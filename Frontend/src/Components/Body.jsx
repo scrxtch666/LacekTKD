@@ -1,15 +1,18 @@
-function Body() {
-    const [count, setCount] = useState(0);
-    const currentYear = new Date().getFullYear();
-  
-    return (
-      <>
-<div class="bg-customGreen">
-sss
-</div>
+import { useState } from 'react';
 
-      </>
-    );
-  }
-  
-  export default Body;
+function Body({ children }) {
+
+
+  return (
+    <div className="bg-customGreen container xl: mx-auto">
+     
+      {children && (
+        <div className="children-wrapper">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default Body;

@@ -7,7 +7,7 @@ function Footer() {
     return (
       <>
 <footer class="bg-white dark:bg-customBlack text-black fixed w-full z-20 bottom-0 start-0 border-b border-gray-200 dark:border-gray-600">
-    <div class="mx-auto w-full max-w-screen-xl p-6 py-6 lg:py-8">
+    <div class="mx-auto w-full max-w-screen-2xl p-6 py-6 lg:py-8">
         <h3 class="text-customWhite font-bold opacity-45 flex justify-center ">SPONZOŘI</h3>
         <div class="md:flex md:justify-between">
           <div class="mb-6 md:mb-0">

@@ -10,10 +10,10 @@ function Header() {
       
        
       <nav class="bg-white dark:bg-customGreen text-black fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
-        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2 md:w-3/3">
+        <div class="max-w-screen-2xl flex flex-wrap items-center justify-between mx-auto p-2 md:w-3/3">
           <div class="flex space-x-6">
             <a
-              href="https://www.instagram.com/"
+              href="https://www.tkdlacek.cz/"
               class="flex items-center space-x-3 rtl:space-x-reverse"
             >
               <img
@@ -22,18 +22,27 @@ function Header() {
                 alt="image description"
               ></img>
             </a>
+            
             <button
               type="button"
-              class="relative flex items-center justify-center text-customGreen bg-customWhite rounded-lg text-sm text-center dark:bg-customWhite space-x-6"
+              class="relative flex items-center justify-center text-customGreen bg-customWhite rounded-lg text-sm text-center dark:bg-customWhite space-x-6 w-200px"
             >
+            
+               <a
+              href="https://www.tkdlacek.cz/">
+                <div>
               <div class="absolute top-1/2 left-5 transform -translate-x-1/2 -translate-y-1/2 flex h-4 w-4">
                 <div class="animate-ping absolute inline-flex h-full w-full rounded-full bg-customGreen opacity-75"></div>
                 <div class="relative inline-flex rounded-full h-4 w-4 bg-customGreen"></div>
               </div>
-              <div class="flex justify-center align-middle text-xs">
+              </div>
+              <div class="flex justify-center align-middle text-xs w-40 h-8 items-center font-semibold">
                 NÁBOR OTEVŘEN
               </div>
+              </a>
+             
             </button>
+            
           </div>
 
           <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
