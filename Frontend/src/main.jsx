@@ -11,20 +11,18 @@ import Showcase from './Components/Showcase.jsx';
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <>
-      <Header />
+     
       
       <main className="pt-20">
       
         <Body>
-        <Showcase />
+        
           <App />
-          <Fighter />
-          <Fighter />
-          <Fighter /><Fighter />
-          <App />
+          
+          
         </Body>
       </main>
-      <Footer />
+      
     </>
   </StrictMode>,
 );

@@ -1,9 +1,4 @@
-import { useState } from "react";
-
-
-
 function Showcase() {
-  const [count, setCount] = useState(0);
 
   return (
     <>
@@ -19,13 +14,12 @@ function Showcase() {
         </div>
   </figcaption>
        </div>
-       
-       
-
-
-      
     </>
   );
 }
 
 export default Showcase;
+
+
+
+
