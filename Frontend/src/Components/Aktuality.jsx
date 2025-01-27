@@ -6,8 +6,10 @@ function Aktuality() {
     <div className="p-4">
      <h1 class="font-bold text-2xl">AKTUALITY</h1>
       
-      <div class="flex justify-between font-bold mb-2">
+      <div class="flex justify-end font-bold mb-2">
+       {/* Použití Routes místo Switch 
         <div class="bg-customWhite p-2 px-4 rounded-md border-2 border-customBlack">2025</div>
+        */}
         <div class="flex gap-4">
             <div class="bg-customWhite p-2 px-4 rounded-md border-2 border-customBlack">ROK</div>
             <div class="bg-customWhite p-2 px-4 rounded-md border-2 border-customBlack">MĚSÍC</div>
