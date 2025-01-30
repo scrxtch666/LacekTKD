@@ -3,7 +3,7 @@ import mainImage from '../assets/Showcase/main.jpg';
 
 const EventCard = () => {
   return (
-    <div className="max-w-md overflow-hidden bg-pink-50 rounded-2xl shadow-xl">
+    <div className="max-w-sm overflow-hidden bg-pink-50 rounded-2xl shadow-xl">
       <div className="relative">
         <img 
           src={mainImage}

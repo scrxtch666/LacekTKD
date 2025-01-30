@@ -4,7 +4,7 @@ function Header() {
   return (
     <>
       <nav className="bg-white dark:bg-customGreen text-black fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
-        <div className="max-w-screen-2xl flex flex-wrap items-center justify-between mx-auto p-2 md:w-3/3">
+        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2 md:w-3/3">
           <div className="flex space-x-6">
             <Link
               to="/"
@@ -12,7 +12,7 @@ function Header() {
             >
               <img
                 className="h-auto w-20"
-                src="../src/assets/Logo.png"
+                src="../src/assets/Team/Logo.png"
                 alt="Logo"
               />
             </Link>
@@ -43,7 +43,7 @@ function Header() {
               <div className="relative inline-flex rounded-full h-5 w-5 bg-customGreen">
                 <img
                   className="px-0.6 py-0.6"
-                  src="../src/assets/login.png"
+                  src="../src/assets/Icons/login.png"
                   alt="Login"
                 />
               </div>
@@ -58,10 +58,10 @@ function Header() {
             <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-customGreen dark:border-gray-700">
             <li>
                 <Link
-                  to="/home"
+                  to="/admin"
                   className="block py-2 px-3 text-black bg-blue-700 rounded md:bg-transparent md:text-customBlack md:p-0 md:customBlack"
                 >
-                  Domů
+                  ADMIN
                 </Link>
               </li>
               <li>

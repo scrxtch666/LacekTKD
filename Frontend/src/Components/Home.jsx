@@ -1,6 +1,7 @@
 import Showcase from "./Showcase";
 import Fighter from "./Fighter";
 import EventCard from "./EventCard";
+import Event from "../pages/Home/Event";
 
 const Home = () => {
   return (
@@ -8,9 +9,9 @@ const Home = () => {
       <div class="flex flex-col gap-5">
         <Showcase />
 
-        <div class="bg-customWhite h-8 flex justify-between rounded align-middle content-center font-bold">
+        <div class="bg-customWhite h-8 flex justify-between content-center px-4 rounded-md font-bold">
           <div class="justify-center align-middle content-center">
-            <span>AKTUALITY</span>
+            <span class="">AKTUALITY</span>
           </div>
           <div class="justify-center align-middle content-center">
             <span class="text-customGreen">ZÁŘÍ</span>
@@ -23,18 +24,18 @@ const Home = () => {
           <EventCard />
         </div>
 
-        <div class="bg-customWhite h-8 flex justify-between rounded align-middle content-center font-bold">
+        <div class="bg-customWhite h-8 flex justify-between content-center px-4 rounded-md font-bold">
           <div class="justify-center align-middle content-center">
-            <span>NADCHÁZEJÍCÍ AKCE</span>
+            <span class="">NADCHÁZEJÍCÍ AKCE</span>
           </div>
-          <div class="justify-center align-middle content-center">
-            <span class="text-customGreen"></span>
-          </div>
+         
         </div>
 
-        <div class="flex justify-between h-64">
-          <div class="bg-customWhite w-1/3 h-64 p-2">Kalendář</div>
-          <div class="bg-customWhite w-1/3 h-64 p-2">Další akce</div>
+        <div class="flex justify-between h-64 gap-52">
+          <div class="bg-customWhite w-full h-64 p-2">Kalendář</div>
+          
+            <Event />
+        
         </div>
 
 {/*
@@ -50,14 +51,14 @@ const Home = () => {
           </div>
         </div>
 */}
-
-      <div class="bg-customWhite flex justify-evenly items-center p-4">
-<img src="../src/assets/logo_tkdlacek_white.png" alt="" class="h-28"/>
-<span class="font-bold text-xl">Přihlas se k odběru novinek a zůstaň v obraze</span>
+<div class="flex justify-center">
+      <div class="bg-customWhite flex justify-evenly items-center p-4 rounded-xl w-2/3">
+<img src="../src/assets/Team/logo_tkdlacek_white.png" alt="" class="h-28"/>
+<span class="font-bold text-l">Přihlas se k odběru novinek a zůstaň v obraze</span>
 <input type="text" placeholder="Zadejte email:"/>
 <button>Přihlásit</button>
       </div>
-
+      </div>
       </div>
     </>
   );

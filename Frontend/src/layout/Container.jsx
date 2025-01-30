@@ -1,9 +1,6 @@
-// src/components/Container.jsx
-import React from 'react';
-
 function Container({ children }) {
   return (
-    <div className="container mx-auto">
+    <div className="max-w-screen-xl mx-auto bg-customGreen">
       {children}
     </div>
   );
