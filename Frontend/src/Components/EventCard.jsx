@@ -22,7 +22,7 @@ const EventCard = () => {
       </div>
       
       {/* Date Container */}
-      <div className="px-4 py-2">
+      <div className="px-4 py-2 bg-customWhite">
         <div className="flex items-center">
           <span className="text-emerald-600 text-sm font-medium">
             07.08.2017

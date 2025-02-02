@@ -1,0 +1,26 @@
+import { Link } from "react-router-dom";
+import React from "react";
+function Nabor() {
+  return (
+    <>
+      <button
+        type="button"
+        className="relative flex items-center justify-center text-customGreen bg-customWhite rounded-lg text-sm text-center dark:bg-customWhite space-x-6 w-200px"
+      >
+        <Link to="/">
+          <div>
+            <div className="absolute top-1/2 left-5 transform -translate-x-1/2 -translate-y-1/2 flex h-4 w-4">
+              <div className="animate-ping absolute inline-flex h-full w-full rounded-full bg-customGreen opacity-75"></div>
+              <div className="relative inline-flex rounded-full h-4 w-4 bg-customGreen"></div>
+            </div>
+          </div>
+          <div className="flex justify-center align-middle text-xs w-40 h-8 items-center font-semibold">
+            NÁBOR OTEVŘEN
+          </div>
+        </Link>
+      </button>
+    </>
+  );
+}
+
+export default Nabor;

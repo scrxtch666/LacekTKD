@@ -1,0 +1,25 @@
+import { Link } from "react-router-dom";
+import React from "react";
+function Button() {
+  return (
+    <>
+  <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+            <button
+              type="button"
+              className="text-customGreen bg-customWhite focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-customWhite flex items-center space-x-1 border border-customGreen"
+            >
+              <div className="relative inline-flex rounded-full h-5 w-5 bg-customGreen">
+                <img
+                  className="px-0.6 py-0.6"
+                  src="../src/assets/Icons/login.png"
+                  alt="Login"
+                />
+              </div>
+              <span>Přihlášení</span>
+            </button>
+          </div>
+    </>
+  );
+}
+
+export default Button;
