@@ -39,7 +39,7 @@ function Header() {
               </li>
               <li>
                 <Link
-                  to="/admin"
+                  to="/nas-oddil"
                   className="block py-2 px-3 text-black bg-blue-700 rounded md:bg-transparent md:text-customBlack md:p-0 md:customBlack"
                 >
                   NÁŠ ODDÍL

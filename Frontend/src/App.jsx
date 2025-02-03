@@ -5,7 +5,6 @@ import Footer from "./layout/Footer";
 import Container from "./layout/Container";
 import Zavodnici from "./Components/Zavodnici";
 import Contact from "./Components/Contact";
-import Fighter from "./Components/Fighter";
 import Aktuality from "./Components/Aktuality";
 import Zkousky from "./Components/Zkousky";
 import Home from "./Components/Home";
