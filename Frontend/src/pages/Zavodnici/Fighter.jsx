@@ -39,7 +39,7 @@ function Fighter() {
                 <div class="relative inline-flex rounded-full h-3 w-3 bg-customGreen">
                   <img
                     class="px-0.2 py-0.2 flex align-middle"
-                    src="../src/assets/belt.png"
+                    src="../src/assets/icons/belt.png"
                     alt="image description"
                   ></img>
                 </div>
@@ -50,7 +50,7 @@ function Fighter() {
                 <div class="relative inline-flex rounded-full h-3 w-3 bg-customGreen">
                   <img
                     class="px-0.2 py-0.2 flex align-middle"
-                    src="../src/assets/medal.png"
+                    src="../src/assets/icons/medal.png"
                     alt="image description"
                   ></img>
                 </div>
@@ -61,7 +61,7 @@ function Fighter() {
                 <div class="relative inline-flex rounded-full h-3 w-3 bg-customGreen">
                   <img
                     class="px-0.2 py-0.2 flex align-middle"
-                    src="../src/assets/trophy.png"
+                    src="../src/assets/icons/trophy.png"
                     alt="image description"
                   ></img>
                 </div>

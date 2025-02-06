@@ -1,8 +1,8 @@
-import Showcase from "./Showcase";
-import EventCard from "./EventCard";
+import Showcase from "../pages/Home/Showcase";
+import EventCard from "../pages/Home/EventCard";
 import Event from "../pages/Home/Event";
-import Calendar from "./Calendar";
-import Newsletter from "./Newsletter";
+import Calendar from "../pages/Home/Calendar";
+import Newsletter from "../pages/Home/Newsletter";
 
 const Home = () => {
   return (

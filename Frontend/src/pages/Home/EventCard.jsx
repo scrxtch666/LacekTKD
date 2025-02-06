@@ -1,5 +1,5 @@
 import React from 'react';
-import mainImage from '../assets/Showcase/main.jpg';
+import mainImage from '../../../src/assets/Showcase/main.jpg';
 
 const EventCard = () => {
   return (

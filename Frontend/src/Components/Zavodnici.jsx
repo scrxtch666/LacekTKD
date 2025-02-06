@@ -1,4 +1,4 @@
-import Fighter from "./Fighter";
+import Fighter from "../pages/Zavodnici/Fighter";
 function Zavodnici() {
   return (
     <div className="fighters-container">
@@ -13,10 +13,14 @@ function Zavodnici() {
           <span class="text-customGreen"> 4</span>
         </div>
       </div>
+
+      <div class="flex justify-between">
       <Fighter />
       <Fighter />
       <Fighter />
       <Fighter />
+      
+      </div>
     </div>
   );
 }
