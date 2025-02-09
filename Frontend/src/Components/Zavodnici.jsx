@@ -1,21 +1,11 @@
 import Fighter from "../pages/Zavodnici/Fighter";
+import Devider from "../pages/Zavodnici/Devider";
 function Zavodnici() {
   return (
-    <div className="fighters-container">
-      <div class="bg-customWhite h-8 flex justify-between rounded align-middle content-center">
-        <div>
-          <img src="" alt="" />
-          <span>1. DAN</span>
-        </div>
-        <div>
-          {" "}
-          <span>Závodníci:</span>
-          <span class="text-customGreen"> 4</span>
-        </div>
-      </div>
+    <div className="fighters-container flex flex-col gap-5">
+    <Devider />
 
       <div class="flex justify-between">
-      <Fighter />
       <Fighter />
       <Fighter />
       <Fighter />

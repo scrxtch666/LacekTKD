@@ -14,7 +14,7 @@ function Newsletter() {
             <span class="font-bold text-xl">
               Přihlas se k odběru novinek a zůstaň v obraze!
             </span>
-            <input type="text" placeholder="Zadejte email:" />
+            <input type="text" placeholder="Zadejte email:" class="p-2 rounded-lg" />
 
             <Button />
             

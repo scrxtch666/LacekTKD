@@ -26,7 +26,7 @@ function AdminHeader() {
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2 md:w-3/3">
         <div className="flex space-x-6">
           <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-            <img className="h-auto w-20" src="../src/assets/Logo.png" alt="Logo" />
+            <img className="h-auto w-20" src="../src/assets/Team/Logo.png" alt="Logo" />
           </Link>
 
         
@@ -38,7 +38,7 @@ function AdminHeader() {
             className="text-customGreen bg-customWhite focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-customWhite flex items-center space-x-1"
           >
             <div className="relative inline-flex rounded-full h-5 w-5 bg-customGreen">
-              <img className="px-0.6 py-0.6" src="../src/assets/login.png" alt="Login" />
+              <img className="px-0.6 py-0.6" src="../src/assets/Icons/login.png" alt="Login" />
             </div>
             <span>Přihlášení</span>
           </button>
