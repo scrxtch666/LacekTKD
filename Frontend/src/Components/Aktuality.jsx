@@ -3,8 +3,8 @@ import EventCard from '../pages/Home/EventCard';
 
 function Aktuality() {
   return (
-    <div className="p-4">
-     <h1 class="font-bold text-2xl">AKTUALITY</h1>
+    <div class="flex flex-col gap-5">
+      <div class="bg-customWhite rounded-lg p-2 font-bold">AKTUALITY</div>
       
       <div class="flex justify-end font-bold mb-2">
        {/* Použití Routes místo Switch 
