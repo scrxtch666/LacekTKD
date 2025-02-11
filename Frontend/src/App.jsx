@@ -9,6 +9,7 @@ import Aktuality from "./Components/Aktuality";
 import Zkousky from "./Components/Zkousky";
 import Home from "./Components/Home";
 import Admin from "./Components/Admin";
+import Turnaje from "./Components/Turnaje";
 import AdminHeader from "./layout/_test/AdminHeader";
 
 
@@ -23,6 +24,7 @@ function Layout() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/turnaje" element={<Turnaje />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/zavodnici" element={<Zavodnici />} />
           <Route path="/aktuality" element={<Aktuality />} />

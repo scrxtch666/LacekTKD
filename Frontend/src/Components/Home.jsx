@@ -19,7 +19,7 @@ const Home = () => {
           </div>
         </div>
 
-        <div class="flex justify-between">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           <EventCard />
           <EventCard />
           <EventCard />
@@ -37,7 +37,6 @@ const Home = () => {
           <Event />
         </div>
 
-        
         <Newsletter />
       </div>
     </>
