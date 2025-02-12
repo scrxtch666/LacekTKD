@@ -11,6 +11,7 @@ import Home from "./Components/Home";
 import Admin from "./Components/Admin";
 import Turnaje from "./Components/Turnaje";
 import AdminHeader from "./layout/_test/AdminHeader";
+import AboutUs from "./Components/AboutUS";
 
 
 function Layout() {
@@ -29,6 +30,7 @@ function Layout() {
           <Route path="/zavodnici" element={<Zavodnici />} />
           <Route path="/aktuality" element={<Aktuality />} />
           <Route path="/zkousky" element={<Zkousky />} />
+          <Route path="/nas-oddil" element={<AboutUs />} />
         </Routes>
       </Container>
       {!isAdmin && <Footer />}

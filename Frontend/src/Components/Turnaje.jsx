@@ -11,7 +11,6 @@ function Turnaje() {
     <Event />
     </div>
     
-<p>Hello</p>
 </>
   );
 }
