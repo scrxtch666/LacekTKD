@@ -3,7 +3,7 @@ import Nabor from "../Components/Nabor";
 import Button from "../Components/Button";
 import { useState } from "react";
 
-function Header() {
+function HeaderTest() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -24,12 +24,12 @@ function Header() {
           <Nabor />
         </div>
 
-        <div className="flex lg:order-2 space-x-3 lg:space-x-0 rtl:space-x-reverse">
+        <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
           <Button />
           <button
             onClick={toggleMenu}
             type="button"
-            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-customBlack rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customGreen"
+            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
             aria-controls="navbar-sticky"
             aria-expanded={isMenuOpen}
           >
@@ -55,10 +55,10 @@ function Header() {
         <div
           className={`items-center justify-between ${
             isMenuOpen ? "block" : "hidden"
-          } w-full lg:flex lg:w-auto lg:order-1`}
+          } w-full md:flex md:w-auto md:order-1`}
           id="navbar-sticky"
         >
-          <ul className="flex flex-col p-4 lg:p-0 mt-4 font-medium border border-customWhite rounded-lg bg-customWhite lg:space-x-8 rtl:space-x-reverse lg:flex-row lg:mt-0 lg:border-0 lg:bg-customWhite dark:bg-customWhite lg:dark:bg-customGreen dark:border-gray-700">
+          <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-customGreen dark:border-gray-700">
             {[
               { to: "/admin", text: "ADMIN" },
               { to: "/nas-oddil", text: "NÁŠ ODDÍL" },
@@ -71,7 +71,7 @@ function Header() {
               <li key={item.to}>
                 <Link
                   to={item.to}
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-customGreen lg:hover:bg-transparent lg:hover:text-customBlack lg:p-0 dark:text-customBlack dark:hover:bg-customGreen dark:hover:text-white lg:dark:hover:bg-transparent"
+                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-customBlack md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                 >
                   {item.text}
                 </Link>
@@ -84,4 +84,4 @@ function Header() {
   );
 }
 
-export default Header;
+export default HeaderTest;
