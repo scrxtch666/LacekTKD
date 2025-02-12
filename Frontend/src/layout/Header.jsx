@@ -71,7 +71,8 @@ function Header() {
               <li key={item.to}>
                 <Link
                   to={item.to}
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-customGreen lg:hover:bg-transparent lg:hover:text-customBlack lg:p-0 dark:text-customBlack dark:hover:bg-customGreen dark:hover:text-white lg:dark:hover:bg-transparent"
+                  className="block py-2 px-3 text-gray-900 rounded hover:bg-customGreen lg:hover:bg-transparent lg:hover:text-customBlack lg:p-0 dark:text-customBlack dark:hover:bg-customGreen dark:hover:text-customBlack lg:dark:hover:bg-transparent"
+                  onClick={toggleMenu}
                 >
                   {item.text}
                 </Link>
