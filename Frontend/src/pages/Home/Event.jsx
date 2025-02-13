@@ -16,26 +16,26 @@ function Event() {
           <div className="bg-customWhite flex flex-col gap-2">
             <span className="font-extrabold text-xl">BRATISLAVA OPEN</span>
 
-            <p className="flex gap-1">
+            <p className="flex gap-1 items-center">
               <img src="../src/assets/Icons/Location.png" alt="" className="h-5" />
               <span className="text-customGreen font-bold">Lokace:</span>
               Bratislava; Slovensko
             </p>
-            <p className="flex gap-1">
+            <p className="flex gap-1 items-center">
               <img src="../src/assets/Icons/Price.png" alt="" className="h-5" />
               <span className="text-customGreen font-bold">Startovné: </span>50€
             </p>
-            <p className="flex gap-1">
+            <p className="flex gap-1 items-center">
               <img src="../src/assets/Icons/Type.png" alt="" className="h-5" />
               <span className="text-customGreen font-bold">Typ akce: </span>Turnaj
             </p>
-            <p className="flex gap-1">
+            <p className="flex gap-1 items-center">
               <img src="../src/assets/Icons/Date.png" alt="" className="h-5" />
               <span className="text-customGreen font-bold">Datum: </span>12.07. -
               13.07. 2025
             </p>
             <br />
-            <p className="flex gap-1">
+            <p className="flex gap-1 items-center">
               <img src="../src/assets/Icons/Info.png" alt="" className="h-5" />
               <span className="text-customGreen font-bold">Informace: </span>Odjezd
               od bazénu v Pelhřimově v 13:30. Menší děti vybavte podsedákem.
