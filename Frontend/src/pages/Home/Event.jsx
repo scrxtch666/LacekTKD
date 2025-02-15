@@ -47,7 +47,7 @@ function Event() {
       {/* Overlay který se zobrazí při najetí myší */}
       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-70 transition-all duration-300 rounded-lg flex items-center justify-center">
         <span className="text-white text-lg font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          Zobrazit detaily
+          ZOBRAZIT DETAILY
         </span>
       </div>
     </div>

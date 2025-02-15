@@ -24,7 +24,7 @@ const EventCard = () => {
       {/* Date Container */}
       <div className="px-4 py-2 bg-customWhite">
         <div className="flex items-center">
-          <span className="text-emerald-600 text-sm font-medium">
+          <span className="text-customGreen text-sm font-medium">
             07.08.2017
           </span>
         </div>
