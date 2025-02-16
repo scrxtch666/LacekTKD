@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 
 function Otevreno() {
+  // TODO: podmínka na pondělí - středa
   const openingHour = 16;
   const closingHour = 20;
   const [isOpen, setIsOpen] = useState(false);

@@ -29,7 +29,7 @@ function TimeTable() {
        
       
 
-      <div>
+      <div className="flex flex-col gap-2">
         <span class="font-bold text-xl flex">Adresa</span>
         <span>SK TAEKWONDO LACEK z.s. </span>
         <p>Tř. Legií 1115 </p>
