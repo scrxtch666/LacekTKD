@@ -1,40 +1,74 @@
 function Info() {
-    return (
-     <div className="bg-customWhite p-4 rounded-lg">
-<span className="font-bold text-2xl">Taekwondo LACEK</span> 
-<section>
-  <div class="max-w-4xl mx-auto text-center">
-    <p class="text-gray-700 text-lg">
-      Oddíl <strong>Taekwondo Lacek</strong> je sportovní klub zaměřený na výuku a trénink korejského bojového umění 
-      <strong>taekwondo</strong>, které kombinuje dynamické kopy, techniky sebeobrany a sportovní boj. Klub nabízí tréninky 
-      pro děti, mládež i dospělé, od úplných začátečníků až po pokročilé závodníky.
-    </p>
+  return (
+    <div className="bg-customWhite p-4 rounded-lg flex h-max">
+      <div className="w-full flex flex-col gap-2">
+        <span className="font-bold text-2xl">Taekwondo LACEK</span>
+        <p>
+          Sportovní klub Taekwondo Lacek je významným oddílem taekwonda v České
+          republice, sídlícím v Pelhřimově.
+        </p>
+        <p>
+          Založen byl 19. května 1995 jako Klub Taekwondo WTF Humpolec a je
+          nejstarším aktivně fungujícím oddílem taekwonda v zemi.
+        </p>
+        <p>
+          V roce 2008 došlo k přejmenování na Sportovní klub Taekwondo Lacek a k
+          přesunu sídla do Pelhřimova.
+        </p>
+        <p>
+          Klub je otevřen všem zájemcům bez ohledu na věk, pohlaví či národnost
+          a nabízí tréninky v Pelhřimově a Humpolci.
+        </p>
+        <p>
+          Během své existence dosáhl klub mnoha úspěchů, včetně titulů mistra
+          České republiky v letech 1999, 2000 a 2008 až 2019.
+        </p>
+        <p>
+          Také pravidelně vítězil v České národní lize od roku 2007 do roku
+          2018.
+        </p>
+        <p>V roce 2013 obsadil 4. místo na Mistrovství Evropy oddílů.</p>
+        <p>
+          Tréninky v Pelhřimově probíhají na ZŠ Komenského v pondělí a středu od
+          16:00 do 18:00 pro začátečníky a od 18:00 do 20:00 pro pokročilé.
+        </p>
+        <p>
+          Pro více informací můžete navštívit oficiální webové stránky klubu na
+          adrese <a href="https://www.tkdlacek.cz/">www.tkdlacek.cz</a> nebo
+          kontaktovat trenéra Petra Lacka na telefonním čísle +420 724 209 910
+          či e-mailu <a href="mailto:tkdlacek@gmail.com">tkdlacek@gmail.com</a>.
+        </p>
+      </div>
 
-    <h3 class="text-2xl font-semibold text-gray-800 mt-8">Co nabízíme?</h3>
-    <ul class="list-disc list-inside text-gray-700 text-lg mt-4">
-      <li>Výuku tradičního i sportovního taekwonda</li>
-      <li>Tréninky zaměřené na kondici, flexibilitu a sílu</li>
-      <li>Účast na soutěžích a seminářích</li>
-      <li>Možnost složení technických zkoušek (páskování)</li>
-    </ul>
+      <div className="w-1/3 flex flex-col justify-between">
+        <div className="flex flex-col justify-center items-center">
+          <img
+            className="bg-customGreen rounded-full p-2 border-2 border-customWhite"
+            src="../src/assets/Icons/world.png"
+            alt="Logo"
+          />
+          <p className="text-customGreen font-medium">36 navštívených zemí</p>
+        </div>
 
-    <h3 class="text-2xl font-semibold text-gray-800 mt-8">Proč si vybrat nás?</h3>
-    <ul class="list-disc list-inside text-gray-700 text-lg mt-4">
-      <li>Kvalifikovaní a zkušení trenéři</li>
-      <li>Přátelská atmosféra a podpora každého člena</li>
-      <li>Moderní tréninkové metody a vybavení</li>
-      <li>Možnost reprezentovat klub na domácích i zahraničních turnajích</li>
-    </ul>
+        <div className="flex flex-col justify-center items-center">
+          <img
+            className="bg-customGreen rounded-full p-2 border-2 border-customWhite"
+            src="../src/assets/Icons/world.png"
+            alt="Logo"
+          />
+          <p className="text-customGreen font-medium">36 navštívených zemí</p>
+        </div>
+        <div className="flex flex-col justify-center items-center">
+          <img
+            className="bg-customGreen rounded-full p-2 border-2 border-customWhite"
+            src="../src/assets/Icons/world.png"
+            alt="Logo"
+          />
+          <p className="text-customGreen font-medium">36 navštívených zemí</p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-    <p class="text-xl font-semibold text-gray-800 mt-8">
-      Přidejte se k nám a staňte se součástí <span class="text-blue-600">komunity bojovníků</span>, kteří si jdou za svými cíli! 🥋🔥
-    </p>
-  </div>
-</section>
-
-</div>
-    );
-  }
-  
-  export default Info;
-  
+export default Info;
