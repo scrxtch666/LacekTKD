@@ -8,7 +8,7 @@ function Contact() {
   return (
     <div className=" flex gap-5 flex-col">
       <div class="bg-customWhite rounded-lg p-2 font-bold">KONTAKT</div>
-      <div class="flex justify-between gap-8">
+      <div class="flex justify-between gap-5">
         <MainContact />
         <MainContact />
         <MainContact />

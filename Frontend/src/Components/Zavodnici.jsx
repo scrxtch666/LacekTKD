@@ -19,6 +19,10 @@ function Zavodnici() {
         <Fighter />
         <Fighter />
       </div>
+      <Devider />
+      <div class="flex justify-between">
+        <Fighter />
+      </div>
     </div>
     </>
   );

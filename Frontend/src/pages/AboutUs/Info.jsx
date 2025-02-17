@@ -52,19 +52,19 @@ function Info() {
 
         <div className="flex flex-col justify-center items-center">
           <img
-            className="bg-customGreen rounded-full p-2 border-2 border-customWhite"
-            src="../src/assets/Icons/world.png"
+            className="bg-customGreen rounded-full p-2 border-2 border-customWhite max-h-20 h-full"
+            src="../src/assets/Icons/trophy_w.png"
             alt="Logo"
           />
-          <p className="text-customGreen font-medium">36 navštívených zemí</p>
+          <p className="text-customGreen font-medium">účast na 72 akcích ročně</p>
         </div>
         <div className="flex flex-col justify-center items-center">
           <img
             className="bg-customGreen rounded-full p-2 border-2 border-customWhite"
-            src="../src/assets/Icons/world.png"
+            src="../src/assets/Icons/fighters.png"
             alt="Logo"
           />
-          <p className="text-customGreen font-medium">36 navštívených zemí</p>
+          <p className="text-customGreen font-medium">43 členů oddílu</p>
         </div>
       </div>
     </div>
