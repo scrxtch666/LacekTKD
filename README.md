@@ -1,4 +1,7 @@
-Bakalářská práce na téma restruktualizace wbových stránek Taekwondo Lacek. Realizováno pomocí React, TailWindCSS a NodeJS.
+Bakalářská práce na téma restruktualizace webových stránek Taekwondo Lacek. Realizováno pomocí React, TailWindCSS a NodeJS.
+
+# RESTRUKTUALIZACE WEBOVÝCH STRÁNEK
+
 
 > [!TIP]
 >Ikonky: https://icons8.com/icons/set/facebook
@@ -8,11 +11,11 @@ Bakalářská práce na téma restruktualizace wbových stránek Taekwondo Lacek
 >Dokumentace k formátování: https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax
 
 Barvy:
-```
-        GREEN: '#01923E',
-        BLACK: '#181918',
-        WHITE: '#F8F0E5',
-```
+
+        GREEN:  `#01923E`
+        BLACK:  `#181918`
+        WHITE:  `#F8F0E5`
+
 
 Komentář:
 {/*  */}
