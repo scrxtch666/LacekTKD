@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 
 function Otevreno() {
-  // TODO: podmínka na pondělí - středa
+  // Podmínka pro pondělí až středu (1-3)
   const openingHour = 16;
   const closingHour = 20;
   const [isOpen, setIsOpen] = useState(false);
@@ -10,8 +10,14 @@ function Otevreno() {
   useEffect(() => {
     const checkOpeningHours = () => {
       const now = new Date();
+      const currentDay = now.getDay(); // 0 = neděle, 1 = pondělí, ..., 6 = sobota
       const currentHour = now.getHours();
-      setIsOpen(currentHour >= openingHour && currentHour < closingHour);
+      
+      // Kontrola, zda je den pondělí až středa (1-3) a zda je v otevírací době
+      const isDayOpen = currentDay >= 1 && currentDay <= 3; // Od pondělí (1) do středy (3)
+      const isTimeOpen = currentHour >= openingHour && currentHour < closingHour;
+      
+      setIsOpen(isDayOpen && isTimeOpen);
     };
 
     checkOpeningHours();
