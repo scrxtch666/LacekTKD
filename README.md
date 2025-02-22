@@ -1,6 +1,8 @@
-Bakalářská práce na téma restruktualizace webových stránek Taekwondo Lacek. Realizováno pomocí React, TailWindCSS a NodeJS.
-
 # RESTRUKTUALIZACE WEBOVÝCH STRÁNEK
+Použité technologie:
+        - React
+        - TailWindCSS
+        - NodeJS
 
 
 
@@ -25,3 +27,8 @@ TODO: upravit modální okno
 TODO: upravit buttony a udělat nějaký univerzální 
 
 TODO: upravit readME - naformátovat
+TODO: sloučit názvy karet - všechny bud české nebo anglické
+TODO: na kartě zavodnici upravit devider na pásky
+TODO: pořád upravit TURNAJE
+TODO: upravit footer 
+

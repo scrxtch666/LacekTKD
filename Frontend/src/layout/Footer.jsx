@@ -4,7 +4,8 @@ function Footer() {
 
   return (
     <>
-      <footer class="bg-white dark:bg-customBlack text-black w-full z-20 bottom-0 start-0 border-b border-gray-200 dark:border-gray-600">
+    {/* fixed to dá přes celou obrazovku, ale nneí to až dole */}
+      <footer class="bg-white dark:bg-customBlack text-black w-full z-20 bottom-0 start-0 border-b border-gray-200 dark:border-gray-600 mt-5">
         <div class="mx-auto w-full max-w-screen-xl p-6 py-6 lg:py-8">
           <h3 class="text-customWhite font-bold opacity-45 flex justify-center ">
             SPONZOŘI
@@ -20,10 +21,10 @@ function Footer() {
           <div class="sm:flex sm:items-center sm:justify-between">
             <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
               © {currentYear}
-              <a href="/" class="hover:underline font-bold">
-                scrxtch
+              <a href="/" class="hover:underline font-bold px-1">
+                 scrxtch
               </a>
-              . All Rights Reserved.
+                All Rights Reserved.
             </span>
             <div class="flex mt-4 sm:justify-center sm:mt-0">
               <a
