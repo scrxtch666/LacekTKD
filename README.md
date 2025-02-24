@@ -33,3 +33,5 @@ TODO: pořád upravit TURNAJE
 TODO: upravit footer 
 TODO: nadefinovat si nějaké classy v TailWindCSS configu
 TODO: pořešit modal přes mapu v kontaktech
+TODO: upravit responzivitu
+TODO: vzít si inspiraci a udělat shadow jako mám u newsletter shadow-xl border-2

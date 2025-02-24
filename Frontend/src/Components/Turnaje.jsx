@@ -10,11 +10,11 @@ function Turnaje() {
     <div class="flex flex-col justify-between gap-5">
     <Devider />
     
-    <Router>
+    
     <Routes>
       <Route path="/Detail" element={<Detail />} />
     </Routes>
-  </Router>
+ 
     <Turnaj />
 
 <div className="flex justify-between gap-5">

@@ -5,7 +5,7 @@ function Newsletter() {
   return (
     <>
   <div class="flex justify-center">
-          <div class="bg-customWhite flex justify-evenly items-center p-4 rounded-xl gap-4">
+          <div class="bg-customWhite flex justify-evenly items-center p-4 rounded-xl gap-4 shadow-xl border-2">
             <img
               src="../src/assets/Team/logo_tkdlacek_white.png"
               alt=""
