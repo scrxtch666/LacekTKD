@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import Nabor from "../Components/Nabor";
-import Button from "../Components/Button";
+import LogInButton from "../Components/LogInButton";
 import { useState } from "react";
 
 function Header() {
@@ -12,7 +12,7 @@ function Header() {
 
   return (
     <nav className="bg-white dark:bg-customGreen text-black fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto py-4">
         <div className="flex items-center space-x-6">
           <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
             <img
@@ -25,7 +25,7 @@ function Header() {
         </div>
 
         <div className="flex lg:order-2 space-x-3 lg:space-x-0 rtl:space-x-reverse">
-          <Button />
+          <LogInButton />
           <button
             onClick={toggleMenu}
             type="button"
@@ -66,7 +66,7 @@ function Header() {
               { to: "/zkousky", text: "ZKOUŠKY" },
               { to: "/turnaje", text: "TURNAJE" },
               { to: "/zavodnici", text: "ZÁVODNÍCI" },
-              { to: "/contact", text: "KONTAKT" },
+              { to: "/kontakt", text: "KONTAKT" },
             ].map((item) => (
               <li key={item.to}>
                 <Link

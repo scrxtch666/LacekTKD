@@ -31,4 +31,5 @@ TODO: sloučit názvy karet - všechny bud české nebo anglické
 TODO: na kartě zavodnici upravit devider na pásky
 TODO: pořád upravit TURNAJE
 TODO: upravit footer 
-
+TODO: nadefinovat si nějaké classy v TailWindCSS configu
+TODO: pořešit modal přes mapu v kontaktech

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Button from "../../Components/Button";
+import Button from "../../Components/LogInButton";
 import React from "react";
 function Newsletter() {
   return (

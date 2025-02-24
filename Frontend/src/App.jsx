@@ -26,7 +26,7 @@ function Layout() {
           <Route path="/" element={<Home />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/turnaje" element={<Turnaje />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/kontakt" element={<Contact />} />
           <Route path="/zavodnici" element={<Zavodnici />} />
           <Route path="/aktuality" element={<Aktuality />} />
           <Route path="/zkousky" element={<Zkousky />} />
