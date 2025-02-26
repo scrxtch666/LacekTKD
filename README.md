@@ -35,3 +35,7 @@ TODO: nadefinovat si nějaké classy v TailWindCSS configu
 TODO: pořešit modal přes mapu v kontaktech
 TODO: upravit responzivitu
 TODO: vzít si inspiraci a udělat shadow jako mám u newsletter shadow-xl border-2
+
+TODO: u pásků udělat menu na pásky na levé straně, jakože sloupec
+
+TODO: upravit Detail.jsx

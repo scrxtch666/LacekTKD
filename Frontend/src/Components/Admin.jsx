@@ -1,6 +1,10 @@
 function Admin() {
   return (
     <>
+    <div className="flex flex-col gap-5">
+      <div className="flex justify-center">
+      <span className="bg-customWhite flex items-center justify-center p-4 rounded-md border-2 border-customBlack text-red-600 font-bold w-1/2">Toto zatím slouží jako testovací prostředí</span>
+      </div>
       <div class="bg-customWhite rounded-md">Zdravíme, Petr! 👋</div>
 
       <h1>Rychlé nastavení</h1>
@@ -63,6 +67,7 @@ function Admin() {
       <span>Počet závodníků</span>
       <span>Trunajů tento rok</span>
 
+      </div>
       </div>
     </>
   );

@@ -12,6 +12,7 @@ import Admin from "./Components/Admin";
 import Turnaje from "./Components/Turnaje";
 import AdminHeader from "./layout/_test/AdminHeader";
 import AboutUs from "./Components/AboutUS";
+import Detail from "./pages/Turnaje/Detail";
 
 
 function Layout() {
@@ -31,6 +32,7 @@ function Layout() {
           <Route path="/aktuality" element={<Aktuality />} />
           <Route path="/zkousky" element={<Zkousky />} />
           <Route path="/nas-oddil" element={<AboutUs />} />
+          <Route path="/detail" element={<Detail />} />
         </Routes>
       </Container>
       {!isAdmin && <Footer />}

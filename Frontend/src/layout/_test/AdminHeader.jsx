@@ -84,6 +84,11 @@ function AdminHeader() {
                 KONTAKT
               </Link>
             </li>
+            <li>
+              <Link to="/detail" className="block py-2 px-3 text-customGreen rounded hover:bg-gray-100 md:hover:bg-transparent md:text-customBlack md:p-0">
+                detail
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
