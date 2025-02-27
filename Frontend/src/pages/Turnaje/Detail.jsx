@@ -26,11 +26,12 @@ function Detail() {
         </div>
 
         <div className="flex gap-5">
-          <div className="bg-customWhite w-full rounded-md flex justify-between p-4">
+
+          <div className="flex-wrap bg-customWhite w-full max-w-full overflow-auto rounded-md flex justify-between p-4">
             <img
               src="\src\assets\Fighters\PetrLacek.jpg"
               alt=""
-              class="rounded-lg w-16"
+              class="rounded-lg w-14 h-auto"
             />
             <img
               src="\src\assets\Fighters\PetrLacek.jpg"
@@ -53,6 +54,16 @@ function Detail() {
               class="rounded-lg w-16"
             />{" "}
             <img
+              src="\src\assets\Fighters\PetrLacek.jpg"
+              alt=""
+              class="rounded-lg w-16"
+            />
+             <img
+              src="\src\assets\Fighters\PetrLacek.jpg"
+              alt=""
+              class="rounded-lg w-16"
+            />
+                <img
               src="\src\assets\Fighters\PetrLacek.jpg"
               alt=""
               class="rounded-lg w-16"

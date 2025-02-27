@@ -39,3 +39,8 @@ TODO: vzít si inspiraci a udělat shadow jako mám u newsletter shadow-xl borde
 TODO: u pásků udělat menu na pásky na levé straně, jakože sloupec
 
 TODO: upravit Detail.jsx
+
+
+TODO: udělat jednotné styly - c tailwindCss.cfg zkusit udělat nějakou jednotnou class
+
+TODO: nápad je že poté co se všichni závnodnící přihlásí na turnaj, tak si to trenér bude moci vyexportovat a poté zde nahrát ten soubor a ten mu uloží statisitky

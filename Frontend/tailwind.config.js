@@ -10,6 +10,7 @@ export default {
         customGreen: '#01923E',
         customBlack: '#181918',
         customWhite: '#F8F0E5',
+        alertRed: '	#ff0f0f',
       },
       keyframes: {
         pulsate: {
