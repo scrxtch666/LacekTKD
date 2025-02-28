@@ -1,7 +1,7 @@
 function Stats() {
   return (
     <>
-      <div class="card w-1/2">
+      <div class="card w-full">
         <span class="font-bold text-xl">Statistiky</span>
         <hr />
         <div className="flex justify-between">
