@@ -3,7 +3,7 @@ function Stats() {
     <>
       <div class="card w-1/2">
         <span class="font-bold text-xl">Statistiky</span>
-<hr/>
+        <hr />
         <div className="flex justify-between">
           <div className="flex flex-col justify-center items-center">
             <span>Počet závodníků:</span>

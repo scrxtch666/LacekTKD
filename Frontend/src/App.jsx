@@ -13,6 +13,7 @@ import Turnaje from "./Components/Turnaje";
 import AdminHeader from "./layout/_test/AdminHeader";
 import AboutUs from "./Components/AboutUS";
 import Detail from "./pages/Turnaje/Detail";
+import SideBar from "./layout/_test/Sidebar";
 
 
 function Layout() {
@@ -21,7 +22,7 @@ function Layout() {
 
   return (
     <>
-      {isAdmin ? <AdminHeader /> : <Header />}
+      {isAdmin ? <SideBar /> : <Header />}
       <Container>
         <Routes>
           <Route path="/" element={<Home />} />
