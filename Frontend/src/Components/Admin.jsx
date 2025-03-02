@@ -2,6 +2,7 @@ import Welcome from "../pages/Admin/Welcome";
 import Stats from "../pages/Admin/Stats";
 import Add from "../pages/Admin/Add";
 import Alert from "./_test/Alert";
+import Table from "../pages/Admin/Table";
 function Admin() {
   return (
     <>
@@ -43,6 +44,8 @@ function Admin() {
           <span>Trunajů tento rok</span>
         </div>
       </div>
+
+      <Table />
     </>
   );
 }
