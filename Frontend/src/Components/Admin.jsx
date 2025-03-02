@@ -38,14 +38,11 @@ function Admin() {
           <span>Test</span>
         </div>
 
-        <span>Statistiky</span>
-        <div class="bg-customWhite">
-          <span>Počet závodníků</span>
-          <span>Trunajů tento rok</span>
-        </div>
+        
+        <Table />
       </div>
 
-      <Table />
+     
     </>
   );
 }
