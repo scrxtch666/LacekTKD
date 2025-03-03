@@ -46,3 +46,6 @@ TODO: udělat jednotné styly - c tailwindCss.cfg zkusit udělat nějakou jednot
 TODO: nápad je že poté co se všichni závnodnící přihlásí na turnaj, tak si to trenér bude moci vyexportovat a poté zde nahrát ten soubor a ten mu uloží statisitky
 
 TODO: makat a dělat backend
+
+TODO: musím udělat základ backendu, minimálně login
+TODO: dále musím udělat admin layout

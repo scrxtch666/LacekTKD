@@ -60,7 +60,7 @@ function Header() {
         >
           <ul className="flex flex-col p-4 lg:p-0 mt-4 font-medium border border-customWhite rounded-lg bg-customWhite lg:space-x-8 rtl:space-x-reverse lg:flex-row lg:mt-0 lg:border-0 lg:bg-customWhite dark:bg-customWhite lg:dark:bg-customGreen dark:border-gray-700">
             {[
-              { to: "/admin", text: "ADMIN" },
+              { to: "/admin", text: "A" },
               { to: "/nas-oddil", text: "NÁŠ ODDÍL" },
               { to: "/aktuality", text: "AKTUALITY" },
               { to: "/zkousky", text: "ZKOUŠKY" },

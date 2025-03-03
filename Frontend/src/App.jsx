@@ -10,10 +10,10 @@ import Zkousky from "./Components/Zkousky";
 import Home from "./Components/Home";
 import Admin from "./Components/Admin";
 import Turnaje from "./Components/Turnaje";
-import AdminHeader from "./layout/_test/AdminHeader";
 import AboutUs from "./Components/AboutUS";
 import Detail from "./pages/Turnaje/Detail";
 import SideBar from "./layout/_test/Sidebar";
+import AdminContainer from "./layout/AdminContainer";
 
 
 function Layout() {
