@@ -2,7 +2,7 @@ function Stats() {
   return (
     <>
       <div class="card w-full">
-        <span class="font-bold text-xl">Statistiky</span>
+        <span class="font-bold uppercase">Statistiky</span>
         <hr />
         <div className="flex justify-between">
           <div className="flex flex-col justify-center items-center">

@@ -2,7 +2,7 @@ function Add() {
   return (
     <>
       <div className="card w-full">
-        <span className="font-bold">Rychlé přidání</span>
+        <span className="font-bold uppercase">Rychlé přidání</span>
         <hr />
         <div className="h-full flex items-center justify-between gap-2">
           <button className="flex w-full rounded-lg p-2 border-2 border-customBlack justify-evenly">
