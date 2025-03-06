@@ -3,11 +3,11 @@ import MainContact from "../pages/Kontakty/MainContact";
 import Location from "../pages/Kontakty/Location";
 import TimeTable from "../pages/Kontakty/TimeTable";
 import Map from "../pages/Kontakty/Map";
-
+import Devider from "../pages/Kontakty/Devider";
 function Contact() {
   return (
     <div className=" flex gap-5 flex-col">
-      <div class="bg-customWhite rounded-lg p-2 font-bold">KONTAKT</div>
+      <Devider />
       <div class="flex justify-between gap-5">
         <MainContact />
         <MainContact />
