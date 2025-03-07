@@ -3,13 +3,14 @@ function Turnaj() {
       <div className="relative w-full h-64 rounded-lg group">
       <div className="bg-customWhite w-full h-full p-2 rounded-lg">
         <div className="h-full flex gap-2">
-          <div className="flex max-w-52 w-full object-cover object-center">
-            <img
-              src="../src/assets/Events/BT_open2.jpg"
-              alt=""
-              className="object-cover object-center rounded-md"
-            />
-          </div>
+        <div className="flex max-w-52 w-full object-cover object-center">
+  <img
+    src="../src/assets/Events/BT_open2.jpg"
+    alt=""
+    className="object-cover object-center rounded-md md:hidden"
+  />
+</div>
+
 
           <div className="bg-customWhite flex flex-col gap-2">
             <span className="font-extrabold text-xl">BRATISLAVA OPEN</span>

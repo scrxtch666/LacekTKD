@@ -23,7 +23,6 @@ Barvy:
 Komentář:
 {/*  */}
 
-TODO: upravit modální okno
 TODO: upravit buttony a udělat nějaký univerzální 
 
 TODO: upravit readME - naformátovat
@@ -49,3 +48,6 @@ TODO: makat a dělat backend
 
 TODO: musím udělat základ backendu, minimálně login
 TODO: dále musím udělat admin layout
+
+TODO: devider je vlastně div, který má classu devider
+TODO: udělat více responzivní kartu na turnaje - při určité šířce se nebude zobrazovat fotografie
