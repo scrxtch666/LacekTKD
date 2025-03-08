@@ -12,27 +12,15 @@ const Home = () => {
 
         <div className="devider shadow-xl border-2">aktuality</div>
 
-        <div className="w-[1280px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          <EventCard />
-          <EventCard />
-          <EventCard />
-        </div>
-
-        <div className="grid grid-cols-3 gap-13">
-          <EventCard />
-          <EventCard />
-          <EventCard />
-        </div>
-
         <div className="flex justify-between gap-5">
           <EventCard />
           <EventCard />
           <EventCard />
         </div>
 
-       <div className="devider shadow-xl border-2">
-        <span>nadcházející akce</span>
-       </div>
+        <div className="devider shadow-xl border-2">
+          <span>nadcházející akce</span>
+        </div>
 
         <div class="flex justify-between h-64 gap-6">
           <Calendar />

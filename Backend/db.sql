@@ -18,6 +18,7 @@ Table fighters {
   birth timestamp
   belt text
   role integer
+  photo varchar
 }
 
 Table roles{
@@ -32,6 +33,23 @@ Table posts {
   user_id integer [not null]
   status varchar
   created_at timestamp
+}
+
+Table event {
+  id integer [primary key]
+  title varchar
+  body text [note: 'Content of the post']
+  user_id integer [not null]
+  status varchar
+  created_at timestamp
+  date timestamp
+  photo varchar
+}
+
+Table contact {
+  id integer [primary key]
+  id_first_name varchar
+  id_last_name varchar 
 }
 
 Ref user_posts: posts.user_id > fighters.id // many-to-one

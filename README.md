@@ -51,3 +51,5 @@ TODO: dále musím udělat admin layout
 
 TODO: devider je vlastně div, který má classu devider
 TODO: udělat více responzivní kartu na turnaje - při určité šířce se nebude zobrazovat fotografie
+
+TODO: když bude menší zobrazuení, tak přidat nějaký padding po stranách

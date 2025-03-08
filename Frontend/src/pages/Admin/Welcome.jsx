@@ -1,6 +1,6 @@
 function Welcome() {
     return (
-      <div class="bg-customWhite h-8 flex justify-between content-center p-6 rounded-md font-bold">
+      <div class="bg-customWhite h-8 flex justify-between content-center p-6 rounded-md font-bold w-full">
       <div class="justify-center align-middle content-center flex items-center">
         <span class="">Zdravíme, Petrě! 👋</span>
       </div>
