@@ -17,7 +17,7 @@ function Aktuality() {
         </div>
       </div>
 
-      <div class="mb-2 bg-customWhite p-2 px-4 rounded-md border-2 border-customBlack flex justify-between font-bold">
+      <div className='devider' >
         <span>ZÁŘÍ</span>
         <span>POČET: <span class="text-customGreen">3</span></span>
       </div>

@@ -1,5 +1,7 @@
 //  https://dbdiagram.io/d
 
+// Entity: závodníci, turnaje, zkoušky, aktuality, o nas, kontakt
+
 // Use DBML to define your database structure
 // Docs: https://dbml.dbdiagram.io/docs
 

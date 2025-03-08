@@ -1,6 +1,6 @@
 function Container({ children }) {
   return (
-    <div className="max-w-screen-xl mx-auto bg-customGreen overflow-hidden">
+    <div className="max-w-screen-xl mx-auto overflow-hidden">
       {children}
     </div>
   );

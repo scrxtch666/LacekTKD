@@ -10,14 +10,7 @@ const Home = () => {
       <div class="flex flex-col gap-5">
         <Showcase />
 
-        <div class="bg-customWhite h-8 flex justify-between content-center px-4 rounded-md font-bold">
-          <div class="justify-center align-middle content-center">
-            <span class="">AKTUALITY</span>
-          </div>
-          <div class="justify-center align-middle content-center">
-            <span class="text-customGreen">ZÁŘÍ</span>
-          </div>
-        </div>
+        <div className="devider shadow-xl border-2">aktuality</div>
 
         <div className="w-[1280px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           <EventCard />
@@ -37,11 +30,9 @@ const Home = () => {
           <EventCard />
         </div>
 
-        <div class="bg-customWhite h-8 flex justify-between content-center px-4 rounded-md font-bold">
-          <div class="justify-center align-middle content-center">
-            <span class="">NADCHÁZEJÍCÍ AKCE</span>
-          </div>
-        </div>
+       <div className="devider shadow-xl border-2">
+        <span>nadcházející akce</span>
+       </div>
 
         <div class="flex justify-between h-64 gap-6">
           <Calendar />
