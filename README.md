@@ -23,6 +23,8 @@ Barvy:
 Komentář:
 {/*  */}
 
+DB návrh: https://community.dbdiagram.io/t/upgrade-for-database-relationships-zero-to-one-many-relationships-colors-and-more/4184?utm_source=dbdiagram&utm_medium=ads
+
 TODO: upravit buttony a udělat nějaký univerzální 
 
 TODO: upravit readME - naformátovat
