@@ -3,8 +3,19 @@ const express = require('express');
 const mysql = require('mysql2');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const cors = require('cors');  // Přidání knihovny CORS
 
 const app = express();
+
+// Povolení CORS pro frontend na portu 5173
+const corsOptions = {
+    origin: 'http://localhost:5173',  // Povolit požadavky z React aplikace běžící na portu 5173
+    methods: 'GET,POST,PUT,DELETE',
+    allowedHeaders: 'Content-Type,Authorization',
+};
+
+// Použití CORS middleware
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Připojení k databázi
@@ -12,7 +23,7 @@ const db = mysql.createConnection({
     host: 'localhost',
     user: 'root', // změň podle svého nastavení
     password: '', // změň podle svého nastavení
-    database: 'users_db'
+    database: 'LacekTKD'
 });
 
 db.connect(err => {
@@ -22,6 +33,11 @@ db.connect(err => {
 
 // Tajný klíč pro JWT
 const SECRET_KEY = process.env.JWT_SECRET || 'tajnyklic';
+
+// Úvodní stránka
+app.get('/', (req, res) => {
+    res.send('Server běží správně! 🚀');
+});
 
 // Registrace uživatele
 app.post('/register', async (req, res) => {
@@ -55,6 +71,14 @@ app.post('/login', (req, res) => {
         const token = jwt.sign({ id: user.id, username: user.username }, SECRET_KEY, { expiresIn: '1h' });
 
         res.json({ message: 'Přihlášení úspěšné', token });
+    });
+});
+
+// Získání všech turnajů a soustředění
+app.get('/events', (req, res) => {
+    db.query('SELECT name, location, price, type, date_start, date_end, info FROM tournaments', (err, results) => {
+        if (err) return res.status(500).json({ error: 'Chyba při načítání turnajů a soustředění' });
+        res.json(results);
     });
 });
 
