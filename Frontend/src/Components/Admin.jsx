@@ -3,7 +3,18 @@ import Stats from "../pages/Admin/Stats";
 import Add from "../pages/Admin/Add";
 import Alert from "./_test/Alert";
 import Table from "../pages/Admin/Table";
+import { useState } from "react";
+import Nabor from "./Nabor";
 function Admin() {
+
+  const[naborVisible, setNaborVisible] = useState(true);
+
+  const handleClick = (e) => {
+    e.stopPropagation();
+    setNaborVisible(false);
+  };
+
+
   return (
     <>
       <div className="flex flex-col gap-5">
@@ -18,6 +29,11 @@ function Admin() {
         <div className="flex gap-5 w-full">
           <Stats />
           <Add />
+        </div>
+
+        <div>
+          {naborVisible && <Nabor />}
+          <button onClick={handleClick}>Zobrazit nabor</button>
         </div>
 
         <Table />
