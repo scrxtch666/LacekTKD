@@ -76,7 +76,20 @@ app.post('/login', (req, res) => {
 
 // Získání všech turnajů a soustředění
 app.get('/events', (req, res) => {
-    db.query('SELECT name, location, price, type, date_start, date_end, info FROM tournaments', (err, results) => {
+    db.query(`SELECT name, location, price, type, 
+          DATE_FORMAT(date_start, '%d.%m.%Y') AS date_start, 
+          DATE_FORMAT(date_end, '%d.%m.%Y') AS date_end, 
+          info 
+   FROM tournaments`, (err, results) => {
+        if (err) return res.status(500).json({ error: 'Chyba při načítání turnajů a soustředění' });
+        res.json(results);
+    });
+});
+
+// Získání všech pásků
+app.get('/belts', (req, res) => {
+    db.query(`SELECT korean_name, cup, price, img_path
+   FROM belt`, (err, results) => {
         if (err) return res.status(500).json({ error: 'Chyba při načítání turnajů a soustředění' });
         res.json(results);
     });

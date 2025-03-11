@@ -9,8 +9,27 @@ function Zkousky() {
   return (
     <div className="flex flex-col gap-5">
       <div class="bg-customWhite rounded-lg p-2 font-bold">ZKOUŠKY</div>
-      <div className="flex justify-between max-h-64 gap-6">
-        <Pasky />
+      <div className="flex justify-between max-h-64 gap-5">
+
+        <div className="card w-full overflow-hidden">
+          <span class="font-extrabold text-lg">Pásky</span>
+
+          <div className="flex gap-5">
+
+            <div className="w-full">
+              <Pasky />
+            </div>
+
+            <div className="w-full">
+              <Pasky />
+            </div>
+          </div>
+
+        </div>
+
+
+
+
         <Cenik />
       </div>
       <Info />

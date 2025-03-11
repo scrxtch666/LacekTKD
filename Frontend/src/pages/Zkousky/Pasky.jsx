@@ -1,57 +1,45 @@
 import { Link } from "react-router-dom";
-import React from "react";
+import React, { useState, useEffect } from "react";
 function Pasky() {
+  const [belts, setBelts] = useState([]); // Stav pro uchování dat turnajů
+  const [loading, setLoading] = useState(true); // Stav pro zobrazení načítání dat
+
+  // Funkce pro načítání dat o turnajích
+  useEffect(() => {
+    // Načítání dat z backendu
+    fetch("http://localhost:3000/belts")
+      .then((response) => response.json())
+      .then((data) => {
+        setBelts(data); // Nastavení získaných dat do stavu
+        setLoading(false); // Nastavení stavu načítání na false
+      })
+      .catch((error) => {
+        console.error("Chyba při načítání dat:", error);
+        setLoading(false); // I když dojde k chybě, stav načítání bude false
+      });
+  }, []);
+
+  if (loading) {
+    return <div>Načítám data...</div>; // Zobrazení textu při načítání
+  }
   return (
     <>
- <div className="bg-customWhite w-full h-64 p-2 rounded-lg">
-          <p class="font-extrabold text-lg">Pásky</p>
-          <div className="flex justify-between">
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-4">
-                <img
-                  src="../src/assets/Belts/blt_yellow.gif"
-                  alt="Yellow belt"
-                />
-                <p>- 8th CUP -</p>
-                <p className="flex-1 text-center font-bold">Chon-Ji</p>
-              </div>
-              <div className="flex items-center gap-4">
-                <img src="../src/assets/Belts/blt_green.gif" alt="Green belt" />
-                <p>- 6th CUP -</p>
-                <p className="flex-1 text-center font-bold">Dan-Gun</p>
-              </div>
-              <div className="flex items-center gap-4">
-                <img src="../src/assets/Belts/blt_blue.gif" alt="Blue belt" />
-                <p>- 4th CUP -</p>
-                <p className="flex-1 text-center font-bold">Do-San</p>
-              </div>
-            </div>
+      
+        {belts.map((belt) => (
+            
+              
+                <div className="flex items-center gap-5">
+                  <img src={belt.img_path} alt={belt.czech_name} />
+                  <p>- {belt.cup} -</p>
 
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-4">
-                <img src="../src/assets/Belts/blt_red.gif" alt="Red belt" />
-                <p>- 2th CUP -</p>
-                <p className="flex-1 text-center font-bold">Won-Hyo</p>
-              </div>
-              <div className="flex items-center gap-4">
-                <img
-                  src="../src/assets/Belts/blt_black_1.gif"
-                  alt="Black belt 1"
-                />
-                <p>- 1th DAN -</p>
-                <p className="flex-1 text-center font-bold">Choong-Moo</p>
-              </div>
-              <div className="flex items-center gap-4">
-                <img
-                  src="../src/assets/Belts/blt_black_2.gif"
-                  alt="Black belt 2"
-                />
-                <p>- 2th DAN -</p>
-                <p className="flex-1 text-center font-bold">Kwang-Gae</p>
-              </div>
-            </div>
-          </div>
-        </div>
+                  <p className="font-bold">
+                    {belt.korean_name}
+                  </p>
+                </div>
+              
+            
+        ))}
+      
     </>
   );
 }
