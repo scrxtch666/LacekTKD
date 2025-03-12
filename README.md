@@ -57,3 +57,5 @@ TODO: devider je vlastně div, který má classu devider
 TODO: udělat více responzivní kartu na turnaje - při určité šířce se nebude zobrazovat fotografie
 
 TODO: Upravit komponentu pásky - ať se zobrazují vedle sebe a všechny
+
+TODO: udělat ten login
