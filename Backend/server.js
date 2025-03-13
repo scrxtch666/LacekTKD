@@ -96,6 +96,15 @@ app.get('/belts', (req, res) => {
     });
 });
 
+// Získání všech trenérů
+app.get('/coach', (req, res) => {
+    db.query(`SELECT *
+   FROM coach`, (err, results) => {
+        if (err) return res.status(500).json({ error: 'Chyba při načítání turnajů a soustředění' });
+        res.json(results);
+    });
+});
+
 // Získání všech pásků
 app.get('/news', (req, res) => {
     db.query(`SELECT news_name,

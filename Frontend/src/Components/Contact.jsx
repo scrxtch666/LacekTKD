@@ -1,24 +1,23 @@
 import React from "react";
 import MainContact from "../pages/Kontakty/MainContact";
-import Location from "../pages/Kontakty/Location";
 import TimeTable from "../pages/Kontakty/TimeTable";
 import Map from "../pages/Kontakty/Map";
 import Devider from "../pages/Kontakty/Devider";
 function Contact() {
   return (
-    <div className=" flex gap-5 flex-col">
-      <Devider />
+    <>
+      <div className="devider">kontakt</div>
       <div class="flex justify-between gap-5">
         <MainContact />
-        <MainContact />
-        <MainContact />
       </div>
-      <Location />
+
+      <div className="devider">Informace k tréninkům</div>
+
       <div class="flex gap-5">
         <TimeTable />
         <Map />
       </div>
-    </div>
+    </>
   );
 }
 
