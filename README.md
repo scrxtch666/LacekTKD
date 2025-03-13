@@ -59,3 +59,4 @@ TODO: udělat více responzivní kartu na turnaje - při určité šířce se ne
 TODO: Upravit komponentu pásky - ať se zobrazují vedle sebe a všechny
 
 TODO: udělat ten login
+TODO: když bude novinka z turnaje, tak tam budou závodníci, kteří se zúčastnili

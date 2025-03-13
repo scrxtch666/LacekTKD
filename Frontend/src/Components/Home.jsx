@@ -7,29 +7,24 @@ import Newsletter from "../pages/Home/Newsletter";
 const Home = () => {
   return (
     <>
-      <div class="flex flex-col gap-5">
-        <Showcase />
+      <Showcase />
 
-        <div className="devider shadow-xl border-2">aktuality</div>
+      <div className="devider shadow-xl border-2">aktuality</div>
 
-        <div className="flex justify-between gap-5">
-          <EventCard />
-          <EventCard />
-          <EventCard />
-        </div>
-
-        <div className="devider shadow-xl border-2">
-          <span>nadcházející akce</span>
-        </div>
-
-        <div class="flex justify-between h-64 gap-6">
-          <Calendar />
-
-          <Event />
-        </div>
-
-        <Newsletter />
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <EventCard />
       </div>
+
+      <div className="devider shadow-xl border-2">
+        <span>nadcházející akce</span>
+      </div>
+
+      <div class="flex justify-between h-64 gap-5">
+        <Calendar />
+        <Event />
+      </div>
+
+      <Newsletter />
     </>
   );
 };

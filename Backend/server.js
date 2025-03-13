@@ -9,8 +9,9 @@ const app = express();
 
 // Povolení CORS pro frontend na portu 5173
 const corsOptions = {
-    origin: 'http://localhost:5173',  // Povolit požadavky z React aplikace běžící na portu 5173
-    methods: 'GET,POST,PUT,DELETE',
+   // origin: 'http://localhost:5173',  // Povolit požadavky z React aplikace běžící na portu 5173
+   origin: 'http://localhost:5176',
+   methods: 'GET,POST,PUT,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
 };
 
@@ -90,6 +91,18 @@ app.get('/events', (req, res) => {
 app.get('/belts', (req, res) => {
     db.query(`SELECT korean_name, cup, price, img_path
    FROM belt`, (err, results) => {
+        if (err) return res.status(500).json({ error: 'Chyba při načítání turnajů a soustředění' });
+        res.json(results);
+    });
+});
+
+// Získání všech pásků
+app.get('/news', (req, res) => {
+    db.query(`SELECT news_name,
+        DATE_FORMAT(date_start, '%d.%m.%Y') AS date_start, 
+          DATE_FORMAT(date_end, '%d.%m.%Y') AS date_end, text,
+          img_path
+   FROM news`, (err, results) => {
         if (err) return res.status(500).json({ error: 'Chyba při načítání turnajů a soustředění' });
         res.json(results);
     });

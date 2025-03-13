@@ -1,12 +1,36 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import mainImage from '../../../src/assets/Showcase/main.jpg';
 
 const EventCard = () => {
+  const [news, setNews] = useState([]); // Stav pro uchování dat turnajů
+      const [loading, setLoading] = useState(true); // Stav pro zobrazení načítání dat
+  
+      // Funkce pro načítání dat o turnajích
+        useEffect(() => {
+          // Načítání dat z backendu
+          fetch("http://localhost:3000/news")
+            .then((response) => response.json())
+            .then((data) => {
+              setNews(data); // Nastavení získaných dat do stavu
+              setLoading(false); // Nastavení stavu načítání na false
+            })
+            .catch((error) => {
+              console.error("Chyba při načítání dat:", error);
+              setLoading(false); // I když dojde k chybě, stav načítání bude false
+            });
+        }, []);
+      
+        if (loading) {
+          return <div>Načítám data...</div>; // Zobrazení textu při načítání
+        }
+
   return (
+    <>
+    {news.map((event) => (
     <div className="max-w-sm overflow-hidden bg-pink-50 rounded-2xl shadow-xl">
       <div className="relative">
         <img 
-          src={mainImage}
+          src={event.img_path}
           alt="Sports competition"
           className="w-full h-52 object-cover"
         />
@@ -15,7 +39,7 @@ const EventCard = () => {
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent">
           <div className="px-4 py-3">
             <h2 className="text-xl font-bold text-white tracking-wide">
-              BRATISLAVA OPEN
+              {event.news_name}
             </h2>
           </div>
         </div>
@@ -25,12 +49,14 @@ const EventCard = () => {
       <div className="px-4 py-2 bg-customWhite">
         <div className="flex items-center">
           <span className="text-customGreen text-sm font-medium">
-            07.08.2017
+            {event.date_start} - {event.date_end}
           </span>
         </div>
       </div>
     </div>
+    ))}
+    </>
   );
-};
+}
 
 export default EventCard;
