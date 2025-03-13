@@ -12,8 +12,8 @@ function Fighter() {
       <div class="w-[400px] h-40 bg-customWhite text-customBlack rounded-md p-2 flex flex-row justify-between">
         <div class="w-28 h-full rounded-xl overflow-hidden">
   <img
-    src="\src\assets\Fighters\PetrLacek.jpg"
-    alt="test"
+    src="\src\assets\Fighters\lacek_petr.jpg"
+    alt="tesst"
     class="w-full h-full object-cover object-center"
   />
 </div>

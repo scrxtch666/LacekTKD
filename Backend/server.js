@@ -95,6 +95,15 @@ app.get('/belts', (req, res) => {
     });
 });
 
+// Získání závodníků
+app.get('/fighters', (req, res) => {
+    db.query(`SELECT first_name, last_name, belt, profile_pic_path
+   FROM fighters`, (err, results) => {
+        if (err) return res.status(500).json({ error: 'Chyba při načítání turnajů a soustředění' });
+        res.json(results);
+    });
+});
+
 // Middleware pro ověření tokenu
 const verifyToken = (req, res, next) => {
     const token = req.header('Authorization')?.split(' ')[1];
