@@ -7,14 +7,12 @@ import Video from "../pages/AboutUs/Video";
 function AboutUs() {
   return (
     <>
-    <div className="flex flex-col gap-5">
-   <Devider />
-   <Info />
-   <div className="flex gap-5">
-   <History />
-   <Video />
-   </div>
-   </div>
+      <Devider />
+      <Info />
+      <div className="flex gap-5">
+        <History />
+        <Video />
+      </div>
     </>
   );
 }

@@ -5,25 +5,16 @@ import Pasky from "../pages/Zavodnici/Pasky";
 function Zavodnici() {
   return (
     <>
-    <div className="fighters-container flex flex-col gap-5">
-    <Pasky />
+      <Pasky />
       <Devider />
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <FighterTest />
-       
-      </div>
-      <Devider />
-      <div class="flex justify-between">
-        <Fighter />
-        <Fighter />
-        <Fighter />
       </div>
       <Devider />
       <div class="flex justify-between">
         <Fighter />
       </div>
-    </div>
     </>
   );
 }

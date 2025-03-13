@@ -8,7 +8,8 @@ import SestavyInfo from "../pages/Zkousky/SestavyInfo";
 function Zkousky() {
   return (
     <div className="flex flex-col gap-5">
-      <div class="bg-customWhite rounded-lg p-2 font-bold">ZKOUŠKY</div>
+      
+      <div class="devider">ZKOUŠKY</div>
       <div className="flex justify-between max-h-64 gap-5">
 
         <div className="card w-full overflow-hidden">
@@ -26,10 +27,6 @@ function Zkousky() {
           </div>
 
         </div>
-
-
-
-
         <Cenik />
       </div>
       <Info />

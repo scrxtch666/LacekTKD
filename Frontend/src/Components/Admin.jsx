@@ -1,8 +1,8 @@
-import Welcome from "../pages/Admin/Welcome";
-import Stats from "../pages/Admin/Stats";
-import Add from "../pages/Admin/Add";
+import Welcome from "../pages/_Admin/Welcome";
+import Stats from "../pages/_Admin/Stats";
+import Add from "../pages/_Admin/Add";
 import Alert from "./_test/Alert";
-import Table from "../pages/Admin/Table";
+import Table from "../pages/_Admin/Table";
 import { useState } from "react";
 import Nabor from "./Nabor";
 function Admin() {
