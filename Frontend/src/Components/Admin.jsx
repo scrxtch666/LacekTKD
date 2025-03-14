@@ -5,6 +5,7 @@ import Alert from "./_test/Alert";
 import Table from "../pages/_Admin/Table";
 import { useState } from "react";
 import Nabor from "./Nabor";
+import AddFighter from "../pages/_Admin/AddFighter";
 function Admin() {
 
   const[naborVisible, setNaborVisible] = useState(true);
@@ -18,6 +19,7 @@ function Admin() {
   return (
     <>
       <div className="flex flex-col gap-5">
+        
         <Welcome />
         <Alert />
         <div className="flex justify-center">
@@ -25,6 +27,8 @@ function Admin() {
             Toto zatím slouží jako testovací prostředí
           </span>
         </div>
+
+<AddFighter />
 
         <div className="flex gap-5 w-full">
           <Stats />

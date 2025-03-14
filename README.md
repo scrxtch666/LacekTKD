@@ -23,11 +23,15 @@ Barvy:
 Komentář:
 {/*  */}
 
+Pokud bude problém s portem, tak se podívat do server.js na origin: 'http://localhost:5173' a změnit port
+
 Spuštění backendu: cd backend, node server.js
 
 DB návrh: https://community.dbdiagram.io/t/upgrade-for-database-relationships-zero-to-one-many-relationships-colors-and-more/4184?utm_source=dbdiagram&utm_medium=ads
 
 TODO: upravit buttony a udělat nějaký univerzální 
+
+TODO: udělat lepší db - vazby 
 
 TODO: upravit readME - naformátovat
 TODO: sloučit názvy karet - všechny bud české nebo anglické

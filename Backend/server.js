@@ -9,8 +9,8 @@ const app = express();
 
 // Povolení CORS pro frontend na portu 5173
 const corsOptions = {
-   // origin: 'http://localhost:5173',  // Povolit požadavky z React aplikace běžící na portu 5173
-   origin: 'http://localhost:5176',
+    origin: 'http://localhost:5173',  // Povolit požadavky z React aplikace běžící na portu 5173
+  // origin: 'http://localhost:5176',
    methods: 'GET,POST,PUT,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
 };
