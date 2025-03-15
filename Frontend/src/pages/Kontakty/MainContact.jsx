@@ -42,10 +42,11 @@ function MainContact() {
           </div>
         </div>
 
-        <div class="flex justify-between gap-3 w-full">
+        <div class="flex justify-between gap-3 w-full flex-col">
+
           <button
             type="button"
-            className="text-customGreen bg-customWhite focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-customWhite flex items-center space-x-1 border border-customGreen"
+            className="text-customGreen bg-customWhite focus:ring-4 focus:outline-none font-medium rounded-lg text-sm p-2 text-center dark:bg-customWhite flex items-center space-x-1"
           >
             <div className="relative inline-flex rounded-full h-5 w-5 bg-customGreen">
               <img
@@ -59,7 +60,7 @@ function MainContact() {
 
           <button
             type="button"
-            className="text-customGreen bg-customWhite focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-customWhite flex items-center space-x-1 border border-customGreen"
+            className="text-customGreen bg-customWhite focus:ring-4 focus:outline-none font-medium rounded-lg text-sm p-2 text-center dark:bg-customWhite flex items-center space-x-1 borde"
           >
             <div className="relative inline-flex rounded-full h-5 w-5 bg-customGreen">
               <img

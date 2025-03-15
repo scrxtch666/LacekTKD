@@ -2,7 +2,6 @@ import React from "react";
 import MainContact from "../pages/Kontakty/MainContact";
 import TimeTable from "../pages/Kontakty/TimeTable";
 import Map from "../pages/Kontakty/Map";
-import Devider from "../pages/Kontakty/Devider";
 function Contact() {
   return (
     <>

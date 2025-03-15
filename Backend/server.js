@@ -126,6 +126,15 @@ app.get('/fighters', (req, res) => {
     });
 });
 
+
+app.get("/fighters/count", (req, res) => {
+    db.query("SELECT COUNT(last_name) AS count FROM fighters;", (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({ count: result[0].count });
+    });
+});
 // Middleware pro ověření tokenu
 const verifyToken = (req, res, next) => {
     const token = req.header('Authorization')?.split(' ')[1];

@@ -64,3 +64,5 @@ TODO: Upravit komponentu pásky - ať se zobrazují vedle sebe a všechny
 
 TODO: udělat ten login
 TODO: když bude novinka z turnaje, tak tam budou závodníci, kteří se zúčastnili
+
+TODO: udělat vazby v DB a navrhnou finální řešení db
