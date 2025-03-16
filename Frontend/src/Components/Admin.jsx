@@ -6,21 +6,32 @@ import Table from "../pages/_Admin/Table";
 import { useState } from "react";
 import Nabor from "./Nabor";
 import AddFighter from "../pages/_Admin/AddFighter";
+import NewFighter from "../pages/_Admin/NewFighter";
+import Options from "../pages/_Admin/Options";
 function Admin() {
-
-  const[naborVisible, setNaborVisible] = useState(true);
+  const [naborVisible, setNaborVisible] = useState(true);
 
   const handleClick = (e) => {
     e.stopPropagation();
     setNaborVisible(false);
   };
 
-
   return (
     <>
       <div className="flex flex-col gap-5">
-        
         <Welcome />
+
+<div className="devider">Tvorba uživatelského profilu</div>
+        <div className="gap-5 flex">
+          <AddFighter />
+          <NewFighter />
+        </div>
+
+        <div className="flex w-full justify-center">
+        <Options />
+        </div>
+        
+
         <Alert />
         <div className="flex justify-center">
           <span className="bg-customWhite flex items-center justify-center p-4 rounded-md border-2 border-customBlack text-red-600 font-bold w-1/2">
@@ -28,7 +39,7 @@ function Admin() {
           </span>
         </div>
 
-<AddFighter />
+       
 
         <div className="flex gap-5 w-full">
           <Stats />
