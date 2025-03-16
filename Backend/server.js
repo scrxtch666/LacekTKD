@@ -120,7 +120,7 @@ app.get('/news', (req, res) => {
 // Získání závodníků
 app.get('/fighters', (req, res) => {
     db.query(`SELECT first_name, last_name, belt, profile_pic_path
-   FROM fighters`, (err, results) => {
+   FROM fighters WHERE belt = '2.DAN';`, (err, results) => {
         if (err) return res.status(500).json({ error: 'Chyba při načítání turnajů a soustředění' });
         res.json(results);
     });
@@ -128,7 +128,7 @@ app.get('/fighters', (req, res) => {
 
 
 app.get("/fighters/count", (req, res) => {
-    db.query("SELECT COUNT(last_name) AS count FROM fighters;", (err, result) => {
+    db.query("SELECT COUNT(ID) AS count FROM fighters WHERE belt = '2.DAN';", (err, result) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
