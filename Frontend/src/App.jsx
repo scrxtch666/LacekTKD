@@ -14,6 +14,8 @@ import AboutUs from "./Components/AboutUS";
 import Detail from "./pages/Turnaje/Detail";
 import SideBar from "./layout/_test/Sidebar";
 import AdminContainer from "./layout/AdminContainer";
+import AddFighter from "./Components/AddFighter";
+import FightersAdmin from "./Components/FightersAdmin";
 
 
 
@@ -35,6 +37,10 @@ function Layout() {
           <Route path="/zkousky" element={<Zkousky />} />
           <Route path="/nas-oddil" element={<AboutUs />} />
           <Route path="/detail" element={<Detail />} />
+          
+          <Route path="/admin/pridani-zavodnika" element={<AddFighter />} />
+          <Route path="/admin/vsichni-zavodnici" element={<FightersAdmin />} />
+          
         </Routes>
       </Container>
       {!isAdmin && <Footer />}

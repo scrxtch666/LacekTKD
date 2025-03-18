@@ -1,4 +1,4 @@
-function NewFighter() {
+function FighterUdaje() {
   return (
     <>
       <div className="card flex justify-between w-1/2 h-60 gap-5 flex-col">
@@ -42,4 +42,4 @@ function NewFighter() {
   );
 }
 
-export default NewFighter;
+export default FighterUdaje;

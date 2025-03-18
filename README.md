@@ -20,6 +20,10 @@ Barvy:
         WHITE:  `#F8F0E5`
 
 
+> [!IMPORTANT]
+> Samotné stránky jsou v _/components_ a komponenty pro samotné stránky jsou v _/pages/nazev-stranky_
+
+
 Komentář:
 {/*  */}
 
@@ -31,10 +35,7 @@ DB návrh: https://community.dbdiagram.io/t/upgrade-for-database-relationships-z
 
 TODO: upravit buttony a udělat nějaký univerzální 
 
-TODO: udělat lepší db - vazby 
-
 TODO: upravit readME - naformátovat
-TODO: sloučit názvy karet - všechny bud české nebo anglické
 TODO: na kartě zavodnici upravit devider na pásky
 TODO: pořád upravit TURNAJE
 TODO: upravit footer 
