@@ -68,3 +68,9 @@ TODO: když bude novinka z turnaje, tak tam budou závodníci, kteří se zúča
 
 TODO: udělat vazby v DB a navrhnou finální řešení db
 TODO: při vytváření uživatele zadat datum narození
+
+
+Jak budou fungovat pásky:
+- bude tabulka na pásky, kde budou hodnoty jako je ID, img, korean_name, czech_name (cup), price...
+- devidery a závodníci budou podle toho id
+

@@ -32,11 +32,19 @@ function FighterUdaje() {
           />
         </div>
 
-        <input
-          name="myInput  "
-          className="rounded-md border-2 border-customGreen border-dotted bg-customWhite px-2 w-full"
-          placeholder="role"
-        />
+        <div className="flex gap-5">
+          <input
+            name="myInput  "
+            className="rounded-md border-2 border-customGreen border-dotted bg-customWhite px-2 w-full"
+            placeholder="role"
+          />
+
+          <input
+            name="myInput  "
+            className="rounded-md border-2 border-customGreen border-dotted bg-customWhite px-2 w-full"
+            placeholder="datum narození"
+          />
+        </div>
       </div>
     </>
   );
