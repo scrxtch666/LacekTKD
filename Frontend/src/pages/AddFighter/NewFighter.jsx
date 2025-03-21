@@ -43,6 +43,7 @@ function FighterUdaje() {
             name="myInput  "
             className="rounded-md border-2 border-customGreen border-dotted bg-customWhite px-2 w-full"
             placeholder="datum narození"
+            type="date"
           />
         </div>
       </div>

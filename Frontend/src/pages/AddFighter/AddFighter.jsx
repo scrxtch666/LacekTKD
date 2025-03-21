@@ -2,8 +2,9 @@ function FighterMain() {
   return (
     <>
       <div className="card flex justify-between w-1/2 h-60 gap-5">
-        <div className="border-2 border-customGreen border-dotted rounded-md flex items-center justify-center content-center">
+        <div className="border-2 border-customGreen border-dotted rounded-md flex flex-col items-center justify-center content-center">
           <span className="text-xs">Nahrajte profilový obrázek</span>
+          <input type="file" id="file-input" name="ImageStyle" className="text-xs"/>
         </div>
 
         <div className="flex flex-col justify-between">

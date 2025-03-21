@@ -1,4 +1,4 @@
-function AddFighter() {
+function AdminFastAdd() {
     return (
       <>
         <div className="card w-full">
@@ -30,5 +30,5 @@ function AddFighter() {
     );
   }
   
-  export default AddFighter;
+  export default AdminFastAdd;
   

@@ -74,3 +74,4 @@ Jak budou fungovat pásky:
 - bude tabulka na pásky, kde budou hodnoty jako je ID, img, korean_name, czech_name (cup), price...
 - devidery a závodníci budou podle toho id
 
+Rozdělení závodníků do kategorií -> junior, senior, veterán... podle věku
