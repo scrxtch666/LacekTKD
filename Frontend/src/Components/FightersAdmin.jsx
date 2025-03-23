@@ -27,42 +27,39 @@ function FightersAdmin() {
         <div className="w-1/2 flex justify-center">
           <Stats />
         </div>
-
-
-
       </div>
 
       <input
-              name="myInput  "
-              className="bg-customWhite rounded-md p-2 w-1/5 text-gray-800 text-xs"
-              placeholder="Vyhledat závodníka, ↵ hledat"
-            />
+        name="myInput  "
+        className="bg-customWhite rounded-md p-2 w-1/5 text-gray-800 text-xs"
+        placeholder="Vyhledat závodníka, ↵ hledat"
+      />
 
-<div className="devider flex justify-between">
-  <span>Profilový obrázek</span>
-  <span>Celé jméno</span>
-  <span>Věk</span>
-  <span>Váha</span>
-  <span>Pásek</span>
-  <span>Best</span>
-  <span>Legend</span>
-  <span>Aktivní</span>
-</div>
+      <div className="devider flex justify-between">
+        <span>Profilový obrázek</span>
+        <span>Celé jméno</span>
+        <span>Věk</span>
+        <span>Váha</span>
+        <span>Pásek</span>
+        <span>Best</span>
+        <span>Legend</span>
+        <span>Aktivní</span>
+      </div>
 
-<div className="bg-customWhite">
-<img
-                  class="px-0.5 py-0.5 flex align-middle items-center"
-                  src="../src/assets/icons/yes_1.png"
-                  alt="image description"
-                ></img>
+      <div className="bg-customWhite">
+        <img
+          class="px-0.5 py-0.5 flex align-middle items-center"
+          src="../src/assets/icons/yes_1.png"
+          alt="image description"
+        ></img> 
 
-<img
-                  class="px-0.5 py-0.5 flex align-middle items-center"
-                  src="../src/assets/icons/no_1.png"
-                  alt="image description"
-                ></img>
-</div>
-            <AllFightersAdmin />
+        <img
+          class="px-0.5 py-0.5 flex align-middle items-center"
+          src="../src/assets/icons/no_1.png"
+          alt="image description"
+        ></img>
+      </div>
+      <AllFightersAdmin />
     </>
   );
 }
