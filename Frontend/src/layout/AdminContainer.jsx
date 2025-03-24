@@ -1,9 +1,9 @@
-function AdminContainer({ children }) {
+function Container({ children }) {
   return (
-    <div className="w-full bg-customBlack">
+    <div className="max-w-screen-full  overflow-hidden px-5 flex flex-col gap-5 bg-customGreen">
       {children}
     </div>
   );
 }
 
-export default AdminContainer;
+export default Container;

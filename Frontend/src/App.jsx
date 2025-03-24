@@ -26,23 +26,29 @@ function Layout() {
   return (
     <>
       {isAdmin ? <SideBar /> : <Header />}
-      <Container>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/turnaje" element={<Turnaje />} />
-          <Route path="/kontakt" element={<Contact />} />
-          <Route path="/zavodnici" element={<Zavodnici />} />
-          <Route path="/aktuality" element={<Aktuality />} />
-          <Route path="/zkousky" element={<Zkousky />} />
-          <Route path="/nas-oddil" element={<AboutUs />} />
-          <Route path="/detail" element={<Detail />} />
-          
-          <Route path="/admin/pridani-zavodnika" element={<AddFighter />} />
-          <Route path="/admin/vsichni-zavodnici" element={<FightersAdmin />} />
-          
-        </Routes>
-      </Container>
+      {isAdmin ? (
+        <AdminContainer>
+          <Routes>
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/pridani-zavodnika" element={<AddFighter />} />
+            <Route path="/admin/vsichni-zavodnici" element={<FightersAdmin />} />
+            {/* Další admin routy zde */}
+          </Routes>
+        </AdminContainer>
+      ) : (
+        <Container>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/turnaje" element={<Turnaje />} />
+            <Route path="/kontakt" element={<Contact />} />
+            <Route path="/zavodnici" element={<Zavodnici />} />
+            <Route path="/aktuality" element={<Aktuality />} />
+            <Route path="/zkousky" element={<Zkousky />} />
+            <Route path="/nas-oddil" element={<AboutUs />} />
+            <Route path="/detail" element={<Detail />} />
+          </Routes>
+        </Container>
+      )}
       {!isAdmin && <Footer />}
     </>
   );
