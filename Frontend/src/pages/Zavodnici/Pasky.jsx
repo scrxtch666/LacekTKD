@@ -1,82 +1,33 @@
+import React, { useState, useEffect } from "react";
 function Pasky() {
+  const [belts, setBelts] = useState([]); // Stav pro uchování dat turnajů
+  const [loading, setLoading] = useState(true); // Stav pro zobrazení načítání dat
+
+  // Funkce pro načítání dat o turnajích
+  useEffect(() => {
+    // Načítání dat z backendu
+    fetch("http://localhost:3000/belts")
+      .then((response) => response.json())
+      .then((data) => {
+        setBelts(data); // Nastavení získaných dat do stavu
+        setLoading(false); // Nastavení stavu načítání na false
+      })
+      .catch((error) => {
+        console.error("Chyba při načítání dat:", error);
+        setLoading(false); // I když dojde k chybě, stav načítání bude false
+      });
+  }, []);
+
+  if (loading) {
+    return <div>Načítám data...</div>; // Zobrazení textu při načítání
+  }
   return (
-    <div class="bg-customWhite h-8 flex justify-between content-center px-4 rounded-md font-bold items-center">
-      <div class="w-full justify-between align-middle content-center flex items-center gap-2">
-        <img
-          className="w-9"
-          src="../src/assets/Belts/blt_white.gif"
-          alt="Logo"
-        />
-
-        <img
-          className="w-9"
-          src="../src/assets/Belts/blt_white_yellow.gif"
-          alt="Logo"
-        />
-
-        <img
-          className="w-9"
-          src="../src/assets/Belts/blt_yellow.gif"
-          alt="Logo"
-        />
-
-        <img
-          className="w-9"
-          src="../src/assets/Belts/blt_yellow_green.gif"
-          alt="Logo"
-        />
-
-        <img
-          className="w-9"
-          src="../src/assets/Belts/blt_green.gif"
-          alt="Logo"
-        />
-
-        <img
-          className="w-9"
-          src="../src/assets/Belts/blt_green_blue.gif"
-          alt="Logo"
-        />
-
-        <img
-          className="w-9"
-          src="../src/assets/Belts/blt_blue.gif"
-          alt="Logo"
-        />
-
-        <img
-          className="w-9"
-          src="../src/assets/Belts/blt_blue_red.gif"
-          alt="Logo"
-        />
-
-        <img className="w-9" src="../src/assets/Belts/blt_red.gif" alt="Logo" />
-
-        <img
-          className="w-9"
-          src="../src/assets/Belts/blt_red_black.gif"
-          alt="Logo"
-        />
-
-        <img
-          className="w-9"
-          src="../src/assets/Belts/blt_black_1.gif"
-          alt="Logo"
-        />
-
-        <img
-          className="w-9"
-          src="../src/assets/Belts/blt_black_2.gif"
-          alt="Logo"
-        />
-
-        <img
-          className="w-9"
-          src="../src/assets/Belts/blt_black_3.gif"
-          alt="Logo"
-        />
+      <div class="devider">
+        {belts.map((belt) => (
+          <img src={belt.img_path} alt={belt.czech_name} className="w-9" />
+        ))}
       </div>
-    </div>
+    
   );
 }
 

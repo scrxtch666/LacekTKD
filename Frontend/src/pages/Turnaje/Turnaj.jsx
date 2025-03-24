@@ -1,22 +1,25 @@
 function Turnaj() {
-    return (
-      <div className="relative w-full h-64 rounded-lg group">
+  return (
+    <div className="relative w-full h-64 rounded-lg group overflow-hidden">
       <div className="bg-customWhite w-full h-full p-2 rounded-lg">
         <div className="h-full flex gap-2">
-        <div className="flex max-w-52 w-full object-cover object-center">
-  <img
-    src="../src/assets/Events/BT_open2.jpg"
-    alt=""
-    className="object-cover object-center rounded-md md:hidden"
-  />
-</div>
-
+          <div className="flex max-w-52 w-full object-cover object-center">
+            <img
+              src="../src/assets/Events/BT_open2.jpg"
+              alt=""
+              className="object-cover object-center rounded-md md:hidden"
+            />
+          </div>
 
           <div className="bg-customWhite flex flex-col gap-2">
             <span className="font-extrabold text-xl">BRATISLAVA OPEN</span>
 
             <p className="flex gap-1 items-center">
-              <img src="../src/assets/Icons/Location.png" alt="" className="h-5" />
+              <img
+                src="../src/assets/Icons/Location.png"
+                alt=""
+                className="h-5"
+              />
               <span className="text-customGreen font-bold">Lokace:</span>
               Bratislava; Slovensko
             </p>
@@ -26,18 +29,20 @@ function Turnaj() {
             </p>
             <p className="flex gap-1 items-center">
               <img src="../src/assets/Icons/Type.png" alt="" className="h-5" />
-              <span className="text-customGreen font-bold">Typ akce: </span>Turnaj
+              <span className="text-customGreen font-bold">Typ akce: </span>
+              Turnaj
             </p>
             <p className="flex gap-1 items-center">
               <img src="../src/assets/Icons/Date.png" alt="" className="h-5" />
-              <span className="text-customGreen font-bold">Datum: </span>12.07. -
-              13.07. 2025
+              <span className="text-customGreen font-bold">Datum: </span>12.07.
+              - 13.07. 2025
             </p>
             <br />
             <p className="flex gap-1 items-center">
               <img src="../src/assets/Icons/Info.png" alt="" className="h-5" />
-              <span className="text-customGreen font-bold">Informace: </span>Odjezd
-              od bazénu v Pelhřimově v 13:30. Menší děti vybavte podsedákem.
+              <span className="text-customGreen font-bold">Informace: </span>
+              Odjezd od bazénu v Pelhřimově v 13:30. Menší děti vybavte
+              podsedákem.
             </p>
           </div>
         </div>
@@ -50,8 +55,7 @@ function Turnaj() {
         </span>
       </div>
     </div>
-    );
-  }
-  
-  export default Turnaj;
-  
+  );
+}
+
+export default Turnaj;

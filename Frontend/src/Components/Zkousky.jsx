@@ -7,28 +7,15 @@ import SestavyInfo from "../pages/Zkousky/SestavyInfo";
 
 function Zkousky() {
   return (
-    <div className="flex flex-col gap-5">
-      
+    <>
       <div class="devider">ZKOUŠKY</div>
+
+      {/* Sekce ve které je to obalené */}
       <div className="flex justify-between max-h-64 gap-5">
-
-        <div className="card w-full overflow-hidden">
-          <span class="font-extrabold text-lg">Pásky</span>
-
-          <div className="flex gap-5">
-
-            <div className="w-full">
-              <Pasky />
-            </div>
-
-            <div className="w-full">
-              <Pasky />
-            </div>
-          </div>
-
-        </div>
+        <Pasky />
         <Cenik />
       </div>
+
       <Info />
       <div className=" flex flex-col gap-5">
         <div className="flex justify-between max-h-64 gap-6">
@@ -36,7 +23,7 @@ function Zkousky() {
           <SestavyInfo />
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

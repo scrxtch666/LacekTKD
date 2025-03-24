@@ -24,22 +24,17 @@ function Pasky() {
   }
   return (
     <>
-      
-        {belts.map((belt) => (
-            
-              
-                <div className="flex items-center gap-5">
-                  <img src={belt.img_path} alt={belt.czech_name} />
-                  <p>- {belt.cup} -</p>
+    <div className="card w-full grid grid-cols-2 overflow-y-hidden">
+    <span class="font-extrabold text-lg">Pásky</span>
+      {belts.map((belt) => (
+        <div className="flex items-center gap-5">
+          <img src={belt.img_path} alt={belt.czech_name} />
+          <p>- {belt.cup} -</p>
 
-                  <p className="font-bold">
-                    {belt.korean_name}
-                  </p>
-                </div>
-              
-            
-        ))}
-      
+          <p className="font-bold">{belt.korean_name}</p>
+        </div>
+      ))}
+      </div>
     </>
   );
 }
