@@ -24,8 +24,11 @@ function Pasky() {
   }
   return (
     <>
-    <div className="card w-full grid grid-cols-2 overflow-y-hidden">
+    <div className="card w-full overflow-y-hidden">
     <span class="font-extrabold text-lg">Pásky</span>
+  <div className="grid grid-cols-2">
+
+  
       {belts.map((belt) => (
         <div className="flex items-center gap-5">
           <img src={belt.img_path} alt={belt.czech_name} />
@@ -34,6 +37,7 @@ function Pasky() {
           <p className="font-bold">{belt.korean_name}</p>
         </div>
       ))}
+      </div>
       </div>
     </>
   );

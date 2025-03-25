@@ -23,6 +23,9 @@ Barvy:
 > [!IMPORTANT]
 > Samotné stránky jsou v _/components_ a komponenty pro samotné stránky jsou v _/pages/nazev-stranky_
 
+> [!CAUTION]
+> Víc se podívat na teorii ohledně Reactu - hooky, routing...
+
 
 Komentář:
 {/*  */}

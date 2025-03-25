@@ -27,7 +27,7 @@ function Admin() {
           </span>
         </div>
 
-        
+        <div className="devider items-center flex justify-center">panel rychlého přístupu</div>
 
         <Alert />
 
