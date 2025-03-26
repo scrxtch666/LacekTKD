@@ -16,7 +16,7 @@ const Home = () => {
       </div>
 
       <div className="devider shadow-xl border-2">
-        <span>nadcházející akce</span>
+        nadcházející akce
       </div>
 
       <div class="flex justify-between h-64 gap-5">

@@ -31,7 +31,7 @@ function Event() {
             <div className="h-full flex gap-2">
               <div className="flex max-w-52 w-full object-cover object-center">
                 <img
-                  src={`../src/assets/Events/${event.name}.jpg`} // Předpokládáme, že obrázek má název podle názvu turnaje
+                  src={event.img_path} // Předpokládáme, že obrázek má název podle názvu turnaje
                   alt={event.name}
                   className="object-cover object-center rounded-md"
                 />
