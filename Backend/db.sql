@@ -23,6 +23,8 @@ Table fighters {
   legend bool
   active bool
   category_id integer
+  email varchar
+  phone number
 }
 
 Table roles{
@@ -54,6 +56,8 @@ Table contact {
   id integer [primary key]
   id_first_name varchar
   id_last_name varchar 
+  licence varchar
+  
 }
 
 Table category {
@@ -90,3 +94,4 @@ Ref: belts.id < fighters.belt_id
 
 Ref: category.id < fighters.category_id
 
+  

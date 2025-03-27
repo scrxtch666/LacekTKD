@@ -24,10 +24,10 @@ function Event() {
   }
 
   return (
-    <div>
+    <>
       {events.map((event) => (
         <div key={event.name} className="relative w-full h-64 rounded-lg group overflow-hidden">
-          <div className="bg-customWhite w-full h-full p-2 rounded-lg">
+          <div className="card">
             <div className="h-full flex gap-2">
               <div className="flex max-w-52 w-full object-cover object-center">
                 <img
@@ -36,8 +36,8 @@ function Event() {
                   className="object-cover object-center rounded-md"
                 />
               </div>
-
-              <div className="bg-customWhite flex flex-col gap-2">
+              
+              <div className="flex flex-col gap-2">
                 <span className="font-extrabold text-xl">{event.name}</span>
 
                 <p className="flex gap-1 items-center">
@@ -78,7 +78,7 @@ function Event() {
           </div>
         </div>
       ))}
-    </div>
+    </>
   );
 }
 
