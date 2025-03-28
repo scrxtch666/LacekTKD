@@ -84,7 +84,7 @@ const Calendar = () => {
   };
 
   return (
-    <div className="w-full h-64 bg-customWhite rounded-lg p-4 font-sans flex flex-col">
+    <div className="w-full h-64 card font-sans flex flex-col">
       {/* Header section - zmenšený padding a mezery */}
       <div className="flex items-start gap-2 mb-2">
         <div className="w-5 h-5 bg-red-500 rounded-full flex-shrink-0" />

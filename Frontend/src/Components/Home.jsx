@@ -1,6 +1,7 @@
 import Showcase from "../pages/Home/Showcase";
 import EventCard from "../pages/Home/EventCard";
-import Event from "../pages/Home/Event";
+import ActualEvent from "../pages/Home/ActualEvent";
+import ActualEventTest from "../pages/Home/_test/ActualEvent";
 import Calendar from "../pages/Home/Calendar";
 import Newsletter from "../pages/Home/Newsletter";
 
@@ -19,9 +20,9 @@ const Home = () => {
         nadcházející akce
       </div>
 
-      <div class="flex justify-between h-64 gap-5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-5">
         <Calendar />
-        <Event />
+        <ActualEventTest />
       </div>
 
       <Newsletter />
