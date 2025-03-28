@@ -16,7 +16,7 @@ Table fighters {
   name varchar
   surname varchar
   birth timestamp
-  belt_id integer
+  belts_id integer [not null]
   role integer
   photo varchar
   best bool
@@ -82,7 +82,8 @@ Table users {
   role varchar
 }
 
-Ref user_posts: posts.user_id > fighters.id // many-to-one
+
+Ref fighter_belt: belts.id > fighters.id // many-to-one
 
 Ref: fighters.id < follows.following_user_id
 
@@ -90,7 +91,7 @@ Ref: fighters.id < follows.followed_user_id
 
 Ref: fighters.role < roles.role
 
-Ref: belts.id < fighters.belt_id
+
 
 Ref: category.id < fighters.category_id
 
