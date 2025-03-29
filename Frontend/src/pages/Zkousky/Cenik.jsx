@@ -3,7 +3,7 @@ import React from "react";
 function Cenik() {
   return (
     <>
- <div className="bg-customWhite w-full h-64 p-2 rounded-lg">
+ <div className="bg-customWhite w-full h-full p-2 rounded-lg">
           <p class="font-extrabold text-lg">Ceník</p>
           <div className="flex justify-between">
             <div className="flex flex-col gap-4">

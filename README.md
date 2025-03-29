@@ -80,29 +80,3 @@ Jak budou fungovat pásky:
 Nechá se tam někde udělat dynamické routování, tak se na to podívat
 
 Rozdělení závodníků do kategorií -> junior, senior, veterán... podle věku
-
-
-původní vál: 
-return (
-    <>
-      {isAdmin ? <SideBar /> : <Header />}
-      {isAdmin ? <AdminContainer /> : <Container>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/turnaje" element={<Turnaje />} />
-          <Route path="/kontakt" element={<Contact />} />
-          <Route path="/zavodnici" element={<Zavodnici />} />
-          <Route path="/aktuality" element={<Aktuality />} />
-          <Route path="/zkousky" element={<Zkousky />} />
-          <Route path="/nas-oddil" element={<AboutUs />} />
-          <Route path="/detail" element={<Detail />} />
-
-          <Route path="/admin/pridani-zavodnika" element={<AddFighter />} />
-          <Route path="/admin/vsichni-zavodnici" element={<FightersAdmin />} />
-
-        </Routes>
-      </Container>}
-      {!isAdmin && <Footer />}
-    </>
-  );

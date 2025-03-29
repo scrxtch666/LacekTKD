@@ -11,7 +11,7 @@ function Zkousky() {
       <div class="devider">ZKOUŠKY</div>
 
       {/* Sekce ve které je to obalené */}
-      <div className="flex justify-between max-h-64 gap-5">
+      <div className="flex justify-between max-h-96 h-full gap-5">
         <Pasky />
         <Cenik />
       </div>
