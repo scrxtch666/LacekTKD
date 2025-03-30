@@ -7,6 +7,7 @@ const cors = require('cors');  // Přidání knihovny CORS
 
 const app = express();
 
+
 // Povolení CORS pro frontend na portu 5173
 const corsOptions = {
     origin: 'http://localhost:5173',  // Povolit požadavky z React aplikace běžící na portu 5173
@@ -75,6 +76,26 @@ app.post('/login', (req, res) => {
     });
 });
 
+// Middleware pro ověření tokenu
+const verifyToken = (req, res, next) => {
+    const token = req.header('Authorization')?.split(' ')[1];
+    if (!token) return res.status(403).json({ error: 'Přístup zamítnut' });
+
+    jwt.verify(token, SECRET_KEY, (err, user) => {
+        if (err) return res.status(403).json({ error: 'Neplatný token' });
+        req.user = user;
+        next();
+    });
+};
+
+// Chráněná cesta (přístupná jen pro přihlášené uživatele)
+app.get('/protected', verifyToken, (req, res) => {
+    res.json({ message: 'Toto je chráněná data', user: req.user });
+});
+
+
+// POŽADAVKY NA DB
+
 // Získání všech turnajů a soustředění
 app.get('/events', (req, res) => {
     db.query(`SELECT name, location, price, type, 
@@ -105,7 +126,7 @@ app.get('/belts', (req, res) => {
    FROM belt`, (err, results) => {
         if (err) return res.status(500).json({ error: 'Chyba při načítání turnajů a soustředění' });
         res.json(results);
-    });
+    }); 
 });
 
 // Získání všech trenérů
@@ -117,7 +138,7 @@ app.get('/coach', (req, res) => {
     });
 });
 
-// Získání všech pásků
+// Získání všech novinek
 app.get('/news', (req, res) => {
     db.query(`SELECT news_name,
         DATE_FORMAT(date_start, '%d.%m.%Y') AS date_start, 
@@ -138,7 +159,7 @@ app.get('/fighters', (req, res) => {
     });
 });
 
-
+// Získání počtu závodníků do headru podle pásku
 app.get("/fighters/count", (req, res) => {
     db.query("SELECT COUNT(ID) AS count FROM fighters WHERE belt = '2.DAN';", (err, result) => {
         if (err) {
@@ -148,6 +169,7 @@ app.get("/fighters/count", (req, res) => {
     });
 });
 
+// Získání počtu závodníků do headru 
 app.get("/fighters/countAll", (req, res) => {
     db.query("SELECT COUNT(ID) AS count FROM fighters;", (err, result) => {
         if (err) {
@@ -155,22 +177,6 @@ app.get("/fighters/countAll", (req, res) => {
         }
         res.json({ count: result[0].count });
     });
-});
-// Middleware pro ověření tokenu
-const verifyToken = (req, res, next) => {
-    const token = req.header('Authorization')?.split(' ')[1];
-    if (!token) return res.status(403).json({ error: 'Přístup zamítnut' });
-
-    jwt.verify(token, SECRET_KEY, (err, user) => {
-        if (err) return res.status(403).json({ error: 'Neplatný token' });
-        req.user = user;
-        next();
-    });
-};
-
-// Chráněná cesta (přístupná jen pro přihlášené uživatele)
-app.get('/protected', verifyToken, (req, res) => {
-    res.json({ message: 'Toto je chráněná data', user: req.user });
 });
 
 // Spuštění serveru

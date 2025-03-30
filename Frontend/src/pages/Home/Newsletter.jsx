@@ -9,7 +9,7 @@ function Newsletter() {
             <img
               src="../src/assets/Team/logo_tkdlacek_white.png"
               alt=""
-              class="h-28"
+              class="h-28 hidden lg:flex"
             />
             <span class="font-bold text-xl">
               Přihlas se k odběru novinek a zůstaň v obraze!

@@ -72,8 +72,21 @@ Table belts {
   price varchar
   img_path varchar
   info varchar
+  video_path varchar
 }
 
+Table tournament {
+  id varchar [primary key]
+  name varchar
+  location varchar
+  price integer
+  type varchar
+  start_date date
+  end_date date
+  info varchar
+  img_path varchar
+  users_id int
+}
 
 Table users {
   id integer [primary key]
@@ -90,8 +103,6 @@ Ref: fighters.id < follows.following_user_id
 Ref: fighters.id < follows.followed_user_id
 
 Ref: fighters.role < roles.role
-
-
 
 Ref: category.id < fighters.category_id
 

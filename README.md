@@ -80,3 +80,6 @@ Jak budou fungovat pásky:
 Nechá se tam někde udělat dynamické routování, tak se na to podívat
 
 Rozdělení závodníků do kategorií -> junior, senior, veterán... podle věku
+
+Uživatelské účty bude moci vytvářet trenér + administrátor
+U těch závodníků potřebuju, aby se to zobrazovalo podle id - různě
