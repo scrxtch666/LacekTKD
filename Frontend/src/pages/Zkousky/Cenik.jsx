@@ -1,62 +1,44 @@
 import { Link } from "react-router-dom";
-import React from "react";
+import React, { useState, useEffect } from "react";
 function Cenik() {
+  const [belts, setBelts] = useState([]); // Stav pro uchování dat turnajů
+  const [loading, setLoading] = useState(true); // Stav pro zobrazení načítání dat
+
+  // Funkce pro načítání dat o turnajích
+  useEffect(() => {
+    // Načítání dat z backendu
+    fetch("http://localhost:3000/belts")
+      .then((response) => response.json())
+      .then((data) => {
+        setBelts(data); // Nastavení získaných dat do stavu
+        setLoading(false); // Nastavení stavu načítání na false
+      })
+      .catch((error) => {
+        console.error("Chyba při načítání dat:", error);
+        setLoading(false); // I když dojde k chybě, stav načítání bude false
+      });
+  }, []);
+
+  if (loading) {
+    return <div>Načítám data...</div>; // Zobrazení textu při načítání
+  }
   return (
     <>
- <div className="bg-customWhite w-full h-full p-2 rounded-lg">
-          <p class="font-extrabold text-lg">Ceník</p>
-          <div className="flex justify-between">
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-4">
-                <img
-                  src="../src/assets/Belts/blt_yellow.gif"
-                  alt="Yellow belt"
-                />
-                <p>- 8th CUP -</p>
-                <p className="flex-1 text-center font-bold">250 Kč</p>
-              </div>
-              <div className="flex items-center gap-4">
-                <img src="../src/assets/Belts/blt_green.gif" alt="Green belt" />
-                <p>- 6th CUP -</p>
-                <p className="flex-1 text-center font-bold">350 Kč</p>
-              </div>
-              <div className="flex items-center gap-4">
-                <img src="../src/assets/Belts/blt_blue.gif" alt="Blue belt" />
-                <p>- 4th CUP -</p>
-                <p className="flex-1 text-center font-bold">450 Kč</p>
-              </div>
-            </div>
+    <div className="card w-full overflow-y-hidden">
+    <span class="font-extrabold text-lg">Ceník</span>
+  <div className="grid grid-cols-2">
 
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-4">
-                <img src="../src/assets/Belts/blt_red.gif" alt="Red belt" />
-                <p>- 2th CUP -</p>
-                <p className="flex-1 text-center font-bold">550 Kč</p>
-              </div>
-              <div className="flex items-center gap-4">
-                <img
-                  src="../src/assets/Belts/blt_black_1.gif"
-                  alt="Black belt 1"
-                />
-                <p>- 1th DAN -</p>
-                <p className="flex-1 text-center font-bold">1000 Kč + 70 USD</p>
-              </div>
-              <div className="flex items-center gap-4">
-                <img
-                  src="../src/assets/Belts/blt_black_2.gif"
-                  alt="Black belt 2"
-                />
-                <p>- 2th DAN -</p>
-                <p className="flex-1 text-center font-bold">2000 Kč + 70 USD</p>
-              </div>
-            </div>
-          </div>
-          <span>
-            Dále se platí poplatek za komisaře - 100 Kč, oddílové poplatky - 4
-            000 Kč/rok, roční svazová známka - 300 Kč. Případně si můžete za 150
-            Kč zakoupit svazovou knížečku.
-          </span>
+  
+      {belts.map((belt) => (
+        <div className="flex items-center gap-5">
+          <img src={belt.img_path} alt={belt.czech_name} />
+          <p>- {belt.cup} -</p>
+
+          <p className="font-bold">{belt.price} Kč</p>
         </div>
+      ))}
+      </div>
+      </div>
     </>
   );
 }

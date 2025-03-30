@@ -18,6 +18,12 @@ function Info() {
           + 9.kup - 150 Kč + 8.kup - 250 Kč =
           <span class="font-bold"> 500 Kč</span>
         </p>
+
+        <span>
+            Dále se platí poplatek za komisaře - 100 Kč, oddílové poplatky - 4
+            000 Kč/rok, roční svazová známka - 300 Kč. Případně si můžete za 150
+            Kč zakoupit svazovou knížečku.
+          </span>
       </div>
     </>
   );
