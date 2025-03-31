@@ -16,6 +16,7 @@ import SideBar from "./layout/_test/Sidebar";
 import AdminContainer from "./layout/AdminContainer";
 import AddFighter from "./Components/AddFighter";
 import FightersAdmin from "./Components/FightersAdmin";
+import FooterTest from "./layout/_test/FooterTest";
 
 
 

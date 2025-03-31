@@ -55,6 +55,9 @@ U těch závodníků potřebuju, aby se to zobrazovalo podle id - různě
 Kategorie - jeden fighter má jednu kategorii a kategorie připadá více fighterům
 Články, akce, závody - založeny jedním uživatelem, více článků může patřit jednomu uživateli => **1:N**
 Login, email, telefonní číslo => **1:1**
+Fotky k akcím - více fotek patří k jedné akci, k jedné akci patří více fotek...
+
+Vymyslet jak udělám úspěchy 
 
 # TODO
 - upravit buttony a udělat nějaký univerzální 
@@ -77,3 +80,5 @@ Login, email, telefonní číslo => **1:1**
 - když bude novinka z turnaje, tak tam budou závodníci, kteří se zúčastnili
 - udělat vazby v DB a navrhnou finální řešení db
 - při vytváření uživatele zadat datum narození
+- u pásků 4. a 5. DAN odstranit bílé pozadí
+- zavodnnici - bude se vypisovat devider s hodnotama a potom samotní závodníci

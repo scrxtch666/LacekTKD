@@ -1,79 +1,64 @@
-import Event from "../Home/Event";
-import Fighter from "../Zavodnici/Fighter";
 function Detail() {
   return (
     <>
-      <div className="flex flex-col gap-5">
-        <div class="bg-customWhite h-8 flex justify-between content-center px-4 rounded-md font-bold">
-          <div class="justify-center align-middle content-center">
-            <span class="">DETAIL TURNAJE</span>
+      <div className="devider">detail proběhlého turnaje</div>
+
+      <div className="flex gap-5">
+        <div className="card w-full">
+        <span className="font-extrabold text-xl">xx</span>
+          <div className="flex justify-between
+          ">
+            
+
+            <p className="flex gap-1 items-center">
+              <img
+                src="../src/assets/Icons/Location.png"
+                alt=""
+                className="h-5"
+              />
+              <span className="text-customGreen font-bold">Lokace:</span>
+              xx
+            </p>
+            <p className="flex gap-1 items-center">
+              <img src="../src/assets/Icons/Type.png" alt="" className="h-5" />
+              <span className="text-customGreen font-bold">Typ akce: </span>
+              yy
+            </p>
+            <p className="flex gap-1 items-center">
+              <img src="../src/assets/Icons/Date.png" alt="" className="h-5" />
+              <span className="text-customGreen font-bold">Datum: </span>
+              xx
+            </p>
+            <br />
           </div>
-          <div class="justify-center align-middle content-center">
-            <span class="text-customGreen"></span>
-          </div>
-        </div>
-        <div className="w-1/2">
-          <Event />
+          <p className="flex gap-1 items-center">
+              <img src="../src/assets/Icons/Info.png" alt="" className="h-5" />
+              <span className="text-customGreen font-bold">Informace: </span>
+              info
+            </p>
+            <p className="flex gap-1 items-center">
+              <img src="../src/assets/Icons/Info.png" alt="" className="h-5" />
+              <span className="text-customGreen font-bold">Výsledky: </span>
+              info
+            </p>
         </div>
 
-        <div class="bg-customWhite h-8 flex justify-between content-center px-4 rounded-md font-bold">
-          <div class="justify-center align-middle content-center">
-            <span class="">PŘIHLÁŠENÍ ZÁVODNÍCI</span>
+        <div className="card w-full gap-5 justify-between flex flex-col">
+          <div className="bg-alertRed flex justify-center">
+          <img
+                src="../src/assets/Events/BT_open.jpg"
+                alt="xxx"
+                className="object-cover object-center rounded-md h-full hidden lg:flex"
+              />
           </div>
-          <div class="justify-center align-middle content-center">
-            <span class="text-customGreen">12</span>
-          </div>
+          <div className="bg-customGreen rounded-md">C</div>
         </div>
 
-        <div className="flex gap-5">
-
-          <div className="flex-wrap bg-customWhite w-full max-w-full overflow-auto rounded-md flex justify-between p-4">
-            <img
-              src="\src\assets\Fighters\PetrLacek.jpg"
-              alt=""
-              class="rounded-lg w-14 h-auto"
-            />
-            <img
-              src="\src\assets\Fighters\PetrLacek.jpg"
-              alt=""
-              class="rounded-lg w-16"
-            />
-            <img
-              src="\src\assets\Fighters\PetrLacek.jpg"
-              alt=""
-              class="rounded-lg w-16"
-            />
-            <img
-              src="\src\assets\Fighters\PetrLacek.jpg"
-              alt=""
-              class="rounded-lg w-16"
-            />
-            <img
-              src="\src\assets\Fighters\PetrLacek.jpg"
-              alt=""
-              class="rounded-lg w-16"
-            />{" "}
-            <img
-              src="\src\assets\Fighters\PetrLacek.jpg"
-              alt=""
-              class="rounded-lg w-16"
-            />
-             <img
-              src="\src\assets\Fighters\PetrLacek.jpg"
-              alt=""
-              class="rounded-lg w-16"
-            />
-                <img
-              src="\src\assets\Fighters\PetrLacek.jpg"
-              alt=""
-              class="rounded-lg w-16"
-            />
-          </div>
-          <div className="bg-customBlack w-full rounded-md flex justify-center">
-            <Fighter />
-          </div>
-        </div>
       </div>
+
+      <div className="devider">účastníci</div>
+
+      <div className="card">Aleš Lin Mocek</div>
     </>
   );
 }
