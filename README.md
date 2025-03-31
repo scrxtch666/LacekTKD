@@ -56,10 +56,8 @@ Kategorie - jeden fighter má jednu kategorii a kategorie připadá více fighte
 Články, akce, závody - založeny jedním uživatelem, více článků může patřit jednomu uživateli => **1:N**
 Login, email, telefonní číslo => **1:1**
 
-> [!IMPORTANT]
-> **TODO:**
+# TODO
 - upravit buttony a udělat nějaký univerzální 
-
 - upravit readME - naformátovat
 - na kartě zavodnici upravit devider na pásky
 - pořád upravit TURNAJE
