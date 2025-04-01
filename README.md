@@ -4,6 +4,9 @@ Použité technologie:
         - TailWindCSS
         - NodeJS
 
+> [!IMPORTANT]
+> Nejdříve udělat databázi
+
 > [!TIP]
 >Ikonky: https://icons8.com/icons/set/facebook
 

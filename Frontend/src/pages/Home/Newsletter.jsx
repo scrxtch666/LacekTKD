@@ -1,11 +1,11 @@
-import { Link } from "react-router-dom";
 import Button from "../../Components/LogInButton";
 import React from "react";
 function Newsletter() {
   return (
     <>
-  <div class="flex justify-center">
-          <div class="bg-customWhite flex justify-evenly items-center p-4 rounded-xl gap-4 shadow-xl border-2">
+    <div className="w-full flex justify-center">
+  <div class="w-2/3 grid grid-cols-1">
+          <div class="bg-customWhite flex justify-evenly items-center p-4 rounded-xl gap-4 shadow-xl border-2 overflow-hidden">
             <img
               src="../src/assets/Team/logo_tkdlacek_white.png"
               alt=""
@@ -19,6 +19,7 @@ function Newsletter() {
             <Button />
             
           </div>
+        </div>
         </div>
     </>
   );

@@ -3,7 +3,7 @@ import React from "react";
 function SestavyInfo() {
   return (
     <>
- <div className="bg-customWhite rounded-lg p-2 w-full">
+ <div className="card w-full">
        <span class="font-extrabold text-lg">Důležité pojmy</span>
        <p>Ap Seogi (앞 서기) – Krátký krok</p>
        <p>Ap Kubi (앞 굽이) – Dlouhý bojový postoj</p>
