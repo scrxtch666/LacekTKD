@@ -1,4 +1,13 @@
+import { useState, useEffect } from "react";
 function Info() {
+    const [count, setCount] = useState(null);
+  
+    useEffect(() => {
+      fetch("http://localhost:3000/fighters/countAll")
+          .then((res) => res.json())
+          .then((data) => setCount(data.count))
+          .catch((error) => console.error("Chyba při načítání:", error));
+  }, []);
   return (
     <>
       <div className="flex gap-5">
@@ -69,7 +78,7 @@ function Info() {
               src="../src/assets/Icons/fighters_w.png"
               alt="Logo"
             />
-            <p className="text-customGreen font-medium">43 členů oddílu</p>
+            <p className="text-customGreen font-medium">{count !== null ? count : "Načítám..."} členů oddílu</p>
           </div>
         </div>
       </div>

@@ -5,12 +5,6 @@
 // Use DBML to define your database structure
 // Docs: https://dbml.dbdiagram.io/docs
 
-Table follows {
-  following_user_id integer
-  followed_user_id integer
-  created_at timestamp 
-}
-
 Table fighters {
   id integer [primary key]
   name varchar
@@ -23,8 +17,7 @@ Table fighters {
   legend bool
   active bool
   category_id integer
-  email varchar
-  phone number
+  
 }
 
 Table roles{
@@ -86,24 +79,73 @@ Table tournament {
   info varchar
   img_path varchar
   users_id int
+  creator_id int
 }
 
 Table users {
   id integer [primary key]
   login varchar
   password varchar
-  role varchar
+  emial varchar
+  phone number
+  role_id int
 }
 
+Table achievement{
+  id integer [primary key]
+  place varchar
+  achivement_name varchar
+  year integer
+  fighter_id integer
+}
 
-Ref fighter_belt: belts.id > fighters.id // many-to-one
+// ---------------- 
 
-Ref: fighters.id < follows.following_user_id
+Table sponsors{
+  id integer [primary key]
+  sponsor_name varchar
+  url varchar
+  img_path varchar
+}
 
-Ref: fighters.id < follows.followed_user_id
+Table banner{
+  id integer [primary key]
+  banner_name varchar
+  img_path varchar
+}
+
+Table newsletter{
+  id integer [primary key]
+  news_id integer
+  email varchar
+}
+
+Table news{
+  id integer [primary key]
+  tournament_id int
+  event_id int
+}
+
+// ---------------- 
+
+Ref fighter_belt: belts.id > fighters.belts_id // many-to-one
 
 Ref: fighters.role < roles.role
 
 Ref: category.id < fighters.category_id
 
-  
+Ref: roles.id < users.role_id
+
+Ref users_posts: users.id > posts.user_id // many-to-one
+
+Ref fighters_achivements: fighters.id > achievement.fighter_id // many-to-one
+
+Ref user_event: users.id > event.user_id // many-to-one
+
+Ref news_newsletter: news.event_id > event.id // many-to-one
+
+Ref news_newsletter: news.tournament_id > tournament.id   // many-to-one
+
+Ref: news.id < newsletter.id
+
+

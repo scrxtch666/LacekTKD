@@ -62,6 +62,17 @@ Fotky k akcím - více fotek patří k jedné akci, k jedné akci patří více 
 
 Vymyslet jak udělám úspěchy 
 
+# FRONTEND
+- doladit responzivitu
+- dodělat všechny sekce
+- vybrat a aplikovat font
+- dodělat všechno na karty
+
+# BACKEND
+- udělat pevnou databázi
+- udělat login
+- přidání závodníků
+
 # TODO
 - upravit buttony a udělat nějaký univerzální 
 - upravit readME - naformátovat
@@ -85,3 +96,4 @@ Vymyslet jak udělám úspěchy
 - při vytváření uživatele zadat datum narození
 - u pásků 4. a 5. DAN odstranit bílé pozadí
 - zavodnnici - bude se vypisovat devider s hodnotama a potom samotní závodníci
+- upravit strukturu server.js

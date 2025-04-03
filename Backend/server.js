@@ -3,7 +3,7 @@ const express = require('express');
 const mysql = require('mysql2');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const cors = require('cors');  // Přidání knihovny CORS
+const cors = require('cors');
 
 const app = express();
 
