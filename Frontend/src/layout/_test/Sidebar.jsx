@@ -167,7 +167,7 @@ function SideBar() {
               </button>
               <button
                 type="button"
-                class="flex items-center p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                class="flex items-center p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-alertRed dark:text-white dark:hover:bg-gray-700 hover:border-2 border-customWhite"
                 aria-controls="dropdown-pages"
                 data-collapse-toggle="dropdown-pages"
               >
@@ -240,7 +240,7 @@ function SideBar() {
                   ></path>
                 </svg>
                 <span class="flex-1 ml-3 text-left whitespace-nowrap">
-                  Kontakt
+                  Kontakty 
                 </span>
                 <img
                   src="../src/assets/Icons/plus.png"

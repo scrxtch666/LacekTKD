@@ -16,13 +16,16 @@ function Zkousky() {
         <Cenik />
       </div>
 
-      <Info />
+      <div className="devider">sestavy</div>
       <div className=" flex flex-col gap-5">
         <div className="flex justify-between max-h-64 gap-6">
           <Video />
           <SestavyInfo />
         </div>
       </div>
+
+      <div className="devider">informace ke zkouškám</div>
+      <Info />
     </>
   );
 }

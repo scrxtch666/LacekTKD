@@ -11,18 +11,11 @@ Table fighters {
   surname varchar
   birth timestamp
   belts_id integer [not null]
-  role integer
   photo varchar
   best bool
   legend bool
   active bool
   category_id integer
-  
-}
-
-Table roles{
-  id integer [primary key]
-  role text
 }
 
 Table posts {
@@ -43,14 +36,6 @@ Table event {
   created_at timestamp
   date timestamp
   photo varchar
-}
-
-Table contact {
-  id integer [primary key]
-  id_first_name varchar
-  id_last_name varchar 
-  licence varchar
-  
 }
 
 Table category {
@@ -88,7 +73,13 @@ Table users {
   password varchar
   emial varchar
   phone number
-  role_id int
+  role varchar
+  fighter_id integer
+}
+
+Table role{
+  id integer [primary key]
+  role_name varchar
 }
 
 Table achievement{
@@ -126,15 +117,20 @@ Table news{
   event_id int
 }
 
+Table trainings{
+  id integer [primary key]
+  advanced_start timestamp
+  advanced_end timestamp
+  beginner_start timestamp
+  beginner_end timestamp
+  day_start date
+  day_end date
+}
 // ---------------- 
 
 Ref fighter_belt: belts.id > fighters.belts_id // many-to-one
 
-Ref: fighters.role < roles.role
-
 Ref: category.id < fighters.category_id
-
-Ref: roles.id < users.role_id
 
 Ref users_posts: users.id > posts.user_id // many-to-one
 
@@ -148,4 +144,4 @@ Ref news_newsletter: news.tournament_id > tournament.id   // many-to-one
 
 Ref: news.id < newsletter.id
 
-
+Ref: fighters.id < users.fighter_id

@@ -1,9 +1,8 @@
-import { Link } from "react-router-dom";
 import React from "react";
 function Info() {
   return (
     <>
- <div className="bg-customWhite rounded-lg p-2">
+ <div className="card">
         <p>
           Zkoušky probíhají standartně v Pelhřimově v tělocvičně, kde trénujeme.
           Pokud při zkoušce neuspějete, získáte mezistupeň pásku na který jste
