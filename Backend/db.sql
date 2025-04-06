@@ -75,11 +75,13 @@ Table users {
   phone number
   role varchar
   fighter_id integer
+  role_id integer
 }
 
 Table role{
   id integer [primary key]
   role_name varchar
+  // fighter, trainer, trainer class II., administrator
 }
 
 Table achievement{
@@ -142,6 +144,9 @@ Ref news_newsletter: news.event_id > event.id // many-to-one
 
 Ref news_newsletter: news.tournament_id > tournament.id   // many-to-one
 
+Ref users_role: role.id > users.role_id   // many-to-one
+
+
 Ref: news.id < newsletter.id
 
-Ref: fighters.id < users.fighter_id
+Ref: fighters.id < users.fighter_id 
