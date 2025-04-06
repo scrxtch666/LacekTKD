@@ -4,6 +4,7 @@ const mysql = require('mysql2');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const router = require("./Routes/Router")
 
 const app = express();
 
@@ -20,18 +21,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Připojení k databázi
-const db = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME
-});
-
-db.connect(err => {
-    if (err) throw err;
-    console.log('🟢 MySQL připojeno');
-});
+app.use("/api", router);
 
 // Tajný klíč pro JWT
 const SECRET_KEY = process.env.JWT_SECRET || 'tajnyklic';
@@ -97,6 +87,7 @@ app.get('/protected', verifyToken, (req, res) => {
 // POŽADAVKY NA DB
 
 // Získání všech turnajů a soustředění
+/*
 app.get('/events', (req, res) => {
     db.query(`SELECT name, location, price, type, 
           DATE_FORMAT(date_start, '%d.%m.%Y') AS date_start, 
@@ -178,6 +169,6 @@ app.get("/fighters/countAll", (req, res) => {
         res.json({ count: result[0].count });
     });
 });
-
+*/
 // Spuštění serveru
 app.listen(3000, () => console.log('🚀 Server běží na http://localhost:3000'));

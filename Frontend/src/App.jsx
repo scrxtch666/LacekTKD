@@ -25,6 +25,7 @@ function Layout() {
   const isAdmin = location.pathname.startsWith("/admin");
 
   return (
+    // Dynamické routování
     <>
       {isAdmin ? <SideBar /> : <Header />}
       {isAdmin ? (
