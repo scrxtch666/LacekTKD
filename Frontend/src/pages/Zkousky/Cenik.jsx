@@ -7,7 +7,7 @@ function Cenik() {
   // Funkce pro načítání dat o turnajích
   useEffect(() => {
     // Načítání dat z backendu
-    fetch("http://localhost:3000/belts")
+    fetch("http://localhost:3000/api/belts")
       .then((response) => response.json())
       .then((data) => {
         setBelts(data); // Nastavení získaných dat do stavu

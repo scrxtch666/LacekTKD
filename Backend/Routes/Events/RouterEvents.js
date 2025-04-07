@@ -13,7 +13,7 @@ router.get('/', async(req, res) => {
               res.json(results);
         })
 });
-
+/*
 router.get('/:eventId', async(req, res) => {
     if(typeof req.params.eventId == "undefined") {
         return res.status(400).json({
@@ -33,6 +33,18 @@ router.get('/:eventId', async(req, res) => {
       if (err) return res.status(500).json({ error: 'Chyba při načítání turnajů a soustředění' });
       res.json(results);
 })
+});  */
+
+router.get('/latest', (req, res) => {
+    const client = db();
+    client.query(`SELECT name, location, price, type, 
+          DATE_FORMAT(date_start, '%d.%m.%Y') AS date_start, 
+          DATE_FORMAT(date_end, '%d.%m.%Y') AS date_end, 
+          info 
+   FROM tournaments ORDER BY id DESC limit 1`, (err, results) => {
+        if (err) return res.status(500).json({ error: 'Chyba při načítání turnajů a soustředění' });
+        res.json(results);
+    });
 });
 
 module.exports = router;

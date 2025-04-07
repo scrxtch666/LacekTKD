@@ -4,7 +4,8 @@ const mysql = require('mysql2');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-const router = require("./Routes/Router")
+//const router = require("./Routes/Router");
+const router = require("./Routes/Router");
 
 const app = express();
 
@@ -12,7 +13,7 @@ const app = express();
 // Povolení CORS pro frontend na portu 5173
 const corsOptions = {
     origin: 'http://localhost:5173',  // Povolit požadavky z React aplikace běžící na portu 5173
-  // origin: 'http://localhost:5176',
+  // origin: 'http://localhost:5174',
    methods: 'GET,POST,PUT,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
 };
@@ -21,6 +22,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
+//app.use("/api", router);
 app.use("/api", router);
 
 // Tajný klíč pro JWT

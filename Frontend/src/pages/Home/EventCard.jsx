@@ -8,7 +8,7 @@ const EventCard = () => {
       // Funkce pro načítání dat o turnajích
         useEffect(() => {
           // Načítání dat z backendu
-          fetch("http://localhost:3000/news")
+          fetch("http://localhost:3000/api/news")
             .then((response) => response.json())
             .then((data) => {
               setNews(data); // Nastavení získaných dat do stavu

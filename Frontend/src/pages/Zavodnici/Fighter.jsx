@@ -7,7 +7,7 @@ function Fighter() {
   // Funkce pro načítání dat o turnajích
   useEffect(() => {
     // Načítání dat z backendu
-    fetch("http://localhost:3000/fighters")
+    fetch("http://localhost:3000/api/fighters")
       .then((response) => response.json())
       .then((data) => {
         setFighters(data); // Nastavení získaných dat do stavu

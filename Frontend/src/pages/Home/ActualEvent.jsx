@@ -7,7 +7,7 @@ function ActualEvent() {
   // Funkce pro načítání dat o turnajích
   useEffect(() => {
     // Načítání dat z backendu
-    fetch("http://localhost:3000/events/latest")
+    fetch("http://localhost:3000/api/events/latest")
       .then((response) => response.json())
       .then((data) => {
         setEvents(data); // Nastavení získaných dat do stavu

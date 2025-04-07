@@ -3,7 +3,7 @@ function Info() {
     const [count, setCount] = useState(null);
   
     useEffect(() => {
-      fetch("http://localhost:3000/fighters/countAll")
+      fetch("http://localhost:3000/api/fighters/countAll")
           .then((res) => res.json())
           .then((data) => setCount(data.count))
           .catch((error) => console.error("Chyba při načítání:", error));
