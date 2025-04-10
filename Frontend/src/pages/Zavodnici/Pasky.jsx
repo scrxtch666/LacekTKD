@@ -24,7 +24,7 @@ function Pasky() {
   return (
       <div class="devider">
         {belts.map((belt) => (
-          <img src={belt.img_path} alt={belt.czech_name} className="w-9" />
+          <img src={belt.img_path} alt={belt.belt_name} className="w-9" />
         ))}
       </div>
     

@@ -24,11 +24,24 @@ function Fighter() {
   }
   return (
     <>
+   
       {fighters.map((fighter) => (
+        <div>
+
+          <div className="devider flex justify-between">
+          <img
+              src={fighter.belt_path}
+              alt="test"
+              class="w-9 object-cover object-center"
+            />
+          <span class="">{fighter.cup}</span>
+          </div>
+
+
         <div class="w-[400px] h-40 bg-customWhite text-customBlack rounded-md p-2 flex flex-row justify-between">
           <div class="w-28 h-full rounded-xl overflow-hidden">
             <img
-              src={fighter.profile_pic_path}
+              src={fighter.img_path}
               alt="test"
               class="w-full h-full object-cover object-center"
             />
@@ -36,7 +49,7 @@ function Fighter() {
 
           <div class="flex flex-col text-left w-64 justify-between overflow-hidden">
             <span class="font-semibold">
-              {fighter.first_name} {fighter.last_name}
+              {fighter.name} {fighter.surname}
             </span>
 
             <div class="flex flex-col">
@@ -62,7 +75,7 @@ function Fighter() {
                     alt="image description"
                   ></img>
                 </div>
-                {fighter.belt}
+                {fighter.cup}
               </span>
 
               <span class="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-20 w-full max-h-5 h-full flex items-center justify-around">
@@ -89,6 +102,7 @@ function Fighter() {
             </div>
           </div>
         </div>
+      </div>
       ))}
     </>
   );

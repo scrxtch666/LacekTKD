@@ -31,10 +31,10 @@ function Pasky() {
   
       {belts.map((belt) => (
         <div className="flex items-center gap-5">
-          <img src={belt.img_path} alt={belt.czech_name} />
+          <img src={belt.img_path} alt={belt.belt_name} />
           <p>- {belt.cup} -</p>
 
-          <p className="font-bold">{belt.korean_name}</p>
+          <p className="font-bold">{belt.belt_name}</p>
         </div>
       ))}
       </div>
