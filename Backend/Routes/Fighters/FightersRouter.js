@@ -4,8 +4,8 @@ const db = require("../../Libs/db")
 
 router.get('/', async(req, res) => {
             const client = db();
-            client.query(`SELECT *
-   FROM fighters`, (err, results) => {
+            client.query(`SELECT fighters.img_path, fighters.name, fighters.surname, belts.cup, belts.img_path AS belt_path
+   FROM fighters JOIN belts ON fighters.belts_id = belts.id;`, (err, results) => {
               if (err) return res.status(500).json({ error: 'Chyba při načítání turnajů a soustředění' });
               res.json(results);
         })
