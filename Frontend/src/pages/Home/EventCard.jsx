@@ -8,7 +8,7 @@ const EventCard = () => {
       // Funkce pro načítání dat o turnajích
         useEffect(() => {
           // Načítání dat z backendu
-          fetch("http://localhost:3000/api/news")
+          fetch("http://localhost:3000/api/events/latest")
             .then((response) => response.json())
             .then((data) => {
               setNews(data); // Nastavení získaných dat do stavu
@@ -30,7 +30,7 @@ const EventCard = () => {
     <div className="max-w-sm overflow-hidden bg-pink-50 rounded-2xl shadow-xl">
       <div className="relative">
         <img 
-          src={event.img_path}
+          src={event.photo}
           alt="Sports competition"
           className="w-full h-52 object-cover"
         />
@@ -39,7 +39,7 @@ const EventCard = () => {
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent">
           <div className="px-4 py-3">
             <h2 className="text-xl font-bold text-white tracking-wide">
-              {event.news_name}
+              {event.title}
             </h2>
           </div>
         </div>
@@ -49,7 +49,7 @@ const EventCard = () => {
       <div className="px-4 py-2 bg-customWhite">
         <div className="flex items-center">
           <span className="text-customGreen text-sm font-medium">
-            {event.date_start} - {event.date_end}
+            {event.date} - {event.date_end}
           </span>
         </div>
       </div>

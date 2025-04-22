@@ -3,7 +3,8 @@ const router = app.Router();
 const eventRouter = require("./Events/RouterEvents");
 const beltRouter = require("./Belts/RouterBelts");
 const fightersRouter = require("./Fighters/FightersRouter");
-const newsRouter = require("./News/NewsRouter");
+const newsRouter = require("./News/RouterNews");
+
 
 
 
@@ -12,7 +13,10 @@ const newsRouter = require("./News/NewsRouter");
 router.use("/events", eventRouter);
 router.use("/belts", beltRouter);
 router.use("/fighters", fightersRouter);
+
+
 router.use("/news", newsRouter);
+
 
 // Konec routeru
 

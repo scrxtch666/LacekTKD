@@ -4,11 +4,8 @@ const db = require("../../Libs/db")
 
 router.get('/', async(req, res) => {
             const client = db();
-            client.query(`SELECT name, location, price, type, 
-                DATE_FORMAT(date_start, '%d.%m.%Y') AS date_start, 
-                DATE_FORMAT(date_end, '%d.%m.%Y') AS date_end, 
-                info 
-         FROM tournaments`, (err, results) => {
+            client.query(`SELECT *
+         FROM event`, (err, results) => {
               if (err) return res.status(500).json({ error: 'Chyba při načítání turnajů a soustředění' });
               res.json(results);
         })
@@ -37,11 +34,8 @@ router.get('/:eventId', async(req, res) => {
 
 router.get('/latest', (req, res) => {
     const client = db();
-    client.query(`SELECT name, location, price, type, 
-          DATE_FORMAT(date_start, '%d.%m.%Y') AS date_start, 
-          DATE_FORMAT(date_end, '%d.%m.%Y') AS date_end, 
-          info 
-   FROM tournaments ORDER BY id DESC limit 1`, (err, results) => {
+    client.query(`SELECT *
+         FROM event ORDER BY id DESC limit 3`, (err, results) => {
         if (err) return res.status(500).json({ error: 'Chyba při načítání turnajů a soustředění' });
         res.json(results);
     });
