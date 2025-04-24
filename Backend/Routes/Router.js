@@ -1,6 +1,7 @@
 const app = require("express");
 const router = app.Router();
 const eventRouter = require("./Events/RouterEvents");
+const tournamentRouter = require("./Tournaments/RouterTournaments");
 const beltRouter = require("./Belts/RouterBelts");
 const fightersRouter = require("./Fighters/FightersRouter");
 const newsRouter = require("./News/RouterNews");
@@ -11,6 +12,7 @@ const newsRouter = require("./News/RouterNews");
 
 // Router
 router.use("/events", eventRouter);
+router.use("/tournaments", tournamentRouter);
 router.use("/belts", beltRouter);
 router.use("/fighters", fightersRouter);
 

@@ -5,7 +5,7 @@ const db = require("../../Libs/db")
 router.get('/', async(req, res) => {
             const client = db();
             client.query(`SELECT *
-         FROM event`, (err, results) => {
+         FROM tournament`, (err, results) => {
               if (err) return res.status(500).json({ error: 'Chyba při načítání turnajů a soustředění' });
               res.json(results);
         })
@@ -34,8 +34,8 @@ router.get('/:eventId', async(req, res) => {
 
 router.get('/latest', (req, res) => {
     const client = db();
-    client.query(`SELECT photo, title, DATE_FORMAT(date_start, '%d.%m.') AS date_start
-         FROM event ORDER BY id DESC limit 3`, (err, results) => {
+    client.query(`SELECT * 
+         FROM tournament ORDER BY id DESC limit 1`, (err, results) => {
         if (err) return res.status(500).json({ error: 'Chyba při načítání turnajů a soustředění' });
         res.json(results);
     });

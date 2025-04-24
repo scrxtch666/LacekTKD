@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import mainImage from '../../../src/assets/Showcase/main.jpg';
 
-const EventCard = () => {
+const EventCardLatest = () => {
   const [news, setNews] = useState([]); // Stav pro uchování dat turnajů
       const [loading, setLoading] = useState(true); // Stav pro zobrazení načítání dat
   
       // Funkce pro načítání dat o turnajích
         useEffect(() => {
           // Načítání dat z backendu
-          fetch("http://localhost:3000/api/events")
+          fetch("http://localhost:3000/api/events/latest")
             .then((response) => response.json())
             .then((data) => {
               setNews(data); // Nastavení získaných dat do stavu
@@ -59,4 +59,4 @@ const EventCard = () => {
   );
 }
 
-export default EventCard;
+export default EventCardLatest;

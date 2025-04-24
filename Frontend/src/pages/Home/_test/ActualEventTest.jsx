@@ -7,7 +7,7 @@ function ActualEventTest() {
   // Funkce pro načítání dat o turnajích
   useEffect(() => {
     // Načítání dat z backendu
-    fetch("http://localhost:3000/api/events/latest")
+    fetch("http://localhost:3000/api/tournaments/latest")
       .then((response) => response.json())
       .then((data) => {
         setEvents(data); // Nastavení získaných dat do stavu
@@ -64,7 +64,7 @@ function ActualEventTest() {
                   className="h-5"
                 />
                 <span className="text-customGreen font-bold">Typ akce: </span>
-                {event.type}
+                {event.type_id}
               </p>
               <p className="flex gap-1 items-center">
                 <img
@@ -73,7 +73,7 @@ function ActualEventTest() {
                   className="h-5"
                 />
                 <span className="text-customGreen font-bold">Datum: </span>
-                {event.date_start} - {event.date_end}
+                {event.start_date} - {event.end_date}
               </p>
               <br />
               <p className="flex gap-1 items-center">

@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 
 function ActualEvent() {
-  const [events, setEvents] = useState([]); // Stav pro uchování dat turnajů
+  const [tournaments, setTournaments] = useState([]); // Stav pro uchování dat turnajů
   const [loading, setLoading] = useState(true); // Stav pro zobrazení načítání dat
 
   // Funkce pro načítání dat o turnajích
   useEffect(() => {
     // Načítání dat z backendu
-    fetch("http://localhost:3000/api/events/latest")
+    fetch("http://localhost:3000/api/tournaments")
       .then((response) => response.json())
       .then((data) => {
-        setEvents(data); // Nastavení získaných dat do stavu
+        setTournaments(data); // Nastavení získaných dat do stavu
         setLoading(false); // Nastavení stavu načítání na false
       })
       .catch((error) => {
@@ -25,23 +25,23 @@ function ActualEvent() {
 
   return (
     <>
-      {events.map((event) => (
+      {tournaments.map((tournament) => (
         <div
-          key={event.name}
+          key={tournament.name}
           className="relative w-full h-64 rounded-lg group overflow-hidden bg-alertRed"
         >
           <div className="card">
             <div className="h-full flex gap-2">
               <div className="flex max-w-52 w-full object-cover object-center items-center">
                 <img
-                  src="../src/assets/Events/BT_open.jpg"
-                  alt={event.name}
+                  src={tournament.img_path}
+                  alt={tournament.name}
                   className="object-cover object-center rounded-md"
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <span className="font-extrabold text-xl">{event.name}</span>
+                <span className="font-extrabold text-xl">{tournament.name}</span>
 
                 <p className="flex gap-1 items-center">
                   <img
@@ -50,7 +50,7 @@ function ActualEvent() {
                     className="h-5"
                   />
                   <span className="text-customGreen font-bold">Lokace:</span>
-                  {event.location}
+                  {tournament.location}
                 </p>
                 <p className="flex gap-1 items-center">
                   <img
@@ -61,7 +61,7 @@ function ActualEvent() {
                   <span className="text-customGreen font-bold">
                     Startovné:{" "}
                   </span>
-                  {event.price}€
+                  {tournament.price}€
                 </p>
                 <p className="flex gap-1 items-center">
                   <img
@@ -70,7 +70,7 @@ function ActualEvent() {
                     className="h-5"
                   />
                   <span className="text-customGreen font-bold">Typ akce: </span>
-                  {event.type}
+                  {tournament.type}
                 </p>
                 <p className="flex gap-1 items-center">
                   <img
@@ -79,7 +79,7 @@ function ActualEvent() {
                     className="h-5"
                   />
                   <span className="text-customGreen font-bold">Datum: </span>
-                  {event.date_start} - {event.date_end}
+                  {tournament.date_start} - {tournament.date_end}
                 </p>
                 <br />
                 <p className="flex gap-1 items-center">
@@ -91,7 +91,7 @@ function ActualEvent() {
                   <span className="text-customGreen font-bold">
                     Informace:{" "}
                   </span>
-                  {event.info}
+                  {tournament.info}
                 </p>
               </div>
             </div>
