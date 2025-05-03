@@ -74,6 +74,7 @@ Vymyslet jak udělám úspěchy
 - přidání závodníků
 
 # TODO
+- upravit šířku mainContact componenty
 - upravit buttony a udělat nějaký univerzální 
 - upravit readME - naformátovat
 - na kartě zavodnici upravit devider na pásky

@@ -5,7 +5,7 @@ const tournamentRouter = require("./Tournaments/RouterTournaments");
 const beltRouter = require("./Belts/RouterBelts");
 const fightersRouter = require("./Fighters/FightersRouter");
 const newsRouter = require("./News/RouterNews");
-
+const usersRouter = require("./Users/RouterUsers");
 
 
 
@@ -15,6 +15,7 @@ router.use("/events", eventRouter);
 router.use("/tournaments", tournamentRouter);
 router.use("/belts", beltRouter);
 router.use("/fighters", fightersRouter);
+router.use("/users", usersRouter);
 
 
 router.use("/news", newsRouter);

@@ -7,7 +7,7 @@ function MainContact() {
       // Funkce pro načítání dat o turnajích
         useEffect(() => {
           // Načítání dat z backendu
-          fetch("http://localhost:3000/coach")
+          fetch("http://localhost:3000/api/users/trainer")
             .then((response) => response.json())
             .then((data) => {
               setCoach(data); // Nastavení získaných dat do stavu
@@ -25,6 +25,7 @@ function MainContact() {
   return (
     <>
     {coach.map((ocoach) => (
+    <div className="w-full flex flex-row justify-center">
       <div class="bg-customWhite w-full h-max rounded-lg flex justify-between flex-col items-center p-4 gap-5">
         <div class="flex justify-evenly h-1/2 w-full">
           <img
@@ -35,8 +36,8 @@ function MainContact() {
 
           <div class="flex flex-col justify-center items-center align-middle">
             <p class="flex flex-col">
-              <span className="font-bold text-xl">{ocoach.first_name} {ocoach.last_name}</span>
-              <span className="text-gray-500 font-medium">{ocoach.belt}</span>
+              <span className="font-bold text-xl">{ocoach.name} {ocoach.surname}</span>
+              <span className="text-gray-500 font-medium">{ocoach.belts_id}</span>
               <span class="text-xs text-gray-500">hlavní trenér, II. trenérská třída</span>
             </p>
           </div>
@@ -69,10 +70,11 @@ function MainContact() {
                 alt="Login"
               />
             </div>
-            <span>+420 {ocoach.phone_number}</span>
+            <span>+420 {ocoach.phone}</span>
           </button>
         </div>
       </div>
+    </div>
       ))} 
     </>
   );
