@@ -4,7 +4,7 @@ function Footer() {
 
   return (
     <>
-    {/* fixed to dá přes celou obrazovku, ale nneí to až dole */}
+      {/* fixed to dá přes celou obrazovku, ale není to až dole */}
       <footer class="bg-white dark:bg-customBlack text-black w-full z-20 bottom-0 start-0 border-b border-gray-200 dark:border-gray-600 mt-5">
         <div class="mx-auto w-full max-w-screen-xl p-6 py-6 lg:py-8">
           <h3 class="text-customWhite font-bold opacity-45 flex justify-center ">
@@ -13,18 +13,18 @@ function Footer() {
           <div class="md:flex md:justify-between">
             <div class="mb-6 md:mb-0"></div>
             <script src="https://cdn.jsdelivr.net/npm/flowbite@2.3.0/dist/flowbite.min.js"></script>
-            {/* 
-<Carousel />
-        */}
+          {/* Pžehlídka sponorů ve footeru */}
+            <Carousel />
+          {/*  */}
           </div>
           <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
           <div class="sm:flex sm:items-center sm:justify-between">
             <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
               © {currentYear}
               <a href="/" class="hover:underline font-bold px-1">
-                 scrxtch
+                scrxtch
               </a>
-                All Rights Reserved.
+              All Rights Reserved.
             </span>
             <div class="flex mt-4 sm:justify-center sm:mt-0">
               <a

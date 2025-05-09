@@ -1,102 +1,90 @@
-function Carousel() {
+import { useState, useEffect, useRef } from "react";
+
+function SponsorCarousel() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const intervalRef = useRef(null);
+
+  const [sponsors, setSponsors] = useState([]); // Stav pro uchování dat sponzorů
+  const [loading, setLoading] = useState(true); // Stav pro zobrazení načítání dat
+
+  useEffect(() => {
+    // Načítání dat z backendu
+    fetch("http://localhost:3000/api/sponsors")
+      .then((response) => response.json())
+      .then((data) => {
+        setSponsors(data); // Nastavení získaných dat do stavu
+        setLoading(false); // Nastavení stavu načítání na false
+      })
+      .catch((error) => {
+        console.error("Chyba při načítání dat:", error);
+        setLoading(false); // I když dojde k chybě, stav načítání bude false
+      });
+  }, []);
+
+  // Funkce pro posun přehlídky
+  const moveCarousel = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % sponsors.length);
+  };
+
+  // Nastavení automatického posouvání - spustí se až po načtení dat
+  useEffect(() => {
+    // Spouštíme interval pouze pokud máme dostatek sponzorů
+    if (sponsors.length > 0) {
+      intervalRef.current = setInterval(moveCarousel, 3000);
+
+      return () => {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
+      };
+    }
+  }, [sponsors]); // Přidání sponsors jako závislost, aby se interval spustil až po načtení
+
+  // Získání aktuálních log pro zobrazení
+  const getVisibleSponsors = () => {
+    if (sponsors.length === 0) return [];
+    
+    const visibleSponsors = [];
+    for (let i = 0; i < Math.min(3, sponsors.length); i++) {
+      const index = (currentIndex + i) % sponsors.length;
+      visibleSponsors.push(sponsors[index]);
+    }
+    return visibleSponsors;
+  };
+
+  if (loading) {
+    return <div>Načítám data...</div>; // Zobrazení textu při načítání
+  }
+
+  // Nedostatek sponzorů
+  if (sponsors.length === 0) {
+    return null; // Nezobrazíme nic, pokud nejsou žádní sponzoři
+  }
+
   return (
     <>
-      <div
-        id="controls-carousel"
-        class="relative w-full"
-        data-carousel="static"
-      >
-        <div class="relative h-56 overflow-hidden rounded-lg md:h-96">
-          <div class="hidden duration-700 ease-in-out" data-carousel-item>
-            <img
-              className="h-auto w-20"
-              src="../src/assets/Team/Logo.png"
-              alt="Logo"
-            />{" "}
-          </div>
-          <div
-            class="hidden duration-700 ease-in-out"
-            data-carousel-item="active"
-          >
-            <img
-              className="h-auto w-20"
-              src="../src/assets/Team/Logo.png"
-              alt="Logo"
-            />{" "}
-          </div>
-          <div class="hidden duration-700 ease-in-out" data-carousel-item>
-            <img
-              className="h-auto w-20"
-              src="../src/assets/Team/Logo.png"
-              alt="Logo"
-            />{" "}
-          </div>
-          <div class="hidden duration-700 ease-in-out" data-carousel-item>
-            <img
-              className="h-auto w-20"
-              src="../src/assets/Team/Logo.png"
-              alt="Logo"
-            />{" "}
-          </div>
-          <div class="hidden duration-700 ease-in-out" data-carousel-item>
-            <img
-              className="h-auto w-20"
-              src="../src/assets/Team/Logo.png"
-              alt="Logo"
-            />{" "}
+      <div className="w-full py-8">
+        <div className="container mx-auto">
+          <div className="flex justify-center">
+            <div className="flex w-full max-w-4xl justify-between">
+              {getVisibleSponsors().map((sponsor) => (
+                <div
+                  key={sponsor.id}
+                  className="mx-4 transition-all duration-500 ease-in-out"
+                >
+                  <img
+                    src={sponsor.img_path}
+                    alt={`Logo ${sponsor.sponsor_name}`}
+                    className="h-16 object-contain mx-auto"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-        <button
-          type="button"
-          class="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
-          data-carousel-prev
-        >
-          <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-            <svg
-              class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 6 10"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5 1 1 5l4 4"
-              />
-            </svg>
-            <span class="sr-only">Previous</span>
-          </span>
-        </button>
-        <button
-          type="button"
-          class="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
-          data-carousel-next
-        >
-          <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-            <svg
-              class="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 6 10"
-            >
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="m1 9 4-4-4-4"
-              />
-            </svg>
-            <span class="sr-only">Next</span>
-          </span>
-        </button>
       </div>
     </>
   );
 }
 
-export default Carousel;
+export default SponsorCarousel;
