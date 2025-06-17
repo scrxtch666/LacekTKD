@@ -34,7 +34,7 @@ router.get('/:eventId', async(req, res) => {
 
 router.get('/latest', (req, res) => {
     const client = db();
-    client.query(`SELECT photo, title, DATE_FORMAT(date_start, '%d.%m.') AS date_start
+    client.query(`SELECT photo, title, DATE_FORMAT(date_start, '%d.%m.%Y') AS date_start
          FROM event ORDER BY id DESC limit 3`, (err, results) => {
         if (err) return res.status(500).json({ error: 'Chyba při načítání turnajů a soustředění' });
         res.json(results);

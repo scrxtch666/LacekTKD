@@ -49,7 +49,7 @@ const EventCardLatest = () => {
       <div className="px-4 py-2 bg-customWhite">
         <div className="flex items-center">
           <span className="text-customGreen text-sm font-medium">
-            {event.date_start} - 
+            {event.date_start}
           </span>
         </div>
       </div>
