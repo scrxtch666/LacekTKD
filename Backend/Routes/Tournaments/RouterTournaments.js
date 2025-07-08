@@ -1,14 +1,20 @@
 const app = require("express");
 const router = app.Router();
-const db = require("../../Libs/db")
+const db = require("../../Libs/db");
 
-router.get('/', async(req, res) => {
-            const client = db();
-            client.query(`SELECT *
-         FROM tournament`, (err, results) => {
-              if (err) return res.status(500).json({ error: 'Chyba při načítání turnajů a soustředění' });
-              res.json(results);
-        })
+router.get("/", async (req, res) => {
+  const client = db();
+  client.query(
+    `SELECT *
+         FROM tournament`,
+    (err, results) => {
+      if (err)
+        return res
+          .status(500)
+          .json({ error: "Chyba při načítání turnajů a soustředění" });
+      res.json(results);
+    }
+  );
 });
 /*
 router.get('/:eventId', async(req, res) => {
@@ -32,14 +38,27 @@ router.get('/:eventId', async(req, res) => {
 })
 });  */
 
-router.get('/latest', (req, res) => {
-    const client = db();
-    client.query(`SELECT name, location, price, type_id, info, DATE_FORMAT(start_date, '%d.%m.') AS start_date, 
-        DATE_FORMAT(end_date, '%d.%m.%Y') AS end_date
-         FROM tournament ORDER BY id DESC limit 1`, (err, results) => {
-        if (err) return res.status(500).json({ error: 'Chyba při načítání turnajů a soustředění' });
-        res.json(results);
-    });
+router.get("/latest", (req, res) => {
+  const client = db();
+  client.query(
+    `SELECT 
+            tournament.name AS tournament_name,
+            tournament.location,
+            tournament.price,
+            type.name AS type_name,
+            tournament.info,
+            DATE_FORMAT(start_date, '%d.%m.') AS start_date,
+            DATE_FORMAT(end_date, '%d.%m.%Y') AS end_date
+        FROM tournament
+        INNER JOIN type ON tournament.type_id = type.id
+        ORDER BY tournament.id DESC
+        LIMIT 1`,
+    (err, results) => {
+      if (err)
+        return res.status(500).json({ error: "Chyba při načítání dat!" });
+      res.json(results);
+    }
+  );
 });
 
 module.exports = router;
