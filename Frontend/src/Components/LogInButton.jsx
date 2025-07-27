@@ -49,7 +49,7 @@ function LogInButton() {
             <input
               name="myInput"
               className="rounded-md border-2 border-customBlack px-2"
-              placeholder="Zadejte emial"
+              placeholder="Zadejte email"
             />
           </label>
           <label>

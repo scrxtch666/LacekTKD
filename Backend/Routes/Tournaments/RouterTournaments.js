@@ -5,8 +5,17 @@ const db = require("../../Libs/db");
 router.get("/", async (req, res) => {
   const client = db();
   client.query(
-    `SELECT *
-         FROM tournament`,
+    `SELECT 
+            tournament.name AS tournament_name,
+            tournament.location,
+            tournament.price,
+            type.name AS type_name,
+            tournament.info,
+            DATE_FORMAT(start_date, '%d.%m.') AS start_date,
+            DATE_FORMAT(end_date, '%d.%m.%Y') AS end_date
+        FROM tournament
+        INNER JOIN type ON tournament.type_id = type.id
+        ORDER BY tournament.id DESC`,
     (err, results) => {
       if (err)
         return res

@@ -64,7 +64,7 @@ function Turnaj() {
                   className="h-5"
                 />
                 <span className="text-customGreen font-bold">Typ akce: </span>
-                {event.type_id}
+                {event.type_name}
               </p>
               <p className="flex gap-1 items-center">
                 <img

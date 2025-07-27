@@ -11,6 +11,12 @@ function Login() {
     <>
       <div>Tady bude login page</div>
       <p>Bycript na hesla a JWT na autentizaci</p>
+
+      <div>
+        <h1 className="text-2xl text-customGreen font-bold">Login</h1>
+        <input type="text" />
+      </div>
+
     </>
   );
 }
