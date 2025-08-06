@@ -13,7 +13,7 @@ function Footer() {
           <div class="md:flex md:justify-between">
             <div class="mb-6 md:mb-0"></div>
             <script src="https://cdn.jsdelivr.net/npm/flowbite@2.3.0/dist/flowbite.min.js"></script>
-            {/* Přehlídka sponorů ve footeru */}
+            {/* Přehlídka sponsorů ve footeru */}
             <Carousel />
             {/*  */}
           </div>
