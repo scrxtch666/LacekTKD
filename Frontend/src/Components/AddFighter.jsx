@@ -1,6 +1,7 @@
 
 import FighterMain from "../pages/AddFighter/AddFighter";
 import FighterUdaje from "../pages/AddFighter/NewFighter";
+import AddFighterStats from "../pages/AddFighter/AddFighterStats";
 import Options from "../pages/AddFighter/Options";
 function AddFighter() {
   
@@ -8,7 +9,8 @@ function AddFighter() {
     <>
       <div className="devider">Tvorba uživatelského profilu</div>
         <div className="gap-5 flex">
-          <FighterMain />
+          <AddFighterStats />
+          
           <FighterUdaje />
         </div>
 

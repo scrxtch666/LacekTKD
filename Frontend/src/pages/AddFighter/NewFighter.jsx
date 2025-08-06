@@ -1,7 +1,7 @@
 function FighterUdaje() {
   return (
     <>
-      <div className="card flex justify-between w-1/2 h-60 gap-5 flex-col">
+      <div className="card flex justify-between w-1/2 h-max gap-5 flex-col">
         <span className="font-bold uppercase">Přihlašovací údaje</span>
 
         <div className="flex gap-5">

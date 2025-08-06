@@ -51,7 +51,7 @@ function FightersAdmin() {
           class="px-0.5 py-0.5 flex align-middle items-center"
           src="../src/assets/icons/yes_1.png"
           alt="image description"
-        ></img> 
+        ></img>
 
         <img
           class="px-0.5 py-0.5 flex align-middle items-center"
