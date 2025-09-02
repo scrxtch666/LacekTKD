@@ -38,18 +38,20 @@ const EventCardLatest = () => {
         {/* Event Title Overlay */}
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent">
           <div className="px-4 py-3">
-            <h2 className="text-xl font-bold text-white tracking-wide">
+           {/*  <h2 className="text-xl font-bold text-white tracking-wide">
               {event.title}
             </h2>
+            */}
           </div>
         </div>
       </div>
       
       {/* Date Container */}
       <div className="px-4 py-2 bg-customWhite">
-        <div className="flex items-center">
-          <span className="text-customGreen text-sm font-medium">
-            {event.date_start}
+        <div className="">
+          <span className="text-customGreen text-sm font-medium flex justify-between gap-5">
+            <p className="text-customBlack">{event.title}</p>
+            <p>{event.date_start}</p>
           </span>
         </div>
       </div>
