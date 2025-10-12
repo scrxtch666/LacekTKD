@@ -60,13 +60,13 @@ function Header() {
         >
           <ul className="flex flex-col p-4 lg:p-0 mt-4 font-medium border border-customWhite rounded-lg bg-customWhite lg:space-x-8 rtl:space-x-reverse lg:flex-row lg:mt-0 lg:border-0 lg:bg-customWhite dark:bg-customWhite lg:dark:bg-customGreen dark:border-gray-700">
             {[
-              { to: "/admin", text: "A" },
-              { to: "/nas-oddil", text: "NÁŠ ODDÍL" },
-              { to: "/aktuality", text: "AKTUALITY" },
-              { to: "/zkousky", text: "ZKOUŠKY" },
-              { to: "/turnaje", text: "TURNAJE" },
-              { to: "/zavodnici", text: "ZÁVODNÍCI" },
-              { to: "/kontakt", text: "KONTAKT" },
+              { to: "/admin", text: "Admin" },
+              { to: "/nas-oddil", text: "Náš oddíl" },
+              { to: "/aktuality", text: "Aktuality" },
+              { to: "/zkousky", text: "Zkoušky" },
+              { to: "/turnaje", text: "Turnaje" },
+              { to: "/zavodnici", text: "Závodníci" },
+              { to: "/kontakt", text: "Kontakt" },
             ].map((item) => (
               <li key={item.to}>
                 <Link

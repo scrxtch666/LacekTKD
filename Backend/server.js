@@ -1,21 +1,31 @@
-require('dotenv').config();
-const express = require('express');
-const mysql = require('mysql2');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const cors = require('cors');
-//const router = require("./Routes/Router");
+require("dotenv").config();
+const express = require("express");
+const mysql = require("mysql2");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const cors = require("cors");
 const router = require("./Routes/Router");
 
 const app = express();
 
+const posts = [
+  {
+    username: "Kyle",
+    title: "Post 1",
+  },
+
+  {
+    username: "David",
+    title: "Post 2",
+  },
+];
 
 // Povolení CORS pro frontend na portu 5173
 const corsOptions = {
-    origin: 'http://localhost:5173',  // Povolit požadavky z React aplikace běžící na portu 5173
+  origin: "http://localhost:5173", // Povolit požadavky z React aplikace běžící na portu 5173
   // origin: 'http://localhost:5174',
-   methods: 'GET,POST,PUT,DELETE',
-    allowedHeaders: 'Content-Type,Authorization',
+  methods: "GET,POST,PUT,DELETE",
+  allowedHeaders: "Content-Type,Authorization",
 };
 
 // Použití CORS middleware
@@ -26,31 +36,46 @@ app.use(express.json());
 app.use("/api", router);
 
 // Tajný klíč pro JWT
-const SECRET_KEY = process.env.JWT_SECRET || 'tajnyklic';
+const SECRET_KEY = process.env.JWT_SECRET || "tajnyklic";
 
 // Úvodní stránka
-app.get('/', (req, res) => {
-    res.send('Server běží správně! 🚀');
+app.get("/", (req, res) => {
+  res.send("Server běží správně! 🚀");
 });
 
 // Registrace uživatele
-app.post('/register', async (req, res) => {
-    const { username, password } = req.body;
-    
-    // Hashování hesla
-    const hashedPassword = await bcrypt.hash(password, 10);
+app.post("/register", async (req, res) => {
+  const { username, password } = req.body;
 
-    // Uložení do databáze
-    db.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, hashedPassword], (err, result) => {
-        if (err) return res.status(500).json({ error: 'Chyba při registraci' });
-        res.status(201).json({ message: 'Registrace úspěšná' });
-    });
+  // Hashování hesla
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // Uložení do databáze
+  db.query(
+    "INSERT INTO users (username, password) VALUES (?, ?)",
+    [username, hashedPassword],
+    (err, result) => {
+      if (err) return res.status(500).json({ error: "Chyba při registraci" });
+      res.status(201).json({ message: "Registrace úspěšná" });
+    }
+  );
+});
+
+// Registrace uživatele
+app.post("/posts", authenticateToken, (req, res) => {
+  res.json(posts.filter((post) => post.username === req.user.name));
 });
 
 // Přihlášení uživatele
-app.post('/login', (req, res) => {
-    const { username, password } = req.body;
+app.post("/login", (req, res) => {
+  // const { username, password } = req.body;
+  const username = req.body.username;
+  const user = { name: username };
 
+  const accessToken = jwt.sign(user, process.ACCES_TOKEN_SECRET);
+  res.json({ accessToken: accessToken });
+
+  /*
     db.query('SELECT * FROM users WHERE username = ?', [username], async (err, results) => {
         if (err) return res.status(500).json({ error: 'Chyba serveru' });
         if (results.length === 0) return res.status(401).json({ error: 'Neplatné přihlašovací údaje' });
@@ -65,26 +90,39 @@ app.post('/login', (req, res) => {
         const token = jwt.sign({ id: user.id, username: user.username }, SECRET_KEY, { expiresIn: '1h' });
 
         res.json({ message: 'Přihlášení úspěšné', token });
+        
     });
+    */
 });
+
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers["authorazition"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.ACCES_TOKEN_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+}
 
 // Middleware pro ověření tokenu
 const verifyToken = (req, res, next) => {
-    const token = req.header('Authorization')?.split(' ')[1];
-    if (!token) return res.status(403).json({ error: 'Přístup zamítnut' });
+  const token = req.header("Authorization")?.split(" ")[1];
+  if (!token) return res.status(403).json({ error: "Přístup zamítnut" });
 
-    jwt.verify(token, SECRET_KEY, (err, user) => {
-        if (err) return res.status(403).json({ error: 'Neplatný token' });
-        req.user = user;
-        next();
-    });
+  jwt.verify(token, SECRET_KEY, (err, user) => {
+    if (err) return res.status(403).json({ error: "Neplatný token" });
+    req.user = user;
+    next();
+  });
 };
 
 // Chráněná cesta (přístupná jen pro přihlášené uživatele)
-app.get('/protected', verifyToken, (req, res) => {
-    res.json({ message: 'Toto je chráněná data', user: req.user });
+app.get("/protected", verifyToken, (req, res) => {
+  res.json({ message: "Toto je chráněná data", user: req.user });
 });
-
 
 // POŽADAVKY NA DB
 
@@ -173,4 +211,4 @@ app.get("/fighters/countAll", (req, res) => {
 });
 */
 // Spuštění serveru
-app.listen(3000, () => console.log('🚀 Server běží na http://localhost:3000'));
+app.listen(3000, () => console.log("🚀 Server běží na http://localhost:3000"));

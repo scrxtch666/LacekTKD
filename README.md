@@ -98,3 +98,5 @@ Vymyslet jak udělám úspěchy
 - u pásků 4. a 5. DAN odstranit bílé pozadí
 - zavodnnici - bude se vypisovat devider s hodnotama a potom samotní závodníci
 - upravit strukturu server.js
+- malé písmo v headru
+- header bude defaultně bílý a po scrollování se udělá zelené pozadí a text bude jako na cdn77

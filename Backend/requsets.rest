@@ -1,0 +1,12 @@
+GET http://localhost:5173/posts/
+Authorazition: Bearer
+
+
+###
+
+POST http://localhost:5173/login/
+Content-Type: application/json
+
+{
+    "username": "Kyle"
+}

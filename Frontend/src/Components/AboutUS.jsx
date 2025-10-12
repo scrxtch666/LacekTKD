@@ -4,6 +4,7 @@ import Devider from "../pages/AboutUs/Devider";
 import Info from "../pages/AboutUs/Info";
 import History from "../pages/AboutUs/History";
 import Video from "../pages/AboutUs/Video";
+import Review from "../pages/AboutUs/Review";
 function AboutUs() {
   return (
     <>
@@ -13,6 +14,7 @@ function AboutUs() {
         <History />
         <Video />
       </div>
+      <Review />
     </>
   );
 }

@@ -3,6 +3,7 @@ import React from "react";
 import AddButton from "../pages/AddFighter/AddButton";
 import Stats from "../pages/_Admin/Stats";
 import AllFightersAdmin from "../pages/AddFighter/AllFightersAdmin";
+import FightersAdminTable from "./FightersAdminTable";
 
 function FightersAdmin() {
   return (
@@ -35,16 +36,7 @@ function FightersAdmin() {
         placeholder="Vyhledat závodníka, ↵ hledat"
       />
 
-      <div className="devider flex justify-between">
-        <span>Profilový obrázek</span>
-        <span>Celé jméno</span>
-        <span>Věk</span>
-        <span>Váha</span>
-        <span>Pásek</span>
-        <span>Best</span>
-        <span>Legend</span>
-        <span>Aktivní</span>
-      </div>
+      <FightersAdminTable />
 
       <div className="bg-customWhite">
         <img
@@ -59,7 +51,7 @@ function FightersAdmin() {
           alt="image description"
         ></img>
       </div>
-      <AllFightersAdmin />
+   
     </>
   );
 }

@@ -12,7 +12,7 @@ const EventCardLatest = () => {
             .then((response) => response.json())
             .then((data) => {
               setNews(data); // Nastavení získaných dat do stavu
-              setLoading(false); // Nastavení stavu načítání na false
+              setLoading(false);
             })
             .catch((error) => {
               console.error("Chyba při načítání dat:", error);

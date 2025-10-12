@@ -32,10 +32,11 @@ function Layout() {
       {isAdmin ? (
         <AdminContainer>
           <Routes>
+            {/* admin routy */}
             <Route path="/admin" element={<Admin />} />
             <Route path="/admin/pridani-zavodnika" element={<AddFighter />} />
             <Route path="/admin/vsichni-zavodnici" element={<FightersAdmin />} />
-            {/* Další admin routy zde */}
+            {/* admin routy */}
           </Routes>
         </AdminContainer>
       ) : (
