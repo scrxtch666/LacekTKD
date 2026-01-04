@@ -1,17 +1,36 @@
 import { Link } from "react-router-dom";
 import Nabor from "../Components/Nabor";
 import LogInButton from "../Components/LogInButton";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 0) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <nav className="bg-white dark:bg-customGreen text-black fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
+    <nav className={`${
+      isScrolled ? "bg-customGreen" : "bg-white"
+    } text-black fixed w-full z-20 top-0 start-0 dark:border-gray-600 transition-colors duration-300`}>
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto py-2 px-5">
         <div className="flex items-center space-x-6">
           <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
@@ -58,7 +77,11 @@ function Header() {
           } w-full lg:flex lg:w-auto lg:order-1`}
           id="navbar-sticky"
         >
-          <ul className="flex flex-col p-4 lg:p-0 mt-4 font-medium border border-customWhite rounded-lg bg-customWhite lg:space-x-8 rtl:space-x-reverse lg:flex-row lg:mt-0 lg:border-0 lg:bg-customWhite dark:bg-customWhite lg:dark:bg-customGreen dark:border-gray-700">
+          <ul className={`flex flex-col p-4 lg:p-0 mt-4 font-medium border border-customWhite rounded-lg ${
+            isScrolled ? "bg-customGreen" : "bg-customWhite"
+          } lg:space-x-8 rtl:space-x-reverse lg:flex-row lg:mt-0 lg:border-0 ${
+            isScrolled ? "lg:bg-customGreen" : "lg:bg-white"
+          } dark:border-gray-700 transition-colors duration-300`}>
             {[
               { to: "/admin", text: "Admin" },
               { to: "/nas-oddil", text: "Náš oddíl" },
