@@ -28,12 +28,17 @@ function Header() {
   }, []);
 
   return (
-    <nav className={`${
-      isScrolled ? "bg-customGreen" : "bg-white"
-    } text-black fixed w-full z-20 top-0 start-0 dark:border-gray-600 transition-colors duration-300`}>
+    <nav
+      className={`${
+        isScrolled ? "bg-customGreen" : "bg-white"
+      } text-black fixed w-full z-20 top-0 start-0 dark:border-gray-600 transition-colors duration-300`}
+    >
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto py-2 px-5">
         <div className="flex items-center space-x-6">
-          <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse">
+          <Link
+            to="/"
+            className="flex items-center space-x-3 rtl:space-x-reverse"
+          >
             <img
               className="h-auto w-20"
               src="../src/assets/Team/Logo.png"
@@ -77,11 +82,13 @@ function Header() {
           } w-full lg:flex lg:w-auto lg:order-1`}
           id="navbar-sticky"
         >
-          <ul className={`flex flex-col p-4 lg:p-0 mt-4 font-medium border border-customWhite rounded-lg ${
-            isScrolled ? "bg-customGreen" : "bg-customWhite"
-          } lg:space-x-8 rtl:space-x-reverse lg:flex-row lg:mt-0 lg:border-0 ${
-            isScrolled ? "lg:bg-customGreen" : "lg:bg-white"
-          } dark:border-gray-700 transition-colors duration-300`}>
+          <ul
+            className={`flex flex-col p-4 lg:p-0 mt-4 font-medium border border-customWhite rounded-lg ${
+              isScrolled ? "bg-customGreen" : "bg-customWhite"
+            } lg:space-x-8 rtl:space-x-reverse lg:flex-row lg:mt-0 lg:border-0 ${
+              isScrolled ? "lg:bg-customGreen" : "lg:bg-white"
+            } dark:border-gray-700 transition-colors duration-300`}
+          >
             {[
               { to: "/admin", text: "Admin" },
               { to: "/nas-oddil", text: "Náš oddíl" },
@@ -91,10 +98,11 @@ function Header() {
               { to: "/zavodnici", text: "Závodníci" },
               { to: "/kontakt", text: "Kontakt" },
             ].map((item) => (
-              <li key={item.to}>
+              <li key={item.to}
+              className="hover:bg-customGreen rounded-md p-1">
                 <Link
                   to={item.to}
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-customGreen lg:hover:bg-transparent lg:hover:text-customBlack lg:p-0 dark:text-customBlack dark:hover:bg-customGreen dark:hover:text-customBlack lg:dark:hover:bg-transparent"
+                  className="block py-2 px-3 text-gray-900 rounded hover:bg-customGreen lg:hover:bg-customGreen lg:hover:text-customGreen lg:p-0 dark:text-customBlack dark:hover:bg-customGreen dark:hover:text-customBlack lg:dark:hover:bg-transparent"
                   onClick={toggleMenu}
                 >
                   {item.text}
@@ -102,7 +110,6 @@ function Header() {
               </li>
             ))}
           </ul>
-          
         </div>
       </div>
     </nav>

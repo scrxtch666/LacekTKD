@@ -6,7 +6,7 @@ function Nabor() {
     <>
       <button
         type="button"
-        className="relative flex items-center justify-evenly text-customGreen bg-customWhite rounded-lg text-sm text-center dark:bg-customWhite space-x-6 w-200px"
+        className="relative flex items-center justify-evenly text-customGreen bg-customWhite rounded-lg text-sm text-center dark:bg-customWhite space-x-6 w-200px border border-customGreen"
       >
         {/* Tlačítko bude skryté na menších obrazovkách (do 1024px) a viditelné na větších */}
         <Link to="/" className="w-full hidden xl:flex items-center justify-between">

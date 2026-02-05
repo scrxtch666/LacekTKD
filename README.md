@@ -100,14 +100,22 @@ Vymyslet jak udělám úspěchy
 - upravit strukturu server.js
 - malé písmo v headru
 - header bude defaultně bílý a po scrollování se udělá zelené pozadí a text bude jako na cdn77
+- udělat všude stejně velké mezery
 
 
-Zadání
+> [!IMPORTANT] Zadání BP
 Cílem bakalářské práce je kompletní rekonstrukce webových stránek oddílu Taekwondo Lacek. Aktuální webové stránky jsou již velmi zastaralé, jak designově, tak i z hlediska funkčnosti. Změny se budou týkat především modernizace designu, zlepšení responzivity a přidání klíčových funkcí pro zajištění všech potřebných funkcionalit jako je přihlašování závodníků na akce či zkoušky, zobrazení kalendáře, ve kterém budou uvedeny termíny jednotlivých akcí. Dále bude přidán registrační formulář pro nové zájemce o členství v oddílu, implementována galerie obrázků, přidány odkazy na sociální sítě a zpřehledněna navigace.
 
 MUST HAVE
 - [ ] zlepšit design
-- [ ]responzivita
+- [ ] responzivita
 - [ ] kalendář
 - [ ] carousel
 - [ ] login
+
+
+Classy
+- jsou v index.css
+
+
+rounded-2xl
