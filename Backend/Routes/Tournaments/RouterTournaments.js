@@ -47,8 +47,7 @@ router.get('/:eventId', async(req, res) => {
 });  */
 
 router.get("/latest", (req, res) => {
-  const client = db();
-  client.query(
+  db.query(
     `SELECT 
             tournament.name AS tournament_name,
             tournament.location,

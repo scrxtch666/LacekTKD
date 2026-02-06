@@ -36,8 +36,7 @@ router.get('/:eventId', async(req, res) => {
 });  */
 
 router.get("/trainer", (req, res) => {
-  const client = db();
-  client.query(
+  db.query(
     `SELECT users.id, users.email, users.phone, fighters.name, fighters.surname, fighters.id, fighters.belts_id, fighters.img_path
      FROM users JOIN fighters ON fighters.id = users.fighter_id WHERE users.role_id LIKE "2";`,
     // SELECT users.id, users.email, users.phone, fighters.name, fighters.surname, fighters.id, fighters.belts_id, fighters.img_path

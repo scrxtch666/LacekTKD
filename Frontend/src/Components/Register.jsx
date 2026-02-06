@@ -1,34 +1,27 @@
 import { useState } from "react";
 
-const Login = () => {
+const Register = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/login", {
+      const response = await fetch("http://localhost:3000/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
       const data = await response.json();
-
-      if (data.token) {
-        // Uložíme token do paměti prohlížeče
-        localStorage.setItem("token", data.token);
-        alert("Přihlášení úspěšné! Token uložen.");
-      } else {
-        alert(data.error);
-      }
+      alert(data.message || data.error);
     } catch (err) {
-      console.error("Chyba přihlášení:", err);
+      console.error("Chyba při odesílání:", err);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-xl shadow-md border-t-4 border-customGreen">
-      <h2 className="text-2xl font-bold mb-4">Přihlášení</h2>
-      <form onSubmit={handleLogin} className="space-y-4">
+    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-xl shadow-md">
+      <h2 className="text-2xl font-bold mb-4">Registrace</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
           placeholder="Uživatelské jméno"
@@ -41,12 +34,12 @@ const Login = () => {
           className="w-full p-2 border rounded"
           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
         />
-        <button className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition">
-          Přihlásit se
+        <button className="w-full bg-customGreen text-white p-2 rounded hover:bg-green-600 transition">
+          Zaregistrovat se
         </button>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default Register;
