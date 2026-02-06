@@ -11,12 +11,12 @@ const EventCardLatest = () => {
     fetch("http://localhost:3000/api/events/latest")
       .then((response) => response.json())
       .then((data) => {
-        setEvents(Array.isArray(data) ? data : []); // Nastavení získaných dat do stavu
+        setNews(Array.isArray(data) ? data : []); // Nastavení získaných dat do stavu
         setLoading(false);
       })
       .catch((error) => {
         console.error("Chyba při načítání dat:", error);
-        setEvents([]); // Při chybě zajistíme, že events zůstane polem
+        setNews([]); // Při chybě zajistíme, že events zůstane polem
         setLoading(false); // I když dojde k chybě, stav načítání bude false
       });
   }, []);
@@ -26,7 +26,7 @@ const EventCardLatest = () => {
   }
 
   // Ošetření prázdného stavu - pokud pole zůstalo prázdné
-  if (events.length === 0) {
+  if (news.length === 0) {
     return (
       <div className="card w-full p-10 text-center border-2 border-dashed">
         <p className="text-gray-500">

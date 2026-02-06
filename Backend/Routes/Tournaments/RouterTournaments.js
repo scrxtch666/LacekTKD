@@ -3,8 +3,7 @@ const router = app.Router();
 const db = require("../../Libs/db");
 
 router.get("/", async (req, res) => {
-  const client = db();
-  client.query(
+  db.query(
     `SELECT 
             tournament.name AS tournament_name,
             tournament.location,
