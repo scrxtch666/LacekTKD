@@ -101,6 +101,7 @@ Vymyslet jak udělám úspěchy
 - malé písmo v headru
 - header bude defaultně bílý a po scrollování se udělá zelené pozadí a text bude jako na cdn77
 - udělat všude stejně velké mezery
+- děje se to, že pokud nějaká komponenta nemá data, tak že se neloadí celá stránka
 
 
 > [!IMPORTANT] Zadání BP

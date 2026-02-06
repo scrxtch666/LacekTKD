@@ -10,17 +10,29 @@ function ActualEventTest() {
     fetch("http://localhost:3000/api/tournaments/latest")
       .then((response) => response.json())
       .then((data) => {
-        setEvents(data); // Nastavení získaných dat do stavu
+        setEvents(Array.isArray(data) ? data : []); // Nastavení získaných dat do stavu
         setLoading(false); // Nastavení stavu načítání na false
       })
       .catch((error) => {
         console.error("Chyba při načítání dat:", error);
+        setEvents([]); // Při chybě zajistíme, že events zůstane polem
         setLoading(false); // I když dojde k chybě, stav načítání bude false
       });
   }, []);
 
   if (loading) {
     return <div>Načítám data...</div>; // Zobrazení textu při načítání
+  }
+
+  // Ošetření prázdného stavu - pokud pole zůstalo prázdné
+  if (events.length === 0) {
+    return (
+      <div className="card w-full p-10 text-center border-2 border-dashed">
+        <p className="text-gray-500">
+          Momentálně nejsou naplánovány žádné akce.
+        </p>
+      </div>
+    );
   }
 
   return (
