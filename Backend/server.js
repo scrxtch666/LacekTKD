@@ -24,19 +24,24 @@ app.use("/api", router);
 // Tajný klíč z .env (opraven název pro konzistenci)
 const SECRET_KEY = process.env.ACCESS_TOKEN_SECRET || "tajnyklic";
 
+// Úvodní stránka
+app.get("/", (req, res) => {
+  res.send("Server běží správně! 🚀");
+});
+
 // --- ENDPOINTY ---
 
 // 1. Registrace (Hashování a uložení)
 app.post("/register", async (req, res) => {
-  const { username, password } = req.body;
+  const { login, password } = req.body;
 
   try {
     // Bcrypt vytvoří z hesla nečitelný hash
     const hashedPassword = await bcrypt.hash(password, 10);
 
     db.query(
-      "INSERT INTO users (username, password) VALUES (?, ?)",
-      [username, hashedPassword],
+      "INSERT INTO users (login, password) VALUES (?, ?)",
+      [login, hashedPassword],
       (err, result) => {
         if (err) return res.status(500).json({ error: "Chyba při zápisu do DB" });
         res.status(201).json({ message: "Registrace úspěšná" });
@@ -49,11 +54,11 @@ app.post("/register", async (req, res) => {
 
 // 2. Přihlášení (Ověření a vygenerování JWT)
 app.post("/login", (req, res) => {
-  const { username, password } = req.body;
+  const { login, password } = req.body;
 
   db.query(
-    "SELECT * FROM users WHERE username = ?",
-    [username],
+    "SELECT * FROM users WHERE login = ?",
+    [login],
     async (err, results) => {
       if (err) return res.status(500).json({ error: "Chyba serveru" });
       if (results.length === 0) return res.status(401).json({ error: "Uživatel nenalezen" });
@@ -66,7 +71,7 @@ app.post("/login", (req, res) => {
 
       // Vygenerování JWT tokenu - "průkazka" pro klienta
       const token = jwt.sign(
-        { id: user.id, username: user.username },
+        { id: user.id, login: user.login },
         SECRET_KEY,
         { expiresIn: "1h" }
       );

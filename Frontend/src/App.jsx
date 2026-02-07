@@ -18,6 +18,7 @@ import AddFighter from "./Components/AddFighter";
 import FightersAdmin from "./Components/FightersAdmin";
 import FooterTest from "./layout/_test/FooterTest";
 import Login from "./Components/Login"
+import Register from "./Components/Register";
 
 
 
@@ -51,6 +52,7 @@ function Layout() {
             <Route path="/nas-oddil" element={<AboutUs />} />
             <Route path="/detail" element={<Detail />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
           </Routes>
         </Container>
       )}

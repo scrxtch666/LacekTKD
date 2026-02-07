@@ -18,8 +18,6 @@ router.use("/belts", beltRouter);
 router.use("/fighters", fightersRouter);
 router.use("/users", usersRouter);
 router.use("/sponsors", sponsorsRouter);
-
-
 router.use("/news", newsRouter);
 
 

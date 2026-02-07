@@ -35,7 +35,7 @@ app.get("/", (req, res) => {
 });
 
 // Registrace uživatele
-app.post("/tests", authenticateToken, (req, res) => {
+app.post("/register", authenticateToken, (req, res) => {
   res.json(posts.filter((post) => post.username === req.user.name));
 });
 
