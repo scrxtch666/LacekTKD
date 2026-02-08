@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import Nabor from "../Components/Nabor";
 import LogInButton from "../Components/LogInButton";
 import { useState, useEffect } from "react";
@@ -98,15 +98,20 @@ function Header() {
               { to: "/zavodnici", text: "Závodníci" },
               { to: "/kontakt", text: "Kontakt" },
             ].map((item) => (
-              <li key={item.to}
-              className="hover:bg-customGreen rounded-md p-1">
-                <Link
+              <li key={item.to} className="p-1">
+                <NavLink
                   to={item.to}
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-customGreen lg:hover:bg-customGreen lg:hover:text-customGreen lg:p-0 dark:text-customBlack dark:hover:bg-customGreen dark:hover:text-customBlack lg:dark:hover:bg-transparent"
                   onClick={toggleMenu}
+                  className={({ isActive }) =>
+                    `block py-2 px-3 rounded lg:p-0 transition-all duration-200 ${
+                      isActive
+                        ? "underline underline-offset-8 decoration-2 decoration-customBlack font-bold"
+                        : "hover:underline underline-offset-4 decoration-2"
+                    }`
+                  }
                 >
                   {item.text}
-                </Link>
+                </NavLink>
               </li>
             ))}
           </ul>

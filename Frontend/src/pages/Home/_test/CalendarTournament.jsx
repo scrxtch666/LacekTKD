@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
-function ActualEventTest() {
-  const [events, setEvents] = useState([]); // Stav pro uchování dat turnajů
+function CalendarTournament() {
+  const [tournaments, setTournaments] = useState([]); // Stav pro uchování dat turnajů
   const [loading, setLoading] = useState(true); // Stav pro zobrazení načítání dat
 
   // Funkce pro načítání dat o turnajích
@@ -10,12 +10,12 @@ function ActualEventTest() {
     fetch("http://localhost:3000/api/tournaments/latest")
       .then((response) => response.json())
       .then((data) => {
-        setEvents(Array.isArray(data) ? data : []); // Nastavení získaných dat do stavu
+        setTournaments(Array.isArray(data) ? data : []); // Nastavení získaných dat do stavu
         setLoading(false); // Nastavení stavu načítání na false
       })
       .catch((error) => {
         console.error("Chyba při načítání dat:", error);
-        setEvents([]); // Při chybě zajistíme, že events zůstane polem
+        setTournaments([]); // Při chybě zajistíme, že Tournaments zůstane polem
         setLoading(false); // I když dojde k chybě, stav načítání bude false
       });
   }, []);
@@ -25,7 +25,7 @@ function ActualEventTest() {
   }
 
   // Ošetření prázdného stavu - pokud pole zůstalo prázdné
-  if (events.length === 0) {
+  if (tournaments.length === 0) {
     return (
       <div className="card w-full p-10 text-center border-2 border-dashed">
         <p className="text-gray-500">
@@ -37,19 +37,18 @@ function ActualEventTest() {
 
   return (
     <>
-      {events.map((event) => (
+      {tournaments.map((tournament) => (
         <div className="card w-full flex items-center overflow-hidden h-64">
           <div className=" flex gap-2 h-full w-full">
-            <div className="flex max-w-52 object-cover object-center items-center h-full">
-              <img
-                src="../src/assets/Events/BT_open.jpg"
-                alt={event.name}
-                className="object-cover object-center rounded-md h-full hidden lg:flex"
-              />
-            </div>
-
+            <div className="flex w-44 max-w-44 h-full items-center justify-center overflow-hidden">
+  <img
+    src={tournament.img_path}
+    alt={tournament.name}
+    className="object-cover w-full h-full hidden lg:block rounded-md "
+  />
+</div>
             <div className="flex flex-col gap-2">
-              <span className="font-extrabold text-xl">{event.name}</span>
+              <span className="font-extrabold text-xl uppercase">{tournament.tournament_name}</span>
 
               <p className="flex gap-1 items-center">
                 <img
@@ -58,7 +57,7 @@ function ActualEventTest() {
                   className="h-5"
                 />
                 <span className="text-customGreen font-bold">Lokace:</span>
-                {event.location}
+                {tournament.location}
               </p>
               <p className="flex gap-1 items-center">
                 <img
@@ -67,7 +66,7 @@ function ActualEventTest() {
                   className="h-5"
                 />
                 <span className="text-customGreen font-bold">Startovné: </span>
-                {event.price}€
+                {tournament.price}€
               </p>
               <p className="flex gap-1 items-center">
                 <img
@@ -76,7 +75,7 @@ function ActualEventTest() {
                   className="h-5"
                 />
                 <span className="text-customGreen font-bold">Typ akce: </span>
-                {event.type_name}
+                {tournament.type_name}
               </p>
               <p className="flex gap-1 items-center">
                 <img
@@ -85,7 +84,7 @@ function ActualEventTest() {
                   className="h-5"
                 />
                 <span className="text-customGreen font-bold">Datum: </span>
-                {event.start_date} - {event.end_date}
+                {tournament.start_date} - {tournament.end_date}
               </p>
               <br />
               <p className="flex gap-1 items-center">
@@ -95,7 +94,7 @@ function ActualEventTest() {
                   className="h-5"
                 />
                 <span className="text-customGreen font-bold">Informace: </span>
-                {event.info}
+                {tournament.info}
               </p>
             </div>
           </div>
@@ -105,4 +104,4 @@ function ActualEventTest() {
   );
 }
 
-export default ActualEventTest;
+export default CalendarTournament;

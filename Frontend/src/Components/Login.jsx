@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { redirect } from "react-router-dom";
 
 const Login = () => {
   const [formData, setFormData] = useState({ login: "", password: "" });
@@ -17,6 +18,7 @@ const Login = () => {
         // Uložíme token do paměti prohlížeče
         localStorage.setItem("token", data.token);
         alert("Přihlášení úspěšné! Token uložen.");
+        
       } else {
         alert(data.error);
       }

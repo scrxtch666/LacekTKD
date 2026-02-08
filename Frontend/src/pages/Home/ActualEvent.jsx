@@ -41,7 +41,9 @@ function ActualEvent() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <span className="font-extrabold text-xl">{tournament.name}</span>
+                <span className="font-extrabold text-xl">
+                  {tournament.name}
+                </span>
 
                 <p className="flex gap-1 items-center">
                   <img
@@ -103,6 +105,7 @@ function ActualEvent() {
               ZOBRAZIT DETAILY
             </span>
           </div>
+          
         </div>
       ))}
     </>

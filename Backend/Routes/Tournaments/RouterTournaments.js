@@ -10,6 +10,7 @@ router.get("/", async (req, res) => {
             tournament.price,
             type.name AS type_name,
             tournament.info,
+            tournament.img_path,
             DATE_FORMAT(start_date, '%d.%m.') AS start_date,
             DATE_FORMAT(end_date, '%d.%m.%Y') AS end_date
         FROM tournament
@@ -54,6 +55,7 @@ router.get("/latest", (req, res) => {
             tournament.price,
             type.name AS type_name,
             tournament.info,
+            tournament.img_path,
             DATE_FORMAT(start_date, '%d.%m.') AS start_date,
             DATE_FORMAT(end_date, '%d.%m.%Y') AS end_date
         FROM tournament
