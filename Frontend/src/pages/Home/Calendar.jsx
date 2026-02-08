@@ -1,131 +1,70 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { DayPicker } from 'react-day-picker';
+import { format, isSameDay } from 'date-fns';
+import { cs } from 'date-fns/locale';
+import 'react-day-picker/dist/style.css';
 
-// Custom icon components
-const ChevronLeft = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <path d="M15 18l-6-6 6-6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
 
-const ChevronRight = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <path d="M9 18l6-6-6-6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
 
-const ClockIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <circle cx="12" cy="12" r="10" strokeWidth="2"/>
-    <path d="M12 6v6l4 2" strokeWidth="2" strokeLinecap="round"/>
-  </svg>
-);
+function Calendar({ tournaments, onDateSelect }) {
+  const [selected, setSelected] = useState(new Date());
 
-const VideoIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <rect x="2" y="4" width="20" height="16" rx="2" strokeWidth="2"/>
-    <path d="M10 8l6 4-6 4V8z" strokeWidth="2"/>
-  </svg>
-);
+  // Extrahujeme dny, kdy se konají turnaje, pro zvýraznění v kalendáři
+  const eventDays = tournaments.map(t => new Date(t.start_date));
+  console.log("Dny s akcí:", eventDays);
 
-const MapPinIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <path d="M12 21s-8-4.5-8-11a8 8 0 1116 0c0 6.5-8 11-8 11z" strokeWidth="2"/>
-    <circle cx="12" cy="10" r="3" strokeWidth="2"/>
-  </svg>
-);
-
-const Calendar = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  
-  const months = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
-  
-  const weekDays = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
-  
-  const getDaysInMonth = (date) => {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-  };
-  
-  const getFirstDayOfMonth = (date) => {
-    return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-  };
-
-  const handlePrevMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
-  };
-  
-  const handleNextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
-  };
-
-  const renderCalendar = () => {
-    const daysInMonth = getDaysInMonth(currentDate);
-    const firstDayOfMonth = getFirstDayOfMonth(currentDate);
-    const days = [];
-    
-    for (let i = 0; i < firstDayOfMonth; i++) {
-      days.push(<div key={`empty-${i}`} className="h-6 w-6" />);
+  const handleSelect = (day) => {
+    if (day) {
+      setSelected(day);
+      onDateSelect(day); // Tímto pošleš informaci pravé straně
     }
-    
-    for (let day = 1; day <= daysInMonth; day++) {
-      days.push(
-        <div 
-          key={day}
-          className="h-6 w-6 flex items-center justify-center text-xs"
-        >
-          {day}
-        </div>
-      );
-    }
-    
-    return days;
   };
 
   return (
-    <div className="w-full h-64 card font-sans flex flex-col">
-      {/* Header section - zmenšený padding a mezery */}
-      <div className="flex items-start gap-2 mb-2">
-        <div className="w-5 h-5 bg-red-500 rounded-full flex-shrink-0" />
-        <div>
-          <div className="text-xs text-gray-600">Rick Astley</div>
-          <div className="text-sm font-medium">Get Rickrolled</div>
-        </div>
+    <div className="bg-customWhite p-6 rounded-2xl shadow-md w-full border border-[#e8dfd3] h-64">
+      {/* Horní info sekce */}
+     
+
+      <div className="mb-2">
+        <h2 className="text-lg font-bold text-gray-700">
+          {format(selected, 'MMMM yyyy', { locale: cs })}
+        </h2>
       </div>
 
-      {/* Description section - kompaktnější */}
-      
+      {/* Samotný kalendář */}
+      <DayPicker
+        mode="single"
+        selected={selected}
+        onSelect={handleSelect}
+        locale={cs}
+        modifiers={{ hasEvent: eventDays }}
+        // Definice stylů pro dny s akcí (tečka nebo barva)
+        modifiersStyles={{
+          hasEvent: { 
+            fontWeight: 'bold', 
+            color: '#16a34a', // Zelená barva pro dny s turnajem
+            borderBottom: '2px solid #16a34a' 
+          },
+          selected: {
+            backgroundColor: '#16a34a',
+            color: 'white'
+          }
+        }}
+        styles={{
+          caption: { display: 'none' }, // Schováme defaultní hlavičku, máme vlastní
+          head_cell: { color: '#9ca3af', fontWeight: '500', fontSize: '0.8rem' },
+          button: { borderRadius: '8px' }
+        }}
+        className="mx-auto"
+      />
 
-      {/* Calendar section */}
-      <div className="flex-1 flex flex-col min-h-0">
-        {/* Calendar header */}
-        <div className="flex items-center justify-between mb-2">
-          <div className="text-xs">
-            {months[currentDate.getMonth()]} {currentDate.getFullYear()}
-          </div>
-          <div className="flex gap-4">
-            <button onClick={handlePrevMonth} className="text-gray-600">
-              <ChevronLeft />
-            </button>
-            <button onClick={handleNextMonth} className="text-gray-600">
-              <ChevronRight />
-            </button>
-          </div>
-        </div>
-
-        {/* Calendar grid */}
-        <div className="grid grid-cols-7 gap-0 flex-1">
-          {weekDays.map(day => (
-            <div key={day} className="h-6 flex items-center justify-center text-xs text-gray-500">
-              {day}
-            </div>
-          ))}
-          {renderCalendar()}
-        </div>
+      {/* Legenda (volitelné) */}
+      <div className="mt-6 pt-4 border-t border-[#e8dfd3] flex items-center gap-2">
+        <div className="w-2 h-2 rounded-full bg-customGreen"></div>
+        <span className="text-xs text-gray-600 font-medium">Dny s turnajem / akcí</span>
       </div>
     </div>
   );
-};
+}
 
 export default Calendar;
