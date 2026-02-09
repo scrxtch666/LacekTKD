@@ -18,7 +18,7 @@ function CalendarTournament({ tournaments }) {
         <div key={tournament.id} className="card w-full flex items-center overflow-hidden h-64 bg-[#F5EFE6] rounded-2xl p-4 shadow-sm border border-[#e8dfd3]">
           <div className="flex gap-4 h-full w-full">
             {/* OBRÁZEK */}
-            <div className="flex w-44 max-w-44 h-full items-center justify-center overflow-hidden shrink-0">
+            <div className="flex w-44 max-w-44 h-full items-center justify-center overflow-hidden shrink-0 hidden sm:flex">
               <img
                 src={tournament.img_path}
                 alt={tournament.name}

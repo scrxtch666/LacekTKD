@@ -30,7 +30,7 @@ const Home = () => {
   const handleDateSelect = (selectedDay) => {
     const { isSameDay } = require("date-fns"); // nebo import nahoře
     const filtered = allEvents.filter((event) =>
-      isSameDay(new Date(event.start_date), selectedDay)
+      isSameDay(new Date(event.start_date), selectedDay),
     );
     setFilteredEvents(filtered);
   };
@@ -39,20 +39,17 @@ const Home = () => {
     <>
       <Showcase />
 
-      <div className="devider shadow-xl border-2 uppercase font-bold p-2 my-5">aktuality</div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 px-5">
+      <div className="devider">aktuality</div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         <EventCardLatest />
       </div>
 
-      <div className="devider shadow-xl border-2 uppercase font-bold p-2 my-10">nadcházející akce</div>
+      <div className="devider">nadcházející akce</div>
 
       {/* Mřížka pro Kalendář a Karty - md - tablet */}
       <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-5">
         <div className="md:grid-cols-2">
-          <Calendar 
-            tournaments={allEvents} 
-            onDateSelect={handleDateSelect} 
-          />
+          <Calendar tournaments={allEvents} onDateSelect={handleDateSelect} />
         </div>
         <div className="md:grid-cols-2">
           {loading ? (

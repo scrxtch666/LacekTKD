@@ -17,6 +17,8 @@
       text-transform: uppercase;
       display:  flex;
       justify-content: space-between;
+      border-width: 2px;
+      box-shadow: 0 8px 10px -6px rgba(0, 0, 0, 0.1);
     }
 
     /* glassy animation */
