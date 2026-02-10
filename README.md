@@ -113,6 +113,7 @@ MUST HAVE
 - [ ] kalendář
 - [ ] carousel
 - [ ] login
+- [ ] api mapa
 
 
 Classy

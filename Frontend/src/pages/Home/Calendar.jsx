@@ -21,7 +21,7 @@ function Calendar({ tournaments, onDateSelect }) {
   };
 
   return (
-    <div className="bg-customWhite p-6 rounded-2xl shadow-md w-full border border-[#e8dfd3] h-64">
+    <div className="bg-customWhite p-6 rounded-2xl shadow-md w-full border border-[#e8dfd3] h-64 overflow-hidden">
       {/* Horní info sekce */}
      
 
