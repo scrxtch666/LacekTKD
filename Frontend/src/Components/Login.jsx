@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { redirect } from "react-router-dom";
+import { Navigate, redirect, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [formData, setFormData] = useState({ login: "", password: "" });
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -17,7 +18,7 @@ const Login = () => {
       if (data.token) {
         // Uložíme token do paměti prohlížeče
         localStorage.setItem("token", data.token);
-        alert("Přihlášení úspěšné! Token uložen.");
+        navigate("/admin", { replace: true });
         
       } else {
         alert(data.error);

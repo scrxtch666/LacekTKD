@@ -1,6 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
 import Nabor from "../Components/Nabor";
 import LogInButton from "../Components/LogInButton";
+import LogoutButton from "../Components/LogOutButton";
 import { useState, useEffect } from "react";
 
 function Header() {
@@ -50,6 +51,7 @@ function Header() {
 
         <div className="flex lg:order-2 space-x-3 lg:space-x-0 rtl:space-x-reverse">
           <LogInButton />
+          <LogoutButton />
           <button
             onClick={toggleMenu}
             type="button"
@@ -90,7 +92,6 @@ function Header() {
             } dark:border-gray-700 transition-colors duration-300`}
           >
             {[
-              { to: "/admin", text: "Admin" },
               { to: "/nas-oddil", text: "Náš oddíl" },
               { to: "/aktuality", text: "Aktuality" },
               { to: "/zkousky", text: "Zkoušky" },

@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import "./App.css";
 import Header from "./layout/Header";
 import Footer from "./layout/Footer";
@@ -17,10 +22,9 @@ import AdminContainer from "./layout/AdminContainer";
 import AddFighter from "./Components/AddFighter";
 import FightersAdmin from "./Components/FightersAdmin";
 import FooterTest from "./layout/_test/FooterTest";
-import Login from "./Components/Login"
+import Login from "./Components/Login";
 import Register from "./Components/Register";
-
-
+import ProtectedRoute from "./pages/Login/ProtectedRoute";
 
 function Layout() {
   const location = useLocation();
@@ -31,15 +35,22 @@ function Layout() {
     <>
       {isAdmin ? <SideBar /> : <Header />}
       {isAdmin ? (
-        <AdminContainer>
-          <Routes>
-            {/* admin routy */}
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/admin/pridani-zavodnika" element={<AddFighter />} />
-            <Route path="/admin/vsichni-zavodnici" element={<FightersAdmin />} />
-            {/* admin routy */}
-          </Routes>
-        </AdminContainer>
+        <ProtectedRoute>
+            <SideBar />
+            <AdminContainer>
+              <Routes>
+                <Route path="/admin" element={<Admin />} />
+                <Route
+                  path="/admin/pridani-zavodnika"
+                  element={<AddFighter />}
+                />
+                <Route
+                  path="/admin/vsichni-zavodnici"
+                  element={<FightersAdmin />}
+                />
+              </Routes>
+            </AdminContainer>
+        </ProtectedRoute>
       ) : (
         <Container>
           <Routes>

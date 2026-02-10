@@ -76,6 +76,13 @@ app.post("/login", (req, res) => {
         { expiresIn: "1h" }
       );
 
+      // --- TADY JE TEN VÝPIS DO KONZOLE ---
+      console.log("-----------------------------------------");
+      console.log(`Uživatel ${user.login} se přihlásil.`);
+      console.log("Vygenerovaný JWT Token:");
+      console.log(token);
+      console.log("-----------------------------------------");
+
       res.json({ message: "Přihlášení úspěšné", token });
     }
   );
