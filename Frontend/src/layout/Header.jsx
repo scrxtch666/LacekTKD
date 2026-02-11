@@ -92,6 +92,7 @@ function Header() {
             } dark:border-gray-700 transition-colors duration-300`}
           >
             {[
+              { to: "/", text: "Domu" },
               { to: "/nas-oddil", text: "Náš oddíl" },
               { to: "/aktuality", text: "Aktuality" },
               { to: "/zkousky", text: "Zkoušky" },

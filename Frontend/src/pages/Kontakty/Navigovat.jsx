@@ -20,7 +20,7 @@ function Navigovat() {
         <button
           onClick={navigateToGoogleMaps}
           type="button"
-          className="text-customGreen bg-customGreen focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-customGreen flex items-center space-x-1 border border-customGreen w-full justify-center"
+          className="text-customGreen bg-customGreen font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-customGreen flex items-center space-x-1 border border-customGreen w-full justify-center"
         >
           <div className="relative inline-flex rounded-full h-5 w-5 bg-customGreen items-center">
             <img

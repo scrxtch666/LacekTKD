@@ -16,6 +16,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use("/uploads", express.static("uploads"));
 app.use(express.json());
 
 // Použití externích rout (pokud máš další v Router.js)
