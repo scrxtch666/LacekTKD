@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 
-function ShowcaseTest() {
+function ShowcaseCarousel() {
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [emblaRef] = useEmblaCarousel(
-    { loop: true },
-    [Autoplay({ delay: 5000, stopOnInteraction: false })]
-  );
+  const [emblaRef] = useEmblaCarousel({ loop: true }, [
+    Autoplay({ delay: 5000, stopOnInteraction: false }),
+  ]);
 
   useEffect(() => {
     fetch("http://localhost:3000/api/banner")
@@ -42,7 +41,7 @@ function ShowcaseTest() {
             className="relative min-w-full h-[300px] md:h-[400px] lg:h-96 overflow-hidden bg-customBlack"
           >
             <img
-              src={`http://localhost:3000${banner.img_path}`}
+              src={banner.img_path}
               alt={banner.banner_name}
               className="w-full h-full object-cover brightness-50 opacity-75"
             />
@@ -52,9 +51,12 @@ function ShowcaseTest() {
                 <p className="text-xl md:text-2xl lg:text-3xl mb-2 font-sans">
                   Sportovní klub
                 </p>
-
                 <p className="text-3xl md:text-4xl lg:text-5xl font-mono">
-                  {banner.banner_name}
+                  Taekwondo
+                  <span className="text-customGreen font-sans">Lacek</span>
+                </p>
+                <p className="text-base md:text-lg mt-2 font-sans">
+                  Taekwondo - rychleji, výš, silněji, ...
                 </p>
               </div>
             </div>
@@ -65,4 +67,4 @@ function ShowcaseTest() {
   );
 }
 
-export default ShowcaseTest;
+export default ShowcaseCarousel;

@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import Showcase from "../pages/Home/Showcase";
+import ShowcaseCarousel from "../pages/Home/ShowcaseCarousel";
 import Newsletter from "../pages/Home/Newsletter";
 import EventCardLatest from "../pages/Home/EventCardLatest";
 import CalendarTournament from "../pages/Home/CalendarTournament";
 import Calendar from "../pages/Home/Calendar";
-import ShowcaseTest from "../pages/Home/_test/Showcase_test";
 
 const Home = () => {
   const [allEvents, setAllEvents] = useState([]);
@@ -38,8 +37,7 @@ const Home = () => {
 
   return (
     <>
-      <Showcase />
-      <ShowcaseTest />
+      <ShowcaseCarousel />
 
       <div className="devider">aktuality</div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">

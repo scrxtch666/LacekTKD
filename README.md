@@ -114,6 +114,8 @@ MUST HAVE
 - [ ] carousel
 - [ ] login
 - [ ] api mapa
+- [ ] víc se podívat na JWT - občas můžu na admin stránky i bez přihlášení
+
 
 
 Classy
