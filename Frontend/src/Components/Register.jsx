@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 const Register = () => {
-  const [formData, setFormData] = useState({ login: "", password: "" });
+  const [formData, setFormData] = useState({ login: "", password: "", email: "" });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,6 +27,12 @@ const Register = () => {
           placeholder="Uživatelské jméno"
           className="w-full p-2 border rounded"
           onChange={(e) => setFormData({ ...formData, login: e.target.value })}
+        />
+         <input
+          type="email"
+          placeholder="email"
+          className="w-full p-2 border rounded"
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
         />
         <input
           type="password"

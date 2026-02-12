@@ -2,11 +2,14 @@ import { Link, NavLink } from "react-router-dom";
 import Nabor from "../Components/Nabor";
 import LogInButton from "../Components/LogInButton";
 import LogoutButton from "../Components/LogOutButton";
+import UserProfile from "./_test/UserProfile";
 import { useState, useEffect } from "react";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);

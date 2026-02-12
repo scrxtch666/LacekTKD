@@ -34,22 +34,36 @@ app.get("/", (req, res) => {
 
 // 1. Registrace (Hashování a uložení)
 app.post("/register", async (req, res) => {
-  const { login, password } = req.body;
+  const { login, password, email } = req.body;
 
   try {
-    // Bcrypt vytvoří z hesla nečitelný hash
-    const hashedPassword = await bcrypt.hash(password, 10);
-
+    // 1. Kontrola, zda e-mail již existuje
     db.query(
-      "INSERT INTO users (login, password) VALUES (?, ?)",
-      [login, hashedPassword],
-      (err, result) => {
-        if (err) return res.status(500).json({ error: "Chyba při zápisu do DB" });
-        res.status(201).json({ message: "Registrace úspěšná" });
+      "SELECT email FROM users WHERE email = ?",
+      [email],
+      async (err, results) => {
+        if (err) return res.status(500).json({ error: "Chyba serveru při kontrole e-mailu" });
+
+        if (results.length > 0) {
+          // E-mail už existuje – vracíme chybu
+          return res.status(409).json({ error: "Na tuto e-mailovou adresu je již založený účet" });
+        }
+
+        // 2. Pokud neexistuje, pokračujeme v hashování a zápisu
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        db.query(
+          "INSERT INTO users (login, email, password) VALUES (?, ?, ?)",
+          [login, email, hashedPassword],
+          (err, result) => {
+            if (err) return res.status(500).json({ error: "Chyba při zápisu do DB" });
+            res.status(201).json({ message: "Registrace úspěšná" });
+          }
+        );
       }
     );
   } catch (e) {
-    res.status(500).json({ error: "Chyba při zpracování hesla" });
+    res.status(500).json({ error: "Chyba při zpracování dat" });
   }
 });
 

@@ -4,7 +4,7 @@ function CalendarTournament({ tournaments }) {
   // Ošetření prázdného stavu
   if (tournaments.length === 0) {
     return (
-      <div className="card w-full p-10 text-center border-2 border-dashed rounded-2xl bg-[#F5EFE6]">
+      <div className="card w-full p-10 text-center border-2 border-dashed rounded-2xl bg-customWhite">
         <p className="text-gray-500 font-medium">
           Na tento den nejsou naplánovány žádné akce.
         </p>
@@ -15,7 +15,7 @@ function CalendarTournament({ tournaments }) {
   return (
     <div className="flex flex-col gap-6">
       {tournaments.map((tournament) => (
-        <div key={tournament.id} className="card w-full flex items-center overflow-hidden h-64 bg-[#F5EFE6] rounded-2xl p-4 shadow-sm border border-[#e8dfd3]">
+        <div key={tournament.id} className="card w-full flex items-center overflow-hidden h-64 bg-customWhite rounded-2xl p-4 shadow-sm border border-[#e8dfd3]">
           <div className="flex gap-4 h-full w-full">
             {/* OBRÁZEK */}
             <div className="flex w-44 max-w-44 h-full items-center justify-center overflow-hidden shrink-0 hidden sm:flex">

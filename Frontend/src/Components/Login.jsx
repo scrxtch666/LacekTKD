@@ -44,7 +44,7 @@ const Login = () => {
           className="w-full p-2 border rounded"
           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
         />
-        <button className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition">
+        <button className="w-full bg-customGreen text-white p-2 rounded">
           Přihlásit se
         </button>
       </form>
