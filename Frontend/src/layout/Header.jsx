@@ -35,7 +35,7 @@ function Header() {
     <nav
       className={`${
         isScrolled ? "bg-customGreen" : "bg-white"
-      } text-black fixed w-full z-20 top-0 start-0 dark:border-gray-600 transition-colors duration-300`}
+      } text-black w-full z-20 top-0 sticky mb-5 start-0 dark:border-gray-600 transition-colors duration-300`}
     >
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto py-2 px-5">
         <div className="flex items-center space-x-6">

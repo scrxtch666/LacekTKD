@@ -5,7 +5,7 @@ import App from "./App.jsx";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <>
-      <main className="pt-20">
+      <main>
         <App />
       </main>
     </>

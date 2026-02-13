@@ -67,6 +67,32 @@ app.post("/register", async (req, res) => {
   }
 });
 
+app.delete('/api/banner/:id', async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    db.query(
+      "DELETE FROM banner WHERE id = ?",
+      [id],
+      (err, result) => {
+        if (err) {
+          console.error("Chyba při mazání banneru:", err);
+          return res.status(500).json({ error: "Chyba při mazání z databáze" });
+        }
+        
+        if (result.affectedRows === 0) {
+          return res.status(404).json({ error: "Banner nenalezen" });
+        }
+        
+        res.json({ success: true, message: "Banner byl úspěšně smazán" });
+      }
+    );
+  } catch (error) {
+    console.error("Chyba při zpracování:", error);
+    res.status(500).json({ error: "Chyba serveru" });
+  }
+});
+
 // 2. Přihlášení (Ověření a vygenerování JWT)
 app.post("/login", (req, res) => {
   const { login, password } = req.body;

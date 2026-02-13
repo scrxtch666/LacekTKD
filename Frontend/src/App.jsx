@@ -25,52 +25,63 @@ import FooterTest from "./layout/_test/FooterTest";
 import Login from "./Components/Login";
 import Register from "./Components/Register";
 import ProtectedRoute from "./pages/Login/ProtectedRoute";
+import AdminBanner from "./pages/_Admin/AdminBanner";
 
 function Layout() {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith("/admin");
 
-  return (
+
     // Dynamické routování
+   if (isAdmin) {
+    return (
+      <ProtectedRoute>
+        <div className="flex min-h-screen bg-slate-100">
+          <SideBar />
+
+          <main className="flex-1 p-8">
+            <Routes>
+              <Route path="/admin" element={<Admin />} />
+              <Route
+                path="/admin/pridani-zavodnika"
+                element={<AddFighter />}
+              />
+              <Route
+                path="/admin/vsichni-zavodnici"
+                element={<FightersAdmin />}
+              />
+              <Route
+                path="/admin/banner"
+                element={<AdminBanner />}
+              />
+            </Routes>
+          </main>
+        </div>
+      </ProtectedRoute>
+    );
+  }
+
+  return (
     <>
-      {isAdmin ? <SideBar /> : <Header />}
-      {isAdmin ? (
-        <ProtectedRoute>
-            <SideBar />
-            <AdminContainer>
-              <Routes>
-                <Route path="/admin" element={<Admin />} />
-                <Route
-                  path="/admin/pridani-zavodnika"
-                  element={<AddFighter />}
-                />
-                <Route
-                  path="/admin/vsichni-zavodnici"
-                  element={<FightersAdmin />}
-                />
-              </Routes>
-            </AdminContainer>
-        </ProtectedRoute>
-      ) : (
-        <Container>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/turnaje" element={<Turnaje />} />
-            <Route path="/kontakt" element={<Contact />} />
-            <Route path="/zavodnici" element={<Zavodnici />} />
-            <Route path="/aktuality" element={<Aktuality />} />
-            <Route path="/zkousky" element={<Zkousky />} />
-            <Route path="/nas-oddil" element={<AboutUs />} />
-            <Route path="/detail" element={<Detail />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-          </Routes>
-        </Container>
-      )}
-      {!isAdmin && <Footer />}
+      <Header />
+      <Container>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/turnaje" element={<Turnaje />} />
+          <Route path="/kontakt" element={<Contact />} />
+          <Route path="/zavodnici" element={<Zavodnici />} />
+          <Route path="/aktuality" element={<Aktuality />} />
+          <Route path="/zkousky" element={<Zkousky />} />
+          <Route path="/nas-oddil" element={<AboutUs />} />
+          <Route path="/detail" element={<Detail />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </Container>
+      <Footer />
     </>
   );
-}
+  }
 
 function App() {
   return (
