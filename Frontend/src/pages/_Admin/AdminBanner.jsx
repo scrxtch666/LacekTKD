@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Trash2, Image as ImageIcon, Plus, Upload, X } from "lucide-react";
+import { Trash2, Image as ImageIcon, Plus, Upload, X, Eye, EyeOff } from "lucide-react";
 
 function AdminBanner() {
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(null);
+  const [toggling, setToggling] = useState(null);
 
   // Stav pro přidání nového banneru
   const [showAddForm, setShowAddForm] = useState(false);
@@ -12,6 +13,7 @@ function AdminBanner() {
   const [newBanner, setNewBanner] = useState({
     name: "",
     image: null,
+    active: true, // Výchozí stav - aktivní
   });
   const [previewUrl, setPreviewUrl] = useState(null);
 
@@ -55,6 +57,34 @@ function AdminBanner() {
     }
   };
 
+  const handleToggleActive = async (id, currentActive) => {
+    setToggling(id);
+    try {
+      const response = await fetch(`http://localhost:3000/api/banner/${id}/toggle`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ active: !currentActive }),
+      });
+
+      if (response.ok) {
+        setBanners(
+          banners.map((banner) =>
+            banner.id === id ? { ...banner, active: !currentActive } : banner
+          )
+        );
+      } else {
+        alert("Nepodařilo se změnit stav banneru");
+      }
+    } catch (error) {
+      console.error("Chyba při změně stavu:", error);
+      alert("Chyba při změně stavu banneru");
+    } finally {
+      setToggling(null);
+    }
+  };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -82,6 +112,7 @@ function AdminBanner() {
     const formData = new FormData();
     formData.append("banner_name", newBanner.name);
     formData.append("image", newBanner.image);
+    formData.append("active", newBanner.active ? "1" : "0");
 
     try {
       const response = await fetch("http://localhost:3000/api/banner", {
@@ -94,7 +125,7 @@ function AdminBanner() {
         alert("Banner byl úspěšně přidán!");
 
         // Reset formuláře
-        setNewBanner({ name: "", image: null });
+        setNewBanner({ name: "", image: null, active: true });
         setPreviewUrl(null);
         setShowAddForm(false);
 
@@ -114,7 +145,7 @@ function AdminBanner() {
 
   const cancelAdd = () => {
     setShowAddForm(false);
-    setNewBanner({ name: "", image: null });
+    setNewBanner({ name: "", image: null, active: true });
     setPreviewUrl(null);
   };
 
@@ -196,6 +227,23 @@ function AdminBanner() {
               </div>
             </div>
 
+            {/* Aktivní/Neaktivní */}
+            <div>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={newBanner.active}
+                  onChange={(e) =>
+                    setNewBanner({ ...newBanner, active: e.target.checked })
+                  }
+                  className="w-5 h-5 text-green-600 rounded focus:ring-2 focus:ring-green-500"
+                />
+                <span className="text-sm font-medium text-gray-700">
+                  Banner aktivní (zobrazovat na webu)
+                </span>
+              </label>
+            </div>
+
             {/* Náhled */}
             {previewUrl && (
               <div>
@@ -242,7 +290,9 @@ function AdminBanner() {
           {banners.map((banner) => (
             <div
               key={banner.id}
-              className="bg-customWhite rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+              className={`bg-customWhite rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-4 ${
+                !banner.active ? "opacity-60" : ""
+              }`}
             >
               <div className="flex flex-col sm:flex-row items-center gap-4">
                 {/* ID Badge */}
@@ -253,12 +303,17 @@ function AdminBanner() {
                 </div>
 
                 {/* Obrázek */}
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 relative">
                   <img
                     src={banner.img_path}
                     alt={banner.banner_name}
                     className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
                   />
+                  {!banner.active && (
+                    <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
+                      <EyeOff className="text-white" size={32} />
+                    </div>
+                  )}
                 </div>
 
                 {/* Info */}
@@ -267,10 +322,42 @@ function AdminBanner() {
                   <p className="text-lg font-semibold text-gray-800">
                     {banner.banner_name}
                   </p>
+                  <div className="mt-2">
+                    <span
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                        banner.active
+                          ? "bg-green-100 text-green-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {banner.active ? "Aktivní" : "Neaktivní"}
+                    </span>
+                  </div>
                 </div>
 
-                {/* Tlačítko smazat */}
-                <div className="flex-shrink-0">
+                {/* Tlačítka */}
+                <div className="flex flex-col sm:flex-row gap-2">
+                  {/* Tlačítko aktivace/deaktivace */}
+                  <button
+                    onClick={() => handleToggleActive(banner.id, banner.active)}
+                    disabled={toggling === banner.id}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+                      banner.active
+                        ? "bg-yellow-500 hover:bg-yellow-600 text-white"
+                        : "bg-green-500 hover:bg-green-600 text-white"
+                    }`}
+                  >
+                    {banner.active ? <EyeOff size={18} /> : <Eye size={18} />}
+                    <span>
+                      {toggling === banner.id
+                        ? "..."
+                        : banner.active
+                        ? "Skrýt"
+                        : "Zobrazit"}
+                    </span>
+                  </button>
+
+                  {/* Tlačítko smazat */}
                   <button
                     onClick={() => handleDelete(banner.id)}
                     disabled={deleting === banner.id}

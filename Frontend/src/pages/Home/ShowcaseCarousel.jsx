@@ -11,7 +11,7 @@ function ShowcaseCarousel() {
   ]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/banner")
+    fetch("http://localhost:3000/api/banner?active=true")
       .then((response) => response.json())
       .then((data) => {
         setBanners(Array.isArray(data) ? data : []);
