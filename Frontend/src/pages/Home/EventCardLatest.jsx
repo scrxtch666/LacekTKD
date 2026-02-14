@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import mainImage from "../../../src/assets/Showcase/main.jpg";
 
 const EventCardLatest = () => {
   const [news, setNews] = useState([]); // Stav pro uchování dat turnajů
