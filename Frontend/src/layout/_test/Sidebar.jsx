@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, LayoutDashboard, Users, FileText, Settings } from "lucide-react";
+import { Menu, X, LayoutDashboard, Users, FileText, Settings, Image, Phone, Mailbox } from "lucide-react";
 
 function SideBar() {
   const [open, setOpen] = useState(false);
@@ -13,17 +13,17 @@ function SideBar() {
     { name: "Zkoušky", path: "/admin/zkousky", icon: LayoutDashboard },
     { name: "Turnaje", path: "/admin/turnaje", icon: LayoutDashboard },
     { name: "Závodníci", path: "/admin/zavodnici", icon: Users },
-    { name: "Kontakt", path: "/admin/kontakt", icon: LayoutDashboard },
+    { name: "Kontakt", path: "/admin/kontakt", icon: Phone },
     { name: "Dokumenty", path: "/admin/dokumenty", icon: FileText },
     { name: "Nastavení", path: "/admin/nastaveni", icon: Settings },
-
-    { name: "Banner", path: "/admin/banner", icon: Settings },
+    { name: "Banner", path: "/admin/banner", icon: Image },
+    { name: "Newsletter", path: "/admin/newsletter", icon: Mailbox },
   ];
 
   return (
     <>
       {/* MOBILE TOP BAR */}
-      <div className="lg:hidden flex items-center justify-between p-4 bg-slate-900 text-white">
+      <div className="lg:hidden flex items-center justify-between p-4 bg-slate-900 text-white sticky top-0 z-50">
         <button onClick={() => setOpen(true)}>
           <Menu size={24} />
         </button>
@@ -42,14 +42,15 @@ function SideBar() {
       <aside
         className={`
           h-screen w-64 
-          fixed top-0 left-0  bg-slate-900 text-slate-300
+          fixed top-0 left-0 bg-slate-900 text-slate-300
           transform transition-transform duration-300 z-50
+          flex flex-col
           ${open ? "translate-x-0" : "-translate-x-full"}
-          lg:translate-x-0 lg:static lg:block
+          lg:translate-x-0
         `}
       >
         {/* HEADER */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-800">
+        <div className="flex items-center justify-between p-6 border-b border-slate-800 flex-shrink-0">
           <Link to="/" className="text-xl font-bold text-white">
             LacekTKD
           </Link>
@@ -62,8 +63,8 @@ function SideBar() {
           </button>
         </div>
 
-        {/* NAVIGATION */}
-        <nav className="p-4 space-y-2">
+        {/* NAVIGATION - scrollovatelná část */}
+        <nav className="p-4 space-y-2 overflow-y-auto flex-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;

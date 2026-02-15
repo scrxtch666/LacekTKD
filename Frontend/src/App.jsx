@@ -26,34 +26,29 @@ import Login from "./Components/Login";
 import Register from "./Components/Register";
 import ProtectedRoute from "./pages/Login/ProtectedRoute";
 import AdminBanner from "./pages/_Admin/AdminBanner";
+import AdminAktuality from "./pages/_Admin/AdminAktuality";
 
 function Layout() {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith("/admin");
 
-
-    // Dynamické routování
-   if (isAdmin) {
+  // Dynamické routování
+  if (isAdmin) {
     return (
       <ProtectedRoute>
         <div className="flex min-h-screen bg-slate-100">
           <SideBar />
 
-          <main className="flex-1 p-8">
+          <main className="flex-1 p-8 lg:ml-64 w-full">
             <Routes>
               <Route path="/admin" element={<Admin />} />
-              <Route
-                path="/admin/pridani-zavodnika"
-                element={<AddFighter />}
-              />
+              <Route path="/admin/pridani-zavodnika" element={<AddFighter />} />
               <Route
                 path="/admin/vsichni-zavodnici"
                 element={<FightersAdmin />}
               />
-              <Route
-                path="/admin/banner"
-                element={<AdminBanner />}
-              />
+              <Route path="/admin/banner" element={<AdminBanner />} />
+              <Route path="/admin/aktuality" element={<AdminAktuality />} />
             </Routes>
           </main>
         </div>
@@ -81,7 +76,7 @@ function Layout() {
       <Footer />
     </>
   );
-  }
+}
 
 function App() {
   return (

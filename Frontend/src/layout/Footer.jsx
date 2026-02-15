@@ -1,4 +1,6 @@
 import Carousel from "./Carousel";
+import { Trash2, Image as ImageIcon, Facebook, Instagram } from "lucide-react";
+
 function Footer() {
   const currentYear = new Date().getFullYear();
 
