@@ -2,14 +2,14 @@ import { Link, NavLink } from "react-router-dom";
 import Nabor from "../Components/Nabor";
 import LogInButton from "../Components/LogInButton";
 import LogoutButton from "../Components/LogOutButton";
-import UserProfile from "./_test/UserProfile";
 import { useState, useEffect } from "react";
+import { authService } from "../utils/auth"; // Import auth service
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -28,6 +28,33 @@ function Header() {
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // Načtení informací o uživateli
+  useEffect(() => {
+    const loadUser = async () => {
+      setLoading(true);
+      const userData = await authService.getCurrentUser();
+      setUser(userData);
+      setLoading(false);
+    };
+
+    loadUser();
+
+    // Event listener pro změny v localStorage (např. přihlášení/odhlášení v jiné záložce)
+    const handleStorageChange = () => {
+      loadUser();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    // Custom event pro refresh po přihlášení/odhlášení
+    window.addEventListener("authChange", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("authChange", handleStorageChange);
     };
   }, []);
 
@@ -52,13 +79,26 @@ function Header() {
           <Nabor />
         </div>
 
-        <div className="flex lg:order-2 space-x-3 lg:space-x-0 rtl:space-x-reverse">
-          <LogInButton />
-          <LogoutButton />
+        <div className="flex lg:order-2 space-x-3 lg:space-x-0 rtl:space-x-reverse items-center gap-3">
+          {!loading && (
+            <>
+              {user ? (
+                <>
+                  <span className="text-sm font-medium hidden lg:block">
+                    {user.login}
+                  </span>
+                  <LogoutButton onLogout={() => setUser(null)} />
+                </>
+              ) : (
+                <LogInButton onLogin={() => window.location.reload()} />
+              )}
+            </>
+          )}
+
           <button
             onClick={toggleMenu}
             type="button"
-            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-customBlack rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customGreen"
+            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-customBlack rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customGreen ml-2"
             aria-controls="navbar-sticky"
             aria-expanded={isMenuOpen}
           >

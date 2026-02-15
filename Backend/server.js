@@ -44,10 +44,15 @@ app.post("/register", async (req, res) => {
       "SELECT email FROM users WHERE email = ?",
       [email],
       async (err, results) => {
-        if (err) return res.status(500).json({ error: "Chyba serveru při kontrole e-mailu" });
+        if (err)
+          return res
+            .status(500)
+            .json({ error: "Chyba serveru při kontrole e-mailu" });
 
         if (results.length > 0) {
-          return res.status(409).json({ error: "Na tuto e-mailovou adresu je již založený účet" });
+          return res
+            .status(409)
+            .json({ error: "Na tuto e-mailovou adresu je již založený účet" });
         }
 
         // 2. Pokud neexistuje, pokračujeme v hashování a zápisu
@@ -57,11 +62,12 @@ app.post("/register", async (req, res) => {
           "INSERT INTO users (login, email, password) VALUES (?, ?, ?)",
           [login, email, hashedPassword],
           (err, result) => {
-            if (err) return res.status(500).json({ error: "Chyba při zápisu do DB" });
+            if (err)
+              return res.status(500).json({ error: "Chyba při zápisu do DB" });
             res.status(201).json({ message: "Registrace úspěšná" });
-          }
+          },
         );
-      }
+      },
     );
   } catch (e) {
     res.status(500).json({ error: "Chyba při zpracování dat" });
@@ -77,7 +83,8 @@ app.post("/login", (req, res) => {
     [login],
     async (err, results) => {
       if (err) return res.status(500).json({ error: "Chyba serveru" });
-      if (results.length === 0) return res.status(401).json({ error: "Uživatel nenalezen" });
+      if (results.length === 0)
+        return res.status(401).json({ error: "Uživatel nenalezen" });
 
       const user = results[0];
 
@@ -86,11 +93,9 @@ app.post("/login", (req, res) => {
       if (!isMatch) return res.status(401).json({ error: "Nesprávné heslo" });
 
       // Vygenerování JWT tokenu
-      const token = jwt.sign(
-        { id: user.id, login: user.login },
-        SECRET_KEY,
-        { expiresIn: "1h" }
-      );
+      const token = jwt.sign({ id: user.id, login: user.login }, SECRET_KEY, {
+        expiresIn: "1h",
+      });
 
       console.log("-----------------------------------------");
       console.log(`Uživatel ${user.login} se přihlásil.`);
@@ -99,7 +104,27 @@ app.post("/login", (req, res) => {
       console.log("-----------------------------------------");
 
       res.json({ message: "Přihlášení úspěšné", token });
-    }
+    },
+  );
+});
+
+// Endpoint pro získání informací o aktuálním uživateli
+app.get("/api/user/me", verifyToken, (req, res) => {
+  db.query(
+    "SELECT id, login, email FROM users WHERE id = ?",
+    [req.user.id],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: "Chyba serveru" });
+      if (results.length === 0)
+        return res.status(404).json({ error: "Uživatel nenalezen" });
+
+      const user = results[0];
+      res.json({
+        id: user.id,
+        login: user.login,
+        email: user.email,
+      });
+    },
   );
 });
 
