@@ -10,11 +10,11 @@ const router = express.Router();
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadDir = "C:\\LacekTKD\\Frontend\\public\\uploads\\banners";
-    
+
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
-    
+
     cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
@@ -28,7 +28,9 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // Max 5MB
   fileFilter: function (req, file, cb) {
     const allowedTypes = /jpeg|jpg|png|gif|webp/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const extname = allowedTypes.test(
+      path.extname(file.originalname).toLowerCase(),
+    );
     const mimetype = allowedTypes.test(file.mimetype);
 
     if (mimetype && extname) {
@@ -44,17 +46,17 @@ const upload = multer({
 // GET - Získání všech bannerů (s možností filtrace)
 router.get("/", (req, res) => {
   const { active } = req.query;
-  
+
   let query = "SELECT * FROM banner";
   let params = [];
-  
+
   if (active === "true") {
     query += " WHERE active = ?";
     params.push(1);
   }
-  
+
   query += " ORDER BY id DESC";
-  
+
   db.query(query, params, (err, results) => {
     if (err) {
       console.error("Chyba při načítání bannerů:", err);
@@ -81,7 +83,9 @@ router.post("/", upload.single("image"), (req, res) => {
     (err, result) => {
       if (err) {
         console.error("Chyba při ukládání do DB:", err);
-        return res.status(500).json({ error: "Chyba při ukládání do databáze" });
+        return res
+          .status(500)
+          .json({ error: "Chyba při ukládání do databáze" });
       }
 
       res.status(201).json({
@@ -91,7 +95,7 @@ router.post("/", upload.single("image"), (req, res) => {
         img_path: img_path,
         active: isActive,
       });
-    }
+    },
   );
 });
 
@@ -113,57 +117,49 @@ router.patch("/:id/toggle", (req, res) => {
         return res.status(404).json({ error: "Banner nenalezen" });
       }
 
-      res.json({ 
-        success: true, 
-        message: `Banner byl ${active ? 'aktivován' : 'deaktivován'}`,
-        active: active
+      res.json({
+        success: true,
+        message: `Banner byl ${active ? "aktivován" : "deaktivován"}`,
+        active: active,
       });
-    }
+    },
   );
 });
 
 // DELETE - Smazání banneru
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
-  
+
   // Nejdřív získáme cestu k obrázku
-  db.query(
-    "SELECT img_path FROM banner WHERE id = ?",
-    [id],
-    (err, results) => {
-      if (err) {
-        console.error("Chyba při hledání banneru:", err);
-        return res.status(500).json({ error: "Chyba při hledání banneru" });
-      }
-
-      if (results.length === 0) {
-        return res.status(404).json({ error: "Banner nenalezen" });
-      }
-
-      const imgPath = results[0].img_path;
-      const fullPath = path.join("C:\\LacekTKD\\Frontend\\public", imgPath);
-
-      // Smažeme z databáze
-      db.query(
-        "DELETE FROM banner WHERE id = ?",
-        [id],
-        (err, result) => {
-          if (err) {
-            console.error("Chyba při mazání banneru:", err);
-            return res.status(500).json({ error: "Chyba při mazání z databáze" });
-          }
-
-          // Smažeme soubor z disku
-          if (fs.existsSync(fullPath)) {
-            fs.unlinkSync(fullPath);
-            console.log(`Soubor ${fullPath} byl smazán`);
-          }
-
-          res.json({ success: true, message: "Banner byl úspěšně smazán" });
-        }
-      );
+  db.query("SELECT img_path FROM banner WHERE id = ?", [id], (err, results) => {
+    if (err) {
+      console.error("Chyba při hledání banneru:", err);
+      return res.status(500).json({ error: "Chyba při hledání banneru" });
     }
-  );
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "Banner nenalezen" });
+    }
+
+    const imgPath = results[0].img_path;
+    const fullPath = path.join("C:\\LacekTKD\\Frontend\\public", imgPath);
+
+    // Smažeme z databáze
+    db.query("DELETE FROM banner WHERE id = ?", [id], (err, result) => {
+      if (err) {
+        console.error("Chyba při mazání banneru:", err);
+        return res.status(500).json({ error: "Chyba při mazání z databáze" });
+      }
+
+      // Smažeme soubor z disku
+      if (fs.existsSync(fullPath)) {
+        fs.unlinkSync(fullPath);
+        console.log(`Soubor ${fullPath} byl smazán`);
+      }
+
+      res.json({ success: true, message: "Banner byl úspěšně smazán" });
+    });
+  });
 });
 
 module.exports = router;

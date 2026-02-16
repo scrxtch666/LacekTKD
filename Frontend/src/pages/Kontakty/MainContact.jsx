@@ -1,87 +1,92 @@
 import React, { useState, useEffect } from "react";
 
-function MainContact() {
-  const [coach, setCoach] = useState([]); // Stav pro uchování dat turnajů
-  const [loading, setLoading] = useState(true); // Stav pro zobrazení načítání dat
+// Samostatná komponenta pro kartu trenéra pro lepší čitelnost
+const CoachCard = ({ ocoach }) => {
+  return (
+    <div className="bg-customWhite border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 p-6 flex flex-col items-center gap-4">
+      {/* Profilový obrázek s okrajem */}
+      <div className="relative">
+        <img
+          src={ocoach.img_path}
+          alt={`${ocoach.name} ${ocoach.surname}`}
+          className="rounded-full h-32 w-32 object-cover object-center ring-4 ring-customGreen/10"
+        />
+        <div className="absolute bottom-1 right-1 bg-customGreen h-5 w-5 rounded-full border-2 border-white"></div>
+      </div>
 
-  // Funkce pro načítání dat o turnajích
+      {/* Jméno a detaily */}
+      <div className="text-center">
+        <h3 className="font-bold text-xl text-gray-800">
+          {ocoach.name} {ocoach.surname}
+        </h3>
+        <p className="text-customGreen font-semibold text-sm uppercase tracking-wider">
+          {ocoach.belts_id}
+        </p>
+        <p className="text-xs text-gray-400 mt-1 italic">
+          hlavní trenér, II. trenérská třída
+        </p>
+      </div>
+
+      {/* Kontaktní údaje jako interaktivní prvky */}
+      <div className="w-full space-y-2 mt-2">
+        <a
+          href={`mailto:${ocoach.email}`}
+          className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors group"
+        >
+          <div className="bg-customGreen p-2 rounded-full group-hover:scale-110 transition-transform">
+             <img src="/assets/Icons/emailWW.png" alt="Email" className="w-3 h-3 invert" />
+          </div>
+          <span className="text-sm text-gray-600 truncate">{ocoach.email}</span>
+        </a>
+
+        <a
+          href={`tel:+420${ocoach.phone}`}
+          className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors group"
+        >
+          <div className="bg-customGreen p-2 rounded-full group-hover:scale-110 transition-transform">
+             <img src="/assets/Icons/phone.png" alt="Phone" className="w-3 h-3 invert" />
+          </div>
+          <span className="text-sm text-gray-600">+420 {ocoach.phone}</span>
+        </a>
+      </div>
+    </div>
+  );
+};
+
+function MainContact() {
+  const [coaches, setCoaches] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    // Načítání dat z backendu
     fetch("http://localhost:3000/api/users/trainer")
       .then((response) => response.json())
       .then((data) => {
-        setCoach(data); // Nastavení získaných dat do stavu
-        setLoading(false); // Nastavení stavu načítání na false
+        setCoaches(data);
+        setLoading(false);
       })
       .catch((error) => {
         console.error("Chyba při načítání dat:", error);
-        setLoading(false); // I když dojde k chybě, stav načítání bude false
+        setLoading(false);
       });
   }, []);
 
   if (loading) {
-    return <div>Načítám data...</div>; // Zobrazení textu při načítání
+    return (
+      <div className="flex justify-center items-center min-h-[200px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-customGreen"></div>
+        <span className="ml-3 text-gray-500 font-medium">Načítám trenéry...</span>
+      </div>
+    );
   }
+
   return (
-    <>
-      {coach.map((ocoach) => (
-        <div className="w-full flex flex-row justify-center">
-          <div class="bg-customWhite w-full h-max rounded-lg flex justify-between flex-col items-center p-4 gap-5">
-            <div class="flex justify-evenly h-1/2 w-full">
-              <img
-                src={ocoach.img_path}
-                alt=""
-                class="rounded-full h-28 w-28 object-cover object-center"
-              />
-
-              <div class="flex flex-col justify-center items-center align-middle">
-                <p class="flex flex-col">
-                  <span className="font-bold text-xl">
-                    {ocoach.name} {ocoach.surname}
-                  </span>
-                  <span className="text-gray-500 font-medium">
-                    {ocoach.belts_id}
-                  </span>
-                  <span class="text-xs text-gray-500">
-                    hlavní trenér, II. trenérská třída
-                  </span>
-                </p>
-              </div>
-            </div>
-
-            <div class="flex justify-between gap-3 w-full flex-col">
-              <button
-                type="button"
-                className="text-customGreen bg-customWhite focus:ring-4 focus:outline-none font-medium rounded-lg text-sm p-2 text-center dark:bg-customWhite flex items-center space-x-1"
-              >
-                <div className="relative inline-flex rounded-full h-5 w-5 bg-customGreen">
-                  <img
-                    className="px-0.6 py-0.6 m-1"
-                    src="../src/assets/Icons/emailWW.png"
-                    alt="Login"
-                  />
-                </div>
-                <span>{ocoach.email}</span>
-              </button>
-
-              <button
-                type="button"
-                className="text-customGreen bg-customWhite focus:ring-4 focus:outline-none font-medium rounded-lg text-sm p-2 text-center dark:bg-customWhite flex items-center space-x-1 borde"
-              >
-                <div className="relative inline-flex rounded-full h-5 w-5 bg-customGreen">
-                  <img
-                    className="px-1 py-1 "
-                    src="../src/assets/Icons/phone.png"
-                    alt="Login"
-                  />
-                </div>
-                <span>+420 {ocoach.phone}</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      ))}
-    </>
+    <div className="container mx-auto px-4 py-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {coaches.map((coach) => (
+          <CoachCard key={coach.id || coach.email} ocoach={coach} />
+        ))}
+      </div>
+    </div>
   );
 }
 

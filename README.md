@@ -123,3 +123,6 @@ Classy
 
 
 rounded-2xl
+
+Na Linuxu
+- http://localhost:8000/phpmyadmin/index.php

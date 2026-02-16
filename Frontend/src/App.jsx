@@ -27,6 +27,7 @@ import Register from "./Components/Register";
 import ProtectedRoute from "./pages/Login/ProtectedRoute";
 import AdminBanner from "./pages/_Admin/AdminBanner";
 import AdminAktuality from "./pages/_Admin/AdminAktuality";
+import AdminUsers from "./pages/_Admin/AdminUsers";
 
 function Layout() {
   const location = useLocation();
@@ -49,6 +50,7 @@ function Layout() {
               />
               <Route path="/admin/banner" element={<AdminBanner />} />
               <Route path="/admin/aktuality" element={<AdminAktuality />} />
+               <Route path="/admin/users" element={<AdminUsers />} />
             </Routes>
           </main>
         </div>

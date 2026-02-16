@@ -18,6 +18,7 @@ function SideBar() {
     { name: "Nastavení", path: "/admin/nastaveni", icon: Settings },
     { name: "Banner", path: "/admin/banner", icon: Image },
     { name: "Newsletter", path: "/admin/newsletter", icon: Mailbox },
+    { name: "Uživatelé", path: "/admin/users", icon: Users },
   ];
 
   return (

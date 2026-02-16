@@ -4,8 +4,11 @@ const db = require("../../Libs/db");
 
 router.get("/", async (req, res) => {
   db.query(
-    `SELECT *
-         FROM users`,
+    `SELECT 
+    users.*, 
+    role.role_name AS role_name 
+FROM users 
+LEFT JOIN role ON users.role_id = role.id;`,
     (err, results) => {
       if (err)
         return res.status(500).json({ error: "Chyba při načítání uživatelů" });
@@ -49,6 +52,22 @@ router.get("/trainer", (req, res) => {
       res.json(results);
     }
   );
+
+  router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+
+  
+    // Smažeme z databáze
+    db.query("DELETE FROM users WHERE id = ?", [id], (err, result) => {
+      if (err) {
+        console.error("Chyba při mazání uživatele:", err);
+        return res.status(500).json({ error: "Chyba při mazání z databáze" });
+      }
+
+      res.json({ success: true, message: "Uživatel byl úspěšně smazán" });
+    });
+  });
+  
 });
 
 module.exports = router;
