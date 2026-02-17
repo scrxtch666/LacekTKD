@@ -4,8 +4,8 @@ const db = require("../../Libs/db")
 
 router.get('/', async(req, res) => {
             db.query(`SELECT *
-         FROM sponsors`, (err, results) => {
-              if (err) return res.status(500).json({ error: 'Chyba při načítání sponsorů' });
+         FROM role`, (err, results) => {
+              if (err) return res.status(500).json({ error: 'Chyba při načítání rolí' });
               res.json(results);
         })
 });

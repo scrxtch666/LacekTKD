@@ -5,17 +5,22 @@ const db = require("../../Libs/db");
 router.get("/", async (req, res) => {
   db.query(
     `SELECT 
-    users.*, 
-    role.role_name AS role_name 
-FROM users 
-LEFT JOIN role ON users.role_id = role.id;`,
+        users.*,
+        fighters.name     AS name,
+        fighters.surname  AS surname,
+        fighters.img_path AS img_path,
+        role.role_name    AS role_name
+     FROM users
+     LEFT JOIN role     ON users.role_id  = role.id
+     LEFT JOIN fighters ON fighters.id   = users.fighter_id`,
     (err, results) => {
       if (err)
         return res.status(500).json({ error: "Chyba při načítání uživatelů" });
       res.json(results);
-    }
+    },
   );
 });
+
 /*
 router.get('/:eventId', async(req, res) => {
     if(typeof req.params.eventId == "undefined") {
@@ -50,24 +55,59 @@ router.get("/trainer", (req, res) => {
           .status(500)
           .json({ error: "Chyba při načítání trenérských údajů" });
       res.json(results);
-    }
+    },
   );
-
-  router.delete("/:id", (req, res) => {
-  const { id } = req.params;
-
-  
-    // Smažeme z databáze
-    db.query("DELETE FROM users WHERE id = ?", [id], (err, result) => {
-      if (err) {
-        console.error("Chyba při mazání uživatele:", err);
-        return res.status(500).json({ error: "Chyba při mazání z databáze" });
-      }
-
-      res.json({ success: true, message: "Uživatel byl úspěšně smazán" });
-    });
-  });
-  
 });
 
+router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+
+  db.query("DELETE FROM users WHERE id = ?", [id], (err, result) => {
+    if (err)
+      return res.status(500).json({ error: "Chyba při mazání z databáze" });
+    if (result.affectedRows === 0)
+      return res.status(404).json({ error: "Uživatel nenalezen" });
+
+    res.json({ success: true, message: "Uživatel byl úspěšně smazán" });
+  });
+});
+
+// POST - Přidání nového uživatele
+router.post("/", (req, res) => {
+  const { login, password, emial, phone, fighter_id, role_id } = req.body;
+
+  // Validace povinných polí
+  if (!login || !password || !role_id) {
+    return res
+      .status(400)
+      .json({ error: "Chybí povinná pole (login, password, role_id)" });
+  }
+
+  db.query(
+    `INSERT INTO users (login, password, emial, phone, fighter_id, role_id) 
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [
+      login,
+      password,
+      emial || null,
+      phone || null,
+      fighter_id || null,
+      role_id,
+    ],
+    (err, result) => {
+      if (err) {
+        console.error("Chyba při ukládání uživatele:", err);
+        return res
+          .status(500)
+          .json({ error: "Chyba při ukládání do databáze" });
+      }
+
+      res.status(201).json({
+        success: true,
+        message: "Uživatel byl úspěšně přidán",
+        id: result.insertId,
+      });
+    },
+  );
+});
 module.exports = router;

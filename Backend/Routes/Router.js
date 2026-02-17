@@ -8,6 +8,7 @@ const newsRouter = require("./News/RouterNews");
 const usersRouter = require("./Users/RouterUsers");
 const sponsorsRouter = require("./Sponsors/RouterSponsors");
 const bannerRouter = require("./Banner/RouterBanner");
+const roleRouter = require("./Roles/RouterRoles")
 
 
 
@@ -21,6 +22,7 @@ router.use("/users", usersRouter);
 router.use("/sponsors", sponsorsRouter);
 router.use("/news", newsRouter);
 router.use("/banner", bannerRouter);
+router.use("/roles", roleRouter);
 
 
 // Konec routeru

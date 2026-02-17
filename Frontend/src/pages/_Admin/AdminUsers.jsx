@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Trash2, UserPlus, X, UserCheck, UserX, Mail, Shield } from "lucide-react";
+import {
+  Trash2,
+  UserPlus,
+  X,
+  UserCheck,
+  UserX,
+  Mail,
+  Shield,
+} from "lucide-react";
 
 function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(null);
   const [toggling, setToggling] = useState(null);
+  const [roles, setRoles] = useState([]);
 
   // Stav pro přidání nového uživatele
   const [showAddForm, setShowAddForm] = useState(false);
@@ -19,6 +28,7 @@ function AdminUsers() {
 
   useEffect(() => {
     fetchUsers();
+    fetchRoles();
   }, []);
 
   const fetchUsers = () => {
@@ -33,6 +43,13 @@ function AdminUsers() {
         setUsers([]);
         setLoading(false);
       });
+  };
+
+  const fetchRoles = () => {
+    fetch("http://localhost:3000/api/roles")
+      .then((res) => res.json())
+      .then((data) => setRoles(Array.isArray(data) ? data : []))
+      .catch((err) => console.error("Chyba při načítání rolí:", err));
   };
 
   const handleDelete = async (id) => {
@@ -57,7 +74,6 @@ function AdminUsers() {
     }
   };
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -82,10 +98,12 @@ function AdminUsers() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: newUser.name,
-          email: newUser.email,
+          login: newUser.login,
           password: newUser.password,
-          role: newUser.role,
+          emial: newUser.email, // pozor na překlep v DB
+          phone: newUser.phone,
+          role_id: newUser.role, // role je teď ID, ne string
+          fighter_id: newUser.fighter_id || null,
         }),
       });
 
@@ -164,7 +182,9 @@ function AdminUsers() {
       {showAddForm && (
         <div className="bg-customWhite rounded-lg shadow-lg p-6 border-2 border-green-500">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-semibold text-gray-800">Nový uživatel</h3>
+            <h3 className="text-xl font-semibold text-gray-800">
+              Nový uživatel
+            </h3>
             <button
               onClick={cancelAdd}
               className="text-gray-400 hover:text-gray-600"
@@ -239,14 +259,14 @@ function AdminUsers() {
                 }
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               >
-                <option value="user">Uživatel</option>
-                <option value="moderator">Moderátor</option>
-                <option value="admin">Administrátor</option>
+                <option value="">-- Vyber roli --</option>
+                {roles.map((role) => (
+                  <option key={role.id} value={role.id}>
+                    {role.role_name}
+                  </option>
+                ))}
               </select>
             </div>
-
-           
-           
 
             {/* Tlačítka */}
             <div className="flex gap-3 pt-4">
@@ -292,26 +312,33 @@ function AdminUsers() {
 
                 {/* Avatar/Ikona */}
                 <div className="flex-shrink-0">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white text-2xl font-bold">
-                    {user.name?.charAt(0).toUpperCase() || "U"}
-                  </div>
+                  {user.img_path ? (
+                    <img
+                      className="w-16 h-16 rounded-full object-cover"
+                      src={user.img_path}
+                      alt={user.login}
+                    />
+                  ) : (
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white text-2xl font-bold">
+                      {user.login?.charAt(0).toUpperCase() || "U"}
+                    </div>
+                  )}
                 </div>
 
                 {/* Info */}
                 <div className="flex-1 text-center sm:text-left">
                   <p className="text-lg font-semibold text-gray-800">
-                    {user.name}
+                    {user.name} {user.surname}
                   </p>
                   <div className="flex items-center gap-2 text-sm text-gray-600 mt-1 justify-center sm:justify-start">
                     <span>login: {user.login}</span>
-                  <Mail size={14} />
+                    <Mail size={14} />
                     <span>email: {user.email}</span>
                   </div>
                   <div className="mt-2 flex gap-2 justify-center sm:justify-start">
-                    
                     <span
                       className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(
-                        user.role
+                        user.role,
                       )}`}
                     >
                       <Shield size={12} />
