@@ -1,30 +1,29 @@
 import React, { useState, useEffect } from "react";
-import {
-  Trash2,
-  UserPlus,
-  X,
-  UserCheck,
-  UserX,
-  Mail,
-  Shield,
-} from "lucide-react";
+import { Trash2, UserPlus, X, Mail, Shield, Pencil, Check } from "lucide-react";
 
 function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(null);
-  const [toggling, setToggling] = useState(null);
   const [roles, setRoles] = useState([]);
 
-  // Stav pro přidání nového uživatele
+  // Přidání uživatele
   const [showAddForm, setShowAddForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [newUser, setNewUser] = useState({
-    name: "",
+    login: "",
     email: "",
     password: "",
-    role: "user",
+    passwordConfirm: "",
+    role: "",
   });
+  const [formError, setFormError] = useState("");
+
+  // Editace uživatele
+  const [editingId, setEditingId] = useState(null);
+  const [editUser, setEditUser] = useState({});
+  const [editError, setEditError] = useState("");
+  const [editSaving, setEditSaving] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -74,18 +73,103 @@ function AdminUsers() {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // --- Editace ---
+  const startEdit = (user) => {
+    setEditingId(user.id);
+    setEditUser({
+      login: user.login || "",
+      email: user.email || "",
+      password: "",
+      passwordConfirm: "",
+      role: user.role_id || "",
+    });
+    setEditError("");
+  };
 
-    if (!newUser.name || !newUser.email || !newUser.password) {
-      alert("Vyplňte prosím všechna povinná pole");
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditUser({});
+    setEditError("");
+  };
+
+  const handleEditSubmit = async (id) => {
+    setEditError("");
+
+    if (!editUser.login) {
+      setEditError("Login nesmí být prázdný.");
       return;
     }
 
-    // Validace emailu
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(newUser.email)) {
-      alert("Zadejte platnou emailovou adresu");
+    if (editUser.password && editUser.password.length < 6) {
+      setEditError("Heslo musí mít minimálně 6 znaků.");
+      return;
+    }
+
+    if (editUser.password && editUser.password !== editUser.passwordConfirm) {
+      setEditError("Hesla se neshodují.");
+      return;
+    }
+
+    if (!editUser.role) {
+      setEditError("Vyberte prosím roli.");
+      return;
+    }
+
+    setEditSaving(true);
+
+    const payload = {
+      login: editUser.login,
+      emial: editUser.email,
+      role_id: editUser.role,
+    };
+    if (editUser.password) {
+      payload.password = editUser.password;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:3000/api/users/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        cancelEdit();
+        fetchUsers();
+      } else {
+        const error = await response.json();
+        setEditError("Chyba: " + (error.error || "Nepodařilo se uložit změny"));
+      }
+    } catch (error) {
+      console.error("Chyba při ukládání:", error);
+      setEditError("Chyba při ukládání uživatele.");
+    } finally {
+      setEditSaving(false);
+    }
+  };
+
+  // --- Přidání ---
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormError("");
+
+    if (!newUser.login || !newUser.password || !newUser.passwordConfirm) {
+      setFormError("Vyplňte prosím všechna povinná pole.");
+      return;
+    }
+
+    if (newUser.password.length < 6) {
+      setFormError("Heslo musí mít minimálně 6 znaků.");
+      return;
+    }
+
+    if (newUser.password !== newUser.passwordConfirm) {
+      setFormError("Hesla se neshodují.");
+      return;
+    }
+
+    if (!newUser.role) {
+      setFormError("Vyberte prosím roli.");
       return;
     }
 
@@ -94,40 +178,28 @@ function AdminUsers() {
     try {
       const response = await fetch("http://localhost:3000/api/users", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           login: newUser.login,
           password: newUser.password,
-          emial: newUser.email, // pozor na překlep v DB
-          phone: newUser.phone,
-          role_id: newUser.role, // role je teď ID, ne string
-          fighter_id: newUser.fighter_id || null,
+          emial: newUser.email,
+          role_id: newUser.role,
         }),
       });
 
       if (response.ok) {
         alert("Uživatel byl úspěšně přidán!");
-
-        // Reset formuláře
-        setNewUser({
-          name: "",
-          email: "",
-          password: "",
-          role: "user",
-        });
-        setShowAddForm(false);
-
-        // Refresh seznamu
+        cancelAdd();
         fetchUsers();
       } else {
         const error = await response.json();
-        alert("Chyba: " + (error.error || "Nepodařilo se přidat uživatele"));
+        setFormError(
+          "Chyba: " + (error.error || "Nepodařilo se přidat uživatele"),
+        );
       }
     } catch (error) {
       console.error("Chyba při ukládání:", error);
-      alert("Chyba při ukládání uživatele");
+      setFormError("Chyba při ukládání uživatele.");
     } finally {
       setSaving(false);
     }
@@ -135,11 +207,13 @@ function AdminUsers() {
 
   const cancelAdd = () => {
     setShowAddForm(false);
+    setFormError("");
     setNewUser({
-      name: "",
+      login: "",
       email: "",
       password: "",
-      role: "user",
+      passwordConfirm: "",
+      role: "",
     });
   };
 
@@ -194,27 +268,25 @@ function AdminUsers() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Jméno */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Jméno *
+                Login *
               </label>
               <input
                 type="text"
-                value={newUser.name}
+                value={newUser.login}
                 onChange={(e) =>
-                  setNewUser({ ...newUser, name: e.target.value })
+                  setNewUser({ ...newUser, login: e.target.value })
                 }
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                placeholder="Jan Novák"
+                placeholder="novak30"
                 required
               />
             </div>
 
-            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email *
+                Email
               </label>
               <input
                 type="email"
@@ -223,12 +295,10 @@ function AdminUsers() {
                   setNewUser({ ...newUser, email: e.target.value })
                 }
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                placeholder="jan.novak@email.cz"
-                required
+                placeholder="novak@email.cz"
               />
             </div>
 
-            {/* Heslo */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Heslo *
@@ -247,10 +317,42 @@ function AdminUsers() {
               <p className="text-xs text-gray-500 mt-1">Minimálně 6 znaků</p>
             </div>
 
-            {/* Role */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Role
+                Potvrzení hesla *
+              </label>
+              <input
+                type="password"
+                value={newUser.passwordConfirm}
+                onChange={(e) =>
+                  setNewUser({ ...newUser, passwordConfirm: e.target.value })
+                }
+                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                  newUser.passwordConfirm &&
+                  newUser.password !== newUser.passwordConfirm
+                    ? "border-red-400 bg-red-50"
+                    : "border-gray-300"
+                }`}
+                placeholder="••••••••"
+                required
+              />
+              {newUser.passwordConfirm &&
+                newUser.password !== newUser.passwordConfirm && (
+                  <p className="text-xs text-red-500 mt-1">
+                    Hesla se neshodují
+                  </p>
+                )}
+              {newUser.passwordConfirm &&
+                newUser.password === newUser.passwordConfirm && (
+                  <p className="text-xs text-green-600 mt-1">
+                    ✓ Hesla se shodují
+                  </p>
+                )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Role *
               </label>
               <select
                 value={newUser.role}
@@ -258,6 +360,7 @@ function AdminUsers() {
                   setNewUser({ ...newUser, role: e.target.value })
                 }
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                required
               >
                 <option value="">-- Vyber roli --</option>
                 {roles.map((role) => (
@@ -268,7 +371,12 @@ function AdminUsers() {
               </select>
             </div>
 
-            {/* Tlačítka */}
+            {formError && (
+              <div className="px-4 py-3 bg-red-50 border border-red-300 rounded-lg text-sm text-red-700">
+                {formError}
+              </div>
+            )}
+
             <div className="flex gap-3 pt-4">
               <button
                 type="submit"
@@ -300,66 +408,220 @@ function AdminUsers() {
           {users.map((user) => (
             <div
               key={user.id}
-              className={`bg-customWhite rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-4 `}
+              className="bg-customWhite rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
             >
-              <div className="flex flex-col sm:flex-row items-center gap-4">
-                {/* ID Badge */}
-                <div className="flex-shrink-0">
-                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-green-100 text-green-800 font-semibold">
-                    {user.id}
-                  </span>
-                </div>
+              {editingId === user.id ? (
+                /* --- Editační formulář --- */
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-semibold text-gray-700">
+                      Editace uživatele #{user.id}
+                    </span>
+                    <button
+                      onClick={cancelEdit}
+                      className="text-gray-400 hover:text-gray-600"
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
 
-                {/* Avatar/Ikona */}
-                <div className="flex-shrink-0">
-                  {user.img_path ? (
-                    <img
-                      className="w-16 h-16 rounded-full object-cover"
-                      src={user.img_path}
-                      alt={user.login}
-                    />
-                  ) : (
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white text-2xl font-bold">
-                      {user.login?.charAt(0).toUpperCase() || "U"}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Login *
+                      </label>
+                      <input
+                        type="text"
+                        value={editUser.login}
+                        onChange={(e) =>
+                          setEditUser({ ...editUser, login: e.target.value })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        value={editUser.email}
+                        onChange={(e) =>
+                          setEditUser({ ...editUser, email: e.target.value })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="novak@email.cz"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Nové heslo{" "}
+                        <span className="text-gray-400">
+                          (nevyplňujte pro zachování)
+                        </span>
+                      </label>
+                      <input
+                        type="password"
+                        value={editUser.password}
+                        onChange={(e) =>
+                          setEditUser({ ...editUser, password: e.target.value })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="••••••••"
+                        minLength={6}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Potvrzení hesla
+                      </label>
+                      <input
+                        type="password"
+                        value={editUser.passwordConfirm}
+                        onChange={(e) =>
+                          setEditUser({
+                            ...editUser,
+                            passwordConfirm: e.target.value,
+                          })
+                        }
+                        className={`w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                          editUser.passwordConfirm &&
+                          editUser.password !== editUser.passwordConfirm
+                            ? "border-red-400 bg-red-50"
+                            : "border-gray-300"
+                        }`}
+                        placeholder="••••••••"
+                      />
+                      {editUser.passwordConfirm &&
+                        editUser.password !== editUser.passwordConfirm && (
+                          <p className="text-xs text-red-500 mt-1">
+                            Hesla se neshodují
+                          </p>
+                        )}
+                      {editUser.passwordConfirm &&
+                        editUser.password === editUser.passwordConfirm && (
+                          <p className="text-xs text-green-600 mt-1">
+                            ✓ Hesla se shodují
+                          </p>
+                        )}
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Role *
+                      </label>
+                      <select
+                        value={editUser.role}
+                        onChange={(e) =>
+                          setEditUser({ ...editUser, role: e.target.value })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      >
+                        <option value="">-- Vyber roli --</option>
+                        {roles.map((role) => (
+                          <option key={role.id} value={role.id}>
+                            {role.role_name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {editError && (
+                    <div className="px-3 py-2 bg-red-50 border border-red-300 rounded-lg text-sm text-red-700">
+                      {editError}
                     </div>
                   )}
-                </div>
 
-                {/* Info */}
-                <div className="flex-1 text-center sm:text-left">
-                  <p className="text-lg font-semibold text-gray-800">
-                    {user.name} {user.surname}
-                  </p>
-                  <div className="flex items-center gap-2 text-sm text-gray-600 mt-1 justify-center sm:justify-start">
-                    <span>login: {user.login}</span>
-                    <Mail size={14} />
-                    <span>email: {user.email}</span>
-                  </div>
-                  <div className="mt-2 flex gap-2 justify-center sm:justify-start">
-                    <span
-                      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(
-                        user.role,
-                      )}`}
+                  <div className="flex gap-2 pt-1">
+                    <button
+                      onClick={() => handleEditSubmit(user.id)}
+                      disabled={editSaving}
+                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <Shield size={12} />
-                      {user.role_name}
+                      <Check size={16} />
+                      {editSaving ? "Ukládám..." : "Uložit změny"}
+                    </button>
+                    <button
+                      onClick={cancelEdit}
+                      className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm transition-colors"
+                    >
+                      Zrušit
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* --- Normální zobrazení --- */
+                <div className="flex flex-col sm:flex-row items-center gap-4">
+                  {/* ID Badge */}
+                  <div className="flex-shrink-0">
+                    <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-green-100 text-green-800 font-semibold">
+                      {user.id}
                     </span>
                   </div>
-                </div>
 
-                {/* Tlačítka */}
-                <div className="flex flex-col sm:flex-row gap-2">
-                  {/* Tlačítko smazat */}
-                  <button
-                    onClick={() => handleDelete(user.id)}
-                    disabled={deleting === user.id}
-                    className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Trash2 size={18} />
-                    <span>{deleting === user.id ? "Mažu..." : "Smazat"}</span>
-                  </button>
+                  {/* Avatar */}
+                  <div className="flex-shrink-0">
+                    {user.img_path ? (
+                      <img
+                        className="w-16 h-16 rounded-full object-cover"
+                        src={user.img_path}
+                        alt={user.login}
+                      />
+                    ) : (
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white text-2xl font-bold">
+                        {user.login?.charAt(0).toUpperCase() || "U"}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Info */}
+                  <div className="flex-1 text-center sm:text-left">
+                    <p className="text-lg font-semibold text-gray-800">
+                      {user.name} {user.surname}
+                    </p>
+                    <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 mt-1 justify-center sm:justify-start">
+                      <span>login: {user.login}</span>
+                      {user.email && (
+                        <>
+                          <Mail size={14} />
+                          <span>{user.email}</span>
+                        </>
+                      )}
+                    </div>
+                    <div className="mt-2 flex gap-2 justify-center sm:justify-start">
+                      <span
+                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}
+                      >
+                        <Shield size={12} />
+                        {user.role_name}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Tlačítka */}
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <button
+                      onClick={() => startEdit(user)}
+                      className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200"
+                    >
+                      <Pencil size={18} />
+                      <span>Editovat</span>
+                    </button>
+                    <button
+                      onClick={() => handleDelete(user.id)}
+                      disabled={deleting === user.id}
+                      className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Trash2 size={18} />
+                      <span>{deleting === user.id ? "Mažu..." : "Smazat"}</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           ))}
         </div>

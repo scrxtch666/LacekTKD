@@ -1,6 +1,7 @@
 const app = require("express");
 const router = app.Router();
 const db = require("../../Libs/db");
+const bcrypt = require("bcryptjs");
 
 router.get("/", async (req, res) => {
   db.query(
@@ -73,8 +74,9 @@ router.delete("/:id", (req, res) => {
 });
 
 // POST - Přidání nového uživatele
-router.post("/", (req, res) => {
-  const { login, password, emial, phone, fighter_id, role_id } = req.body;
+router.post("/", async (req, res) => {
+  const { login, password, email, role_id } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   // Validace povinných polí
   if (!login || !password || !role_id) {
@@ -84,16 +86,9 @@ router.post("/", (req, res) => {
   }
 
   db.query(
-    `INSERT INTO users (login, password, emial, phone, fighter_id, role_id) 
-     VALUES (?, ?, ?, ?, ?, ?)`,
-    [
-      login,
-      password,
-      emial || null,
-      phone || null,
-      fighter_id || null,
-      role_id,
-    ],
+    `INSERT INTO users (login, password, email, role_id) 
+     VALUES (?, ?, ?, ?)`,
+    [login, hashedPassword, email, role_id],
     (err, result) => {
       if (err) {
         console.error("Chyba při ukládání uživatele:", err);
@@ -109,5 +104,63 @@ router.post("/", (req, res) => {
       });
     },
   );
+});
+
+// PUT - Editace uživatele
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { login, password, email, role_id } = req.body;
+
+  // Validace povinných polí
+  if (!login || !role_id) {
+    return res
+      .status(400)
+      .json({ error: "Chybí povinná pole (login, role_id)" });
+  }
+
+  try {
+    // Pokud bylo zadáno nové heslo, zahashujeme ho
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      db.query(
+        `UPDATE users SET login = ?, password = ?, email = ?, role_id = ? WHERE id = ?`,
+        [login, hashedPassword, email || null, role_id, id],
+        (err, result) => {
+          if (err) {
+            console.error("Chyba při editaci uživatele:", err);
+            return res
+              .status(500)
+              .json({ error: "Chyba při ukládání do databáze" });
+          }
+          if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Uživatel nenalezen" });
+          }
+          res.json({ success: true, message: "Uživatel byl úspěšně upraven" });
+        },
+      );
+    } else {
+      // Bez změny hesla
+      db.query(
+        `UPDATE users SET login = ?, email = ?, role_id = ? WHERE id = ?`,
+        [login, email || null, role_id, id],
+        (err, result) => {
+          if (err) {
+            console.error("Chyba při editaci uživatele:", err);
+            return res
+              .status(500)
+              .json({ error: "Chyba při ukládání do databáze" });
+          }
+          if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Uživatel nenalezen" });
+          }
+          res.json({ success: true, message: "Uživatel byl úspěšně upraven" });
+        },
+      );
+    }
+  } catch (error) {
+    console.error("Chyba:", error);
+    res.status(500).json({ error: "Interní chyba serveru" });
+  }
 });
 module.exports = router;
