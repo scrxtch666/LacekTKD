@@ -19,6 +19,7 @@ function SideBar() {
     { name: "Banner", path: "/admin/banner", icon: Image },
     { name: "Newsletter", path: "/admin/newsletter", icon: Mailbox },
     { name: "Uživatelé", path: "/admin/users", icon: Users },
+    { name: "Sponsoři", path: "/admin/sponsors", icon: Image },
   ];
 
   return (

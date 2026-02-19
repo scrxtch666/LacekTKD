@@ -20,11 +20,9 @@ const CoachCard = ({ ocoach }) => {
           {ocoach.name} {ocoach.surname}
         </h3>
         <p className="text-customGreen font-semibold text-sm uppercase tracking-wider">
-          {ocoach.belts_id}
+          {ocoach.cup}
         </p>
-        <p className="text-xs text-gray-400 mt-1 italic">
-          hlavní trenér, II. trenérská třída
-        </p>
+        <p className="text-xs text-gray-400 mt-1 italic">{ocoach.role_name}</p>
       </div>
 
       {/* Kontaktní údaje jako interaktivní prvky */}
@@ -34,7 +32,11 @@ const CoachCard = ({ ocoach }) => {
           className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors group"
         >
           <div className="bg-customGreen p-2 rounded-full group-hover:scale-110 transition-transform">
-             <img src="/assets/Icons/emailWW.png" alt="Email" className="w-3 h-3 invert" />
+            <img
+              src="/assets/Icons/emailWW.png"
+              alt="Email"
+              className="w-3 h-3 invert"
+            />
           </div>
           <span className="text-sm text-gray-600 truncate">{ocoach.email}</span>
         </a>
@@ -44,7 +46,11 @@ const CoachCard = ({ ocoach }) => {
           className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors group"
         >
           <div className="bg-customGreen p-2 rounded-full group-hover:scale-110 transition-transform">
-             <img src="/assets/Icons/phone.png" alt="Phone" className="w-3 h-3 invert" />
+            <img
+              src="/assets/Icons/phone.png"
+              alt="Phone"
+              className="w-3 h-3 invert"
+            />
           </div>
           <span className="text-sm text-gray-600">+420 {ocoach.phone}</span>
         </a>
@@ -74,13 +80,15 @@ function MainContact() {
     return (
       <div className="flex justify-center items-center min-h-[200px]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-customGreen"></div>
-        <span className="ml-3 text-gray-500 font-medium">Načítám trenéry...</span>
+        <span className="ml-3 text-gray-500 font-medium">
+          Načítám trenéry...
+        </span>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {coaches.map((coach) => (
           <CoachCard key={coach.id || coach.email} ocoach={coach} />

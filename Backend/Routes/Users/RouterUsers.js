@@ -46,8 +46,7 @@ router.get('/:eventId', async(req, res) => {
 
 router.get("/trainer", (req, res) => {
   db.query(
-    `SELECT users.id, users.email, users.phone, fighters.name, fighters.surname, fighters.id, fighters.belts_id, fighters.img_path
-     FROM users JOIN fighters ON fighters.id = users.fighter_id WHERE users.role_id LIKE "2";`,
+    `SELECT users.id, users.email, users.phone, fighters.name, fighters.surname, fighters.id, belts.cup, role.role_name, fighters.img_path FROM users JOIN fighters ON fighters.id = users.fighter_id JOIN role ON role.id = users.role_id JOIN belts ON belts.id = fighters.belts_id WHERE role.role_name LIKE '%tr%'`,
     // SELECT users.id, users.email, users.phone, fighters.name, fighters.surname, fighters.id, fighters.belts_id, fighters.img_path
     // FROM users JOIN fighters ON fighters.id = users.fighter_id JOIN belts ON belts.belt_name = fighters.belts_id WHERE users.role_id LIKE "2";
     (err, results) => {
