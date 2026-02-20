@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { Phone, Mail } from "lucide-react";
+
 
 // Samostatná komponenta pro kartu trenéra pro lepší čitelnost
 const CoachCard = ({ ocoach }) => {
@@ -32,11 +34,7 @@ const CoachCard = ({ ocoach }) => {
           className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors group"
         >
           <div className="bg-customGreen p-2 rounded-full group-hover:scale-110 transition-transform">
-            <img
-              src="/assets/Icons/emailWW.png"
-              alt="Email"
-              className="w-3 h-3 invert"
-            />
+             <Mail size={11} />
           </div>
           <span className="text-sm text-gray-600 truncate">{ocoach.email}</span>
         </a>
@@ -46,11 +44,7 @@ const CoachCard = ({ ocoach }) => {
           className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors group"
         >
           <div className="bg-customGreen p-2 rounded-full group-hover:scale-110 transition-transform">
-            <img
-              src="/assets/Icons/phone.png"
-              alt="Phone"
-              className="w-3 h-3 invert"
-            />
+             <Phone size={11} />
           </div>
           <span className="text-sm text-gray-600">+420 {ocoach.phone}</span>
         </a>

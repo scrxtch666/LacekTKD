@@ -8,13 +8,12 @@ const newsRouter = require("./News/RouterNews");
 const usersRouter = require("./Users/RouterUsers");
 const sponsorsRouter = require("./Sponsors/RouterSponsors");
 const bannerRouter = require("./Banner/RouterBanner");
-const roleRouter = require("./Roles/RouterRoles")
-const categoryRouter = require("./Category/RouterCategory")
-
-
-
+const roleRouter = require("./Roles/RouterRoles");
+const categoryRouter = require("./Category/RouterCategory");
+const trainingRouter = require("./Trainings/RouterTrainings");
 
 // Router
+
 router.use("/events", eventRouter);
 router.use("/tournaments", tournamentRouter);
 router.use("/belts", beltRouter);
@@ -24,25 +23,25 @@ router.use("/sponsors", sponsorsRouter);
 router.use("/news", newsRouter);
 router.use("/banner", bannerRouter);
 router.use("/roles", roleRouter);
-router.use("/category", categoryRouter)
-
+router.use("/category", categoryRouter);
+router.use("/trainings", trainingRouter);
 
 // Konec routeru
 
 const verifyToken = (req, res, next) => {
-    const token = req.header('Authorization')?.split(' ')[1];
-    if (!token) return res.status(403).json({ error: 'Přístup zamítnut' });
+  const token = req.header("Authorization")?.split(" ")[1];
+  if (!token) return res.status(403).json({ error: "Přístup zamítnut" });
 
-    jwt.verify(token, SECRET_KEY, (err, user) => {
-        if (err) return res.status(403).json({ error: 'Neplatný token' });
-        req.user = user;
-        next();
-    });
+  jwt.verify(token, SECRET_KEY, (err, user) => {
+    if (err) return res.status(403).json({ error: "Neplatný token" });
+    req.user = user;
+    next();
+  });
 };
 
 // Chráněná cesta (přístupná jen pro přihlášené uživatele)
-router.get('/protected', verifyToken, (req, res) => {
-    res.json({ message: 'Toto je chráněná data', user: req.user });
+router.get("/protected", verifyToken, (req, res) => {
+  res.json({ message: "Toto je chráněná data", user: req.user });
 });
 
 module.exports = router;
