@@ -29,6 +29,7 @@ import AdminBanner from "./pages/_Admin/AdminBanner";
 import AdminAktuality from "./pages/_Admin/AdminAktuality";
 import AdminUsers from "./pages/_Admin/AdminUsers";
 import AdminSponsors from "./pages/_Admin/AdminSponsors";
+import AdminZavodnici from "./pages/_Admin/AdminZavodnici";
 
 function Layout() {
   const location = useLocation();
@@ -53,6 +54,7 @@ function Layout() {
               <Route path="/admin/aktuality" element={<AdminAktuality />} />
               <Route path="/admin/users" element={<AdminUsers />} />
               <Route path="/admin/sponsors" element={<AdminSponsors />} />
+              <Route path="/admin/zavodnici" element={<AdminZavodnici />} />
             </Routes>
           </main>
         </div>

@@ -4,12 +4,12 @@ const db = require("../../Libs/db");
 
 router.get("/", async (req, res) => {
   db.query(
-    `SELECT * FROM belts`,
+    `SELECT * FROM category`,
     (err, results) => {
       if (err)
         return res
           .status(500)
-          .json({ error: "Chyba při načítání pásků" });
+          .json({ error: "Chyba při načítání kategorií" });
       res.json(results);
     },
   );

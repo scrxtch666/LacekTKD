@@ -34,14 +34,7 @@ function Admin() {
         <div className="flex gap-5 w-full">
           <Stats />
           <Add />
-        </div>
-
-        <div>
-          {naborVisible && <Nabor />}
-          <button onClick={handleClick}>Zobrazit nabor</button>
-        </div>
-
-        <Table />
+        </div>  
       </div>
     </>
   );
