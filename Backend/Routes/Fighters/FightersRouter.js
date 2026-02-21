@@ -39,9 +39,14 @@ router.get("/", async (req, res) => {
         fighters.birth, fighters.best, fighters.legend, fighters.active,
         fighters.actual_weight_category, fighters.belts_id, fighters.category_id,
         TIMESTAMPDIFF(YEAR, fighters.birth, CURDATE()) AS age,
-        belts.cup, belts.img_path AS belt_path
+        belts.cup, belts.img_path AS belt_path,
+        users.id    AS user_id,
+        users.login AS user_login,
+        users.email AS user_email,
+        users.phone AS user_phone
      FROM fighters
-     JOIN belts ON fighters.belts_id = belts.id`,
+     JOIN belts ON fighters.belts_id = belts.id
+     LEFT JOIN users ON users.fighter_id = fighters.id`,
     (err, results) => {
       if (err) return res.status(500).json({ error: "Chyba pri nacitani zavodnikuu" });
       res.json(results);

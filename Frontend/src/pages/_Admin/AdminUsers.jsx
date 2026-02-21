@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Trash2, UserPlus, X, Mail, Shield, Pencil, Check } from "lucide-react";
+import { Trash2, UserPlus, X, Mail, Shield, Pencil, Check, ShieldCheck } from "lucide-react";
 
 function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(null);
   const [roles, setRoles] = useState([]);
+  const [fighters, setFighters] = useState([]);
 
   // Přidání uživatele
   const [showAddForm, setShowAddForm] = useState(false);
@@ -16,6 +17,7 @@ function AdminUsers() {
     password: "",
     passwordConfirm: "",
     role: "",
+    fighter_id: "",
   });
   const [formError, setFormError] = useState("");
 
@@ -28,17 +30,17 @@ function AdminUsers() {
   useEffect(() => {
     fetchUsers();
     fetchRoles();
+    fetchFighters();
   }, []);
 
   const fetchUsers = () => {
     fetch("http://localhost:3000/api/users")
-      .then((response) => response.json())
+      .then((res) => res.json())
       .then((data) => {
         setUsers(Array.isArray(data) ? data : []);
         setLoading(false);
       })
-      .catch((error) => {
-        console.error("Chyba při načítání uživatelů:", error);
+      .catch(() => {
         setUsers([]);
         setLoading(false);
       });
@@ -51,22 +53,23 @@ function AdminUsers() {
       .catch((err) => console.error("Chyba při načítání rolí:", err));
   };
 
+  const fetchFighters = () => {
+    fetch("http://localhost:3000/api/fighters")
+      .then((res) => res.json())
+      .then((data) => setFighters(Array.isArray(data) ? data : []))
+      .catch((err) => console.error("Chyba při načítání závodníků:", err));
+  };
+
   const handleDelete = async (id) => {
     if (!confirm("Opravdu chcete smazat tohoto uživatele?")) return;
-
     setDeleting(id);
     try {
       const response = await fetch(`http://localhost:3000/api/users/${id}`, {
         method: "DELETE",
       });
-
-      if (response.ok) {
-        setUsers(users.filter((user) => user.id !== id));
-      } else {
-        alert("Nepodařilo se smazat uživatele");
-      }
-    } catch (error) {
-      console.error("Chyba při mazání:", error);
+      if (response.ok) setUsers(users.filter((u) => u.id !== id));
+      else alert("Nepodařilo se smazat uživatele");
+    } catch {
       alert("Chyba při mazání uživatele");
     } finally {
       setDeleting(null);
@@ -82,6 +85,7 @@ function AdminUsers() {
       password: "",
       passwordConfirm: "",
       role: user.role_id || "",
+      fighter_id: user.fighter_id || "",
     });
     setEditError("");
   };
@@ -94,37 +98,31 @@ function AdminUsers() {
 
   const handleEditSubmit = async (id) => {
     setEditError("");
-
     if (!editUser.login) {
       setEditError("Login nesmí být prázdný.");
       return;
     }
-
     if (editUser.password && editUser.password.length < 6) {
       setEditError("Heslo musí mít minimálně 6 znaků.");
       return;
     }
-
     if (editUser.password && editUser.password !== editUser.passwordConfirm) {
       setEditError("Hesla se neshodují.");
       return;
     }
-
     if (!editUser.role) {
       setEditError("Vyberte prosím roli.");
       return;
     }
 
     setEditSaving(true);
-
     const payload = {
       login: editUser.login,
-      emial: editUser.email,
+      email: editUser.email,
       role_id: editUser.role,
+      fighter_id: editUser.fighter_id || null,
     };
-    if (editUser.password) {
-      payload.password = editUser.password;
-    }
+    if (editUser.password) payload.password = editUser.password;
 
     try {
       const response = await fetch(`http://localhost:3000/api/users/${id}`, {
@@ -132,7 +130,6 @@ function AdminUsers() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-
       if (response.ok) {
         cancelEdit();
         fetchUsers();
@@ -140,8 +137,7 @@ function AdminUsers() {
         const error = await response.json();
         setEditError("Chyba: " + (error.error || "Nepodařilo se uložit změny"));
       }
-    } catch (error) {
-      console.error("Chyba při ukládání:", error);
+    } catch {
       setEditError("Chyba při ukládání uživatele.");
     } finally {
       setEditSaving(false);
@@ -152,29 +148,24 @@ function AdminUsers() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError("");
-
     if (!newUser.login || !newUser.password || !newUser.passwordConfirm) {
       setFormError("Vyplňte prosím všechna povinná pole.");
       return;
     }
-
     if (newUser.password.length < 6) {
       setFormError("Heslo musí mít minimálně 6 znaků.");
       return;
     }
-
     if (newUser.password !== newUser.passwordConfirm) {
       setFormError("Hesla se neshodují.");
       return;
     }
-
     if (!newUser.role) {
       setFormError("Vyberte prosím roli.");
       return;
     }
 
     setSaving(true);
-
     try {
       const response = await fetch("http://localhost:3000/api/users", {
         method: "POST",
@@ -182,11 +173,11 @@ function AdminUsers() {
         body: JSON.stringify({
           login: newUser.login,
           password: newUser.password,
-          emial: newUser.email,
+          email: newUser.email,
           role_id: newUser.role,
+          fighter_id: newUser.fighter_id || null,
         }),
       });
-
       if (response.ok) {
         alert("Uživatel byl úspěšně přidán!");
         cancelAdd();
@@ -197,8 +188,7 @@ function AdminUsers() {
           "Chyba: " + (error.error || "Nepodařilo se přidat uživatele"),
         );
       }
-    } catch (error) {
-      console.error("Chyba při ukládání:", error);
+    } catch {
       setFormError("Chyba při ukládání uživatele.");
     } finally {
       setSaving(false);
@@ -214,6 +204,7 @@ function AdminUsers() {
       password: "",
       passwordConfirm: "",
       role: "",
+      fighter_id: "",
     });
   };
 
@@ -228,6 +219,12 @@ function AdminUsers() {
     }
   };
 
+  // Pomocná funkce – najde fightera přiřazeného k userovi
+  const getFighterLabel = (fighter_id) => {
+    const f = fighters.find((f) => f.id === fighter_id);
+    return f ? `${f.name} ${f.surname}` : null;
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -236,11 +233,31 @@ function AdminUsers() {
     );
   }
 
+  // Fighter select – sdílený pro add i edit
+  const FighterSelect = ({ value, onChange }) => (
+    <div>
+      <label className="block text-xs font-medium text-gray-600 mb-1">
+        Přiřazený závodník <span className="text-gray-400">(nepovinné)</span>
+      </label>
+      <select
+        value={value}
+        onChange={onChange}
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+      >
+        <option value="">-- Bez přiřazení --</option>
+        {fighters.map((f) => (
+          <option key={f.id} value={f.id}>
+            {f.name} {f.surname}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div className="devider">Správa uživatelů</div>
-
         {!showAddForm && (
           <button
             onClick={() => setShowAddForm(true)}
@@ -268,107 +285,120 @@ function AdminUsers() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Login *
-              </label>
-              <input
-                type="text"
-                value={newUser.login}
-                onChange={(e) =>
-                  setNewUser({ ...newUser, login: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                placeholder="novak30"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                value={newUser.email}
-                onChange={(e) =>
-                  setNewUser({ ...newUser, email: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                placeholder="novak@email.cz"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Heslo *
-              </label>
-              <input
-                type="password"
-                value={newUser.password}
-                onChange={(e) =>
-                  setNewUser({ ...newUser, password: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                placeholder="••••••••"
-                required
-                minLength={6}
-              />
-              <p className="text-xs text-gray-500 mt-1">Minimálně 6 znaků</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Potvrzení hesla *
-              </label>
-              <input
-                type="password"
-                value={newUser.passwordConfirm}
-                onChange={(e) =>
-                  setNewUser({ ...newUser, passwordConfirm: e.target.value })
-                }
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                  newUser.passwordConfirm &&
-                  newUser.password !== newUser.passwordConfirm
-                    ? "border-red-400 bg-red-50"
-                    : "border-gray-300"
-                }`}
-                placeholder="••••••••"
-                required
-              />
-              {newUser.passwordConfirm &&
-                newUser.password !== newUser.passwordConfirm && (
-                  <p className="text-xs text-red-500 mt-1">
-                    Hesla se neshodují
-                  </p>
-                )}
-              {newUser.passwordConfirm &&
-                newUser.password === newUser.passwordConfirm && (
-                  <p className="text-xs text-green-600 mt-1">
-                    ✓ Hesla se shodují
-                  </p>
-                )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Role *
-              </label>
-              <select
-                value={newUser.role}
-                onChange={(e) =>
-                  setNewUser({ ...newUser, role: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                required
-              >
-                <option value="">-- Vyber roli --</option>
-                {roles.map((role) => (
-                  <option key={role.id} value={role.id}>
-                    {role.role_name}
-                  </option>
-                ))}
-              </select>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Login *
+                </label>
+                <input
+                  type="text"
+                  value={newUser.login}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, login: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="novak30"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={newUser.email}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, email: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="novak@email.cz"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Heslo *
+                </label>
+                <input
+                  type="password"
+                  value={newUser.password}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, password: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="••••••••"
+                  required
+                  minLength={6}
+                />
+                <p className="text-xs text-gray-500 mt-1">Minimálně 6 znaků</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Potvrzení hesla *
+                </label>
+                <input
+                  type="password"
+                  value={newUser.passwordConfirm}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, passwordConfirm: e.target.value })
+                  }
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${newUser.passwordConfirm && newUser.password !== newUser.passwordConfirm ? "border-red-400 bg-red-50" : "border-gray-300"}`}
+                  placeholder="••••••••"
+                  required
+                />
+                {newUser.passwordConfirm &&
+                  newUser.password !== newUser.passwordConfirm && (
+                    <p className="text-xs text-red-500 mt-1">
+                      Hesla se neshodují
+                    </p>
+                  )}
+                {newUser.passwordConfirm &&
+                  newUser.password === newUser.passwordConfirm && (
+                    <p className="text-xs text-green-600 mt-1">
+                      ✓ Hesla se shodují
+                    </p>
+                  )}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Role *
+                </label>
+                <select
+                  value={newUser.role}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, role: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  required
+                >
+                  <option value="">-- Vyber roli --</option>
+                  {roles.map((role) => (
+                    <option key={role.id} value={role.id}>
+                      {role.role_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Závodník{" "}
+                  <span className="text-gray-400 font-normal">(nepovinné)</span>
+                </label>
+                <select
+                  value={newUser.fighter_id}
+                  onChange={(e) =>
+                    setNewUser({ ...newUser, fighter_id: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                >
+                  <option value="">-- Bez přiřazení --</option>
+                  {fighters.map((f) => (
+                    <option key={f.id} value={f.id}>
+                      {f.name} {f.surname}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             {formError && (
@@ -439,7 +469,6 @@ function AdminUsers() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
-
                     <div>
                       <label className="block text-xs font-medium text-gray-600 mb-1">
                         Email
@@ -454,7 +483,6 @@ function AdminUsers() {
                         placeholder="novak@email.cz"
                       />
                     </div>
-
                     <div>
                       <label className="block text-xs font-medium text-gray-600 mb-1">
                         Nové heslo{" "}
@@ -473,7 +501,6 @@ function AdminUsers() {
                         minLength={6}
                       />
                     </div>
-
                     <div>
                       <label className="block text-xs font-medium text-gray-600 mb-1">
                         Potvrzení hesla
@@ -487,12 +514,7 @@ function AdminUsers() {
                             passwordConfirm: e.target.value,
                           })
                         }
-                        className={`w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                          editUser.passwordConfirm &&
-                          editUser.password !== editUser.passwordConfirm
-                            ? "border-red-400 bg-red-50"
-                            : "border-gray-300"
-                        }`}
+                        className={`w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ${editUser.passwordConfirm && editUser.password !== editUser.passwordConfirm ? "border-red-400 bg-red-50" : "border-gray-300"}`}
                         placeholder="••••••••"
                       />
                       {editUser.passwordConfirm &&
@@ -508,7 +530,6 @@ function AdminUsers() {
                           </p>
                         )}
                     </div>
-
                     <div>
                       <label className="block text-xs font-medium text-gray-600 mb-1">
                         Role *
@@ -524,6 +545,30 @@ function AdminUsers() {
                         {roles.map((role) => (
                           <option key={role.id} value={role.id}>
                             {role.role_name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    {/* --- FIGHTER SELECT --- */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Závodník{" "}
+                        <span className="text-gray-400">(nepovinné)</span>
+                      </label>
+                      <select
+                        value={editUser.fighter_id}
+                        onChange={(e) =>
+                          setEditUser({
+                            ...editUser,
+                            fighter_id: e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      >
+                        <option value="">-- Bez přiřazení --</option>
+                        {fighters.map((f) => (
+                          <option key={f.id} value={f.id}>
+                            {f.name} {f.surname}
                           </option>
                         ))}
                       </select>
@@ -556,14 +601,11 @@ function AdminUsers() {
               ) : (
                 /* --- Normální zobrazení --- */
                 <div className="flex flex-col sm:flex-row items-center gap-4">
-                  {/* ID Badge */}
                   <div className="flex-shrink-0">
                     <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-green-100 text-green-800 font-semibold">
                       {user.id}
                     </span>
                   </div>
-
-                  {/* Avatar */}
                   <div className="flex-shrink-0">
                     {user.img_path ? (
                       <img
@@ -577,8 +619,6 @@ function AdminUsers() {
                       </div>
                     )}
                   </div>
-
-                  {/* Info */}
                   <div className="flex-1 text-center sm:text-left">
                     <p className="text-lg font-semibold text-gray-800">
                       {user.name} {user.surname}
@@ -592,17 +632,22 @@ function AdminUsers() {
                         </>
                       )}
                     </div>
-                    <div className="mt-2 flex gap-2 justify-center sm:justify-start">
+                    <div className="mt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
                       <span
                         className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}
                       >
                         <Shield size={12} />
                         {user.role_name}
                       </span>
+                      {/* Badge závodníka */}
+                      {user.fighter_id && (
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          <ShieldCheck size={11} />
+                          Přiřazený účet
+                        </span>
+                      )}
                     </div>
                   </div>
-
-                  {/* Tlačítka */}
                   <div className="flex flex-col sm:flex-row gap-2">
                     <button
                       onClick={() => startEdit(user)}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Trash2, UserPlus, X, Pencil, Check, Star, Eye, EyeOff, Upload, Award } from "lucide-react";
+import { Trash2, UserPlus, X, Pencil, Check, Star, Eye, EyeOff, Upload, UserX, User, Trophy } from "lucide-react";
 
 function AdminZavodnici() {
   const [fighters, setFighters] = useState([]);
@@ -534,11 +534,29 @@ function AdminZavodnici() {
                       )}
                       {!!fighter.legend && (
                         <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                         <Award size={11} />
+                          <Trophy size={11} /> 
                           Legenda
                         </span>
                       )}
+                      {fighter.user_login ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            <User size={11} /> 
+                           {fighter.user_login}
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                          <UserX size={11} /> 
+                          Nepřiřazený účet
+                        </span>
+                      )}
                     </div>
+
+                    {fighter.user_login && (fighter.user_email || fighter.user_phone) && (
+                      <div className="flex flex-wrap gap-3 mt-1 justify-center sm:justify-start text-xs text-gray-500">
+                        {fighter.user_email && <span>✉ {fighter.user_email}</span>}
+                        {fighter.user_phone && <span>📞 {fighter.user_phone}</span>}
+                      </div>
+                    )}
                   </div>
 
                   {/* Tlačítka */}
