@@ -4,10 +4,7 @@ import Add from "../pages/_Admin/Add";
 import Alert from "./_test/Alert";
 import Table from "../pages/_Admin/Table";
 import { useState } from "react";
-import Nabor from "./Nabor";
-import AddFighter from "../pages/AddFighter/AddFighter";
-import NewFighter from "../pages/AddFighter/NewFighter";
-import Options from "../pages/AddFighter/Options";
+
 function Admin() {
   const [naborVisible, setNaborVisible] = useState(true);
 

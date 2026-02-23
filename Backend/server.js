@@ -79,7 +79,7 @@ app.post("/login", (req, res) => {
   const { login, password } = req.body;
 
   db.query(
-    "SELECT * FROM users WHERE login = ?",
+    "SELECT users.*, role.role_name FROM users LEFT JOIN role ON users.role_id = role.id WHERE login = ?",
     [login],
     async (err, results) => {
       if (err) return res.status(500).json({ error: "Chyba serveru" });
@@ -93,7 +93,7 @@ app.post("/login", (req, res) => {
       if (!isMatch) return res.status(401).json({ error: "Nesprávné heslo" });
 
       // Vygenerování JWT tokenu
-      const token = jwt.sign({ id: user.id, login: user.login }, SECRET_KEY, {
+      const token = jwt.sign({ id: user.id, login: user.login, role: user.role_name }, SECRET_KEY, {
         expiresIn: "1h",
       });
 
@@ -111,7 +111,10 @@ app.post("/login", (req, res) => {
 // Endpoint pro získání informací o aktuálním uživateli
 app.get("/api/user/me", verifyToken, (req, res) => {
   db.query(
-    "SELECT id, login, email FROM users WHERE id = ?",
+    `SELECT users.id, users.login, users.email, role.role_name
+     FROM users
+     LEFT JOIN role ON users.role_id = role.id
+     WHERE users.id = ?`,
     [req.user.id],
     (err, results) => {
       if (err) return res.status(500).json({ error: "Chyba serveru" });
@@ -123,8 +126,9 @@ app.get("/api/user/me", verifyToken, (req, res) => {
         id: user.id,
         login: user.login,
         email: user.email,
+        role: user.role_name, // ✅ přidej toto
       });
-    },
+    }
   );
 });
 

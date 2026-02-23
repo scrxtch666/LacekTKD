@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Trash2, UserPlus, X, Mail, Shield, Pencil, Check, ShieldCheck } from "lucide-react";
+import {
+  Trash2,
+  UserPlus,
+  X,
+  Mail,
+  Shield,
+  Pencil,
+  Check,
+  ShieldCheck,
+} from "lucide-react";
 
 function AdminUsers() {
   const [users, setUsers] = useState([]);
@@ -614,7 +623,7 @@ function AdminUsers() {
                         alt={user.login}
                       />
                     ) : (
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white text-2xl font-bold">
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br bg-customGreen flex items-center justify-center text-customWhite text-2xl font-bold">
                         {user.login?.charAt(0).toUpperCase() || "U"}
                       </div>
                     )}
@@ -641,7 +650,7 @@ function AdminUsers() {
                       </span>
                       {/* Badge závodníka */}
                       {user.fighter_id && (
-                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <span className="inline-flex items-center gap-1 p2-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                           <ShieldCheck size={11} />
                           Přiřazený účet
                         </span>
