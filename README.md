@@ -126,3 +126,21 @@ rounded-2xl
 
 Na Linuxu
 - http://localhost:8000/phpmyadmin/index.php
+
+
+-- 1. Vytvoř tabulku event_photos pokud neexistuje
+CREATE TABLE IF NOT EXISTS `event_photos` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `event_id` int(11) NOT NULL,
+  `img_path` varchar(255) NOT NULL,
+  `sort_order` int(11) DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `event_id` (`event_id`),
+  CONSTRAINT `event_photos_ibfk_1` 
+    FOREIGN KEY (`event_id`) REFERENCES `event` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 2. Zkontroluj zda tabulka existuje
+SHOW TABLES LIKE 'event_photos';
+
+Udělat to aby se aktualita nechala vytvořit z proběhlé akce, přenesou se závodníci, vyřešit fotografie, první - úvodní fotografie

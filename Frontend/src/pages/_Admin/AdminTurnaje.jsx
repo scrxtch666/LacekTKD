@@ -40,7 +40,7 @@ const TournamentForm = ({
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Místo konání
+          Místo konání *
         </label>
         <input
           type="text"
@@ -52,7 +52,7 @@ const TournamentForm = ({
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Cena (Kč)
+          Cena (Kč) *
         </label>
         <input
           type="number"
@@ -64,7 +64,7 @@ const TournamentForm = ({
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Typ
+          Typ *
         </label>
         <select
           value={data.type_id}
@@ -81,7 +81,7 @@ const TournamentForm = ({
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Datum začátku
+          Datum začátku *
         </label>
         <input
           type="date"
@@ -103,7 +103,7 @@ const TournamentForm = ({
       </div>
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Uzávěrka přihlášek
+          Uzávěrka přihlášek *
         </label>
         <input
           type="date"
@@ -235,6 +235,33 @@ function AdminTurnaje() {
         setLoading(false);
       });
   };
+  const validateForm = (data, setError) => {
+    if (!data.name) {
+      setError("Vyplňte prosím název turnaje.");
+      return false;
+    }
+    if (!data.location) {
+      setError("Vyplňte prosím místo konání.");
+      return false;
+    }
+    if (!data.price) {
+      setError("Vyplňte prosím cenu.");
+      return false;
+    }
+    if (!data.type_id) {
+      setError("Vyberte prosím typ akce.");
+      return false;
+    }
+    if (!data.start_date) {
+      setError("Vyplňte prosím datum začátku.");
+      return false;
+    }
+    if (!data.registrable_date) {
+      setError("Vyplňte prosím uzávěrku přihlášek.");
+      return false;
+    }
+    return true;
+  };
 
   const fetchTypes = () => {
     fetch("http://localhost:3000/api/tournaments/types")
@@ -274,10 +301,7 @@ function AdminTurnaje() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError("");
-    if (!newTournament.name) {
-      setFormError("Vyplňte prosím název turnaje.");
-      return;
-    }
+    if (!validateForm(newTournament, setFormError)) return;
 
     setSaving(true);
     const formData = new FormData();
@@ -359,10 +383,7 @@ function AdminTurnaje() {
 
   const handleEditSubmit = async (id) => {
     setEditError("");
-    if (!editTournament.name) {
-      setEditError("Název nesmí být prázdný.");
-      return;
-    }
+    if (!validateForm(editTournament, setEditError)) return;
 
     setEditSaving(true);
     const formData = new FormData();

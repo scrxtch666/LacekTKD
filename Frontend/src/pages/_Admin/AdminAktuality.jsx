@@ -1,183 +1,456 @@
 import React, { useState, useEffect } from "react";
-import { Trash2, Image as ImageIcon, Plus, Upload, X, Eye, EyeOff } from "lucide-react";
+import {
+  Trash2,
+  Plus,
+  X,
+  Pencil,
+  Upload,
+  Newspaper,
+  Calendar,
+  Eye,
+  EyeOff,
+  Images,
+  ImagePlus,
+} from "lucide-react";
 
+const API = "http://localhost:3000";
+
+// ─── FORMULÁŘ – mimo AdminAktuality aby nedocházelo k remount při psaní ───
+const EventForm = ({
+  data,
+  setData,
+  onSubmit,
+  onCancel,
+  isSaving,
+  error,
+  onPhotosChange,
+  newPhotoPreviews,
+  isEdit,
+}) => (
+  <form onSubmit={onSubmit} className="space-y-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="sm:col-span-2">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Název *
+        </label>
+        <input
+          type="text"
+          value={data.title}
+          onChange={(e) => setData({ ...data, title: e.target.value })}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          placeholder="Název aktuality"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Datum *
+        </label>
+        <input
+          type="date"
+          value={data.date_start}
+          onChange={(e) => setData({ ...data, date_start: e.target.value })}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Status
+        </label>
+        <select
+          value={data.status}
+          onChange={(e) => setData({ ...data, status: e.target.value })}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+        >
+          <option value="Availible">Dostupná</option>
+          <option value="Hidden">Skrytá</option>
+        </select>
+      </div>
+      <div className="sm:col-span-2">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Text aktuality *
+        </label>
+        <textarea
+          value={data.body}
+          rows={5}
+          onChange={(e) => setData({ ...data, body: e.target.value })}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+          placeholder="Text aktuality..."
+        />
+      </div>
+    </div>
+
+    {/* Upload fotek */}
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Fotky{" "}
+        {isEdit && (
+          <span className="text-gray-400 font-normal">
+            (přidá k stávajícím)
+          </span>
+        )}
+        {!isEdit && (
+          <span className="text-gray-400 font-normal">(nepovinné, max 10)</span>
+        )}
+      </label>
+      <label className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer transition-colors text-sm">
+        <ImagePlus size={16} />
+        <span>Vybrat fotky</span>
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={onPhotosChange}
+          className="hidden"
+        />
+      </label>
+
+      {/* Náhled nově vybraných fotek */}
+      {newPhotoPreviews.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {newPhotoPreviews.map((src, i) => (
+            <img
+              key={i}
+              src={src}
+              alt=""
+              className="h-20 w-20 object-cover rounded-lg border border-gray-200"
+            />
+          ))}
+        </div>
+      )}
+    </div>
+
+    {error && (
+      <div className="px-4 py-3 bg-red-50 border border-red-300 rounded-lg text-sm text-red-700">
+        {error}
+      </div>
+    )}
+
+    <div className="flex gap-3 pt-2">
+      <button
+        type="submit"
+        disabled={isSaving}
+        className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {isSaving ? "Ukládám..." : isEdit ? "Uložit změny" : "Přidat aktualitu"}
+      </button>
+      <button
+        type="button"
+        onClick={onCancel}
+        className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors"
+      >
+        Zrušit
+      </button>
+    </div>
+  </form>
+);
+
+// ─── GALERIE FOTEK v řádku aktuality ───
+const PhotoGallery = ({ photos, onDeletePhoto }) => {
+  const [lightbox, setLightbox] = useState(null);
+
+  if (!photos.length)
+    return <p className="text-xs text-gray-400 italic">Žádné fotky</p>;
+
+  return (
+    <>
+      <div className="flex flex-wrap gap-2 mt-2">
+        {photos.map((photo) => (
+          <div key={photo.id} className="relative group">
+            <img
+              src={photo.img_path}
+              alt=""
+              onClick={() => setLightbox(photo.img_path)}
+              className="h-16 w-16 object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity"
+            />
+            <button
+              onClick={() => onDeletePhoto(photo.id)}
+              className="absolute -top-1.5 -right-1.5 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <X size={10} />
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* Lightbox */}
+      {lightbox && (
+        <div
+          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+          onClick={() => setLightbox(null)}
+        >
+          <button className="absolute top-4 right-4 text-white hover:text-gray-300">
+            <X size={32} />
+          </button>
+          <img
+            src={lightbox}
+            alt=""
+            className="max-h-[90vh] max-w-[90vw] object-contain rounded-lg"
+          />
+        </div>
+      )}
+    </>
+  );
+};
+
+// ─── HLAVNÍ KOMPONENTA ───
 function AdminAktuality() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(null);
-  const [toggling, setToggling] = useState(null);
 
-  // Stav pro přidání nového banneru
+  // Přidání
   const [showAddForm, setShowAddForm] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [newBanner, setNewBanner] = useState({
-    name: "",
-    image: null,
-    active: true, // Výchozí stav - aktivní
+  const [saving, setSaving] = useState(false);
+  const [newEvent, setNewEvent] = useState({
+    title: "",
+    body: "",
+    date_start: "",
+    status: "Availible",
   });
-  const [previewUrl, setPreviewUrl] = useState(null);
+  const [newPhotos, setNewPhotos] = useState([]);
+  const [newPhotoPreviews, setNewPhotoPreviews] = useState([]);
+  const [formError, setFormError] = useState("");
+
+  // Editace
+  const [editingId, setEditingId] = useState(null);
+  const [editEvent, setEditEvent] = useState({});
+  const [editPhotos, setEditPhotos] = useState([]);
+  const [editPhotoPreviews, setEditPhotoPreviews] = useState([]);
+  const [editError, setEditError] = useState("");
+  const [editSaving, setEditSaving] = useState(false);
 
   useEffect(() => {
     fetchEvents();
   }, []);
 
   const fetchEvents = () => {
-    fetch("http://localhost:3000/api/event")
-      .then((response) => response.json())
+    fetch(`${API}/api/events`)
+      .then((res) => res.json())
       .then((data) => {
-        setBanners(Array.isArray(data) ? data : []);
+        setEvents(Array.isArray(data) ? data : []);
         setLoading(false);
       })
-      .catch((error) => {
-        console.error("Chyba při načítání dat:", error);
-        setBanners([]);
+      .catch(() => {
+        setEvents([]);
         setLoading(false);
       });
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Opravdu chcete smazat tento banner?")) return;
-
-    setDeleting(id);
-    try {
-      const response = await fetch(`http://localhost:3000/api/banner/${id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        setBanners(banners.filter((banner) => banner.id !== id));
-      } else {
-        alert("Nepodařilo se smazat banner");
-      }
-    } catch (error) {
-      console.error("Chyba při mazání:", error);
-      alert("Chyba při mazání banneru");
-    } finally {
-      setDeleting(null);
+  const validateForm = (data, setError) => {
+    if (!data.title) {
+      setError("Vyplňte prosím název aktuality.");
+      return false;
     }
+    if (!data.body) {
+      setError("Vyplňte prosím text aktuality.");
+      return false;
+    }
+    if (!data.date_start) {
+      setError("Vyplňte prosím datum.");
+      return false;
+    }
+    return true;
   };
 
-  const handleToggleActive = async (id, currentActive) => {
-    setToggling(id);
-    try {
-      const response = await fetch(`http://localhost:3000/api/banner/${id}/toggle`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ active: !currentActive }),
-      });
-
-      if (response.ok) {
-        setBanners(
-          banners.map((banner) =>
-            banner.id === id ? { ...banner, active: !currentActive } : banner
-          )
-        );
-      } else {
-        alert("Nepodařilo se změnit stav banneru");
-      }
-    } catch (error) {
-      console.error("Chyba při změně stavu:", error);
-      alert("Chyba při změně stavu banneru");
-    } finally {
-      setToggling(null);
-    }
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setNewBanner({ ...newBanner, image: file });
-
-      // Vytvoření náhledu
+  // --- ADD ---
+  const handlePhotosChange = (e) => {
+    const files = Array.from(e.target.files);
+    setNewPhotos(files);
+    const previews = [];
+    files.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviewUrl(reader.result);
+        previews.push(reader.result);
+        if (previews.length === files.length)
+          setNewPhotoPreviews([...previews]);
       };
       reader.readAsDataURL(file);
-    }
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError("");
+    if (!validateForm(newEvent, setFormError)) return;
 
-    if (!newBanner.name || !newBanner.image) {
-      alert("Vyplňte prosím název a vyberte obrázek");
-      return;
-    }
-
-    setUploading(true);
-
+    setSaving(true);
     const formData = new FormData();
-    formData.append("banner_name", newBanner.name);
-    formData.append("image", newBanner.image);
-    formData.append("active", newBanner.active ? "1" : "0");
+    formData.append("title", newEvent.title);
+    formData.append("body", newEvent.body);
+    formData.append("date_start", newEvent.date_start);
+    formData.append("status", newEvent.status);
+    newPhotos.forEach((file) => formData.append("photos", file));
 
     try {
-      const response = await fetch("http://localhost:3000/api/banner", {
+      const response = await fetch(`${API}/api/events`, {
         method: "POST",
         body: formData,
       });
-
       if (response.ok) {
-        const data = await response.json();
-        alert("Banner byl úspěšně přidán!");
-
-        // Reset formuláře
-        setNewBanner({ name: "", image: null, active: true });
-        setPreviewUrl(null);
-        setShowAddForm(false);
-
-        // Refresh seznamu
+        cancelAdd();
         fetchEvents();
       } else {
-        const error = await response.json();
-        alert("Chyba: " + (error.error || "Nepodařilo se přidat banner"));
+        const err = await response.json();
+        setFormError(
+          "Chyba: " + (err.error || "Nepodařilo se přidat aktualitu"),
+        );
       }
-    } catch (error) {
-      console.error("Chyba při nahrávání:", error);
-      alert("Chyba při nahrávání banneru");
+    } catch {
+      setFormError("Chyba při ukládání aktuality.");
     } finally {
-      setUploading(false);
+      setSaving(false);
     }
   };
 
   const cancelAdd = () => {
     setShowAddForm(false);
-    setNewBanner({ name: "", image: null, active: true });
-    setPreviewUrl(null);
+    setFormError("");
+    setNewPhotos([]);
+    setNewPhotoPreviews([]);
+    setNewEvent({ title: "", body: "", date_start: "", status: "Availible" });
   };
 
-  if (loading) {
+  // --- EDIT ---
+  const startEdit = (event) => {
+    setEditingId(event.id);
+    setEditEvent({
+      title: event.title || "",
+      body: event.body || "",
+      date_start: event.date_start_raw?.substring(0, 10) || "",
+      status: event.status || "Availible",
+    });
+    setEditPhotos([]);
+    setEditPhotoPreviews([]);
+    setEditError("");
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditEvent({});
+    setEditPhotos([]);
+    setEditPhotoPreviews([]);
+    setEditError("");
+  };
+
+  const handleEditPhotosChange = (e) => {
+    const files = Array.from(e.target.files);
+    setEditPhotos(files);
+    const previews = [];
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        previews.push(reader.result);
+        if (previews.length === files.length)
+          setEditPhotoPreviews([...previews]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleEditSubmit = async (id) => {
+    setEditError("");
+    if (!validateForm(editEvent, setEditError)) return;
+
+    setEditSaving(true);
+    const formData = new FormData();
+    formData.append("title", editEvent.title);
+    formData.append("body", editEvent.body);
+    formData.append("date_start", editEvent.date_start);
+    formData.append("status", editEvent.status);
+    editPhotos.forEach((file) => formData.append("photos", file));
+
+    try {
+      const response = await fetch(`${API}/api/events/${id}`, {
+        method: "PUT",
+        body: formData,
+      });
+      if (response.ok) {
+        cancelEdit();
+        fetchEvents();
+      } else {
+        const err = await response.json();
+        setEditError("Chyba: " + (err.error || "Nepodařilo se uložit změny"));
+      }
+    } catch {
+      setEditError("Chyba při ukládání aktuality.");
+    } finally {
+      setEditSaving(false);
+    }
+  };
+
+  // --- DELETE ---
+  const handleDelete = async (id) => {
+    if (!confirm("Opravdu chcete smazat tuto aktualitu včetně všech fotek?"))
+      return;
+    setDeleting(id);
+    try {
+      const response = await fetch(`${API}/api/events/${id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) setEvents(events.filter((e) => e.id !== id));
+      else alert("Nepodařilo se smazat aktualitu");
+    } catch {
+      alert("Chyba při mazání aktuality");
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  const handleDeletePhoto = async (photoId, eventId) => {
+    if (!confirm("Smazat tuto fotku?")) return;
+    try {
+      const response = await fetch(`${API}/api/events/photo/${photoId}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        setEvents(
+          events.map((e) =>
+            e.id === eventId
+              ? { ...e, photos: e.photos.filter((p) => p.id !== photoId) }
+              : e,
+          ),
+        );
+      } else {
+        alert("Nepodařilo se smazat fotku");
+      }
+    } catch {
+      alert("Chyba při mazání fotky");
+    }
+  };
+
+  const formatDate = (dateStr) =>
+    dateStr ? new Date(dateStr).toLocaleDateString("cs-CZ") : "—";
+
+  if (loading)
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-gray-500">Načítám bannery...</div>
+        <div className="text-gray-500">Načítám aktuality...</div>
       </div>
     );
-  }
 
   return (
     <div className="space-y-6">
+      {/* Hlavička */}
       <div className="flex justify-between items-center">
-        <div className="devider">Správa bannerů</div>
-
+        <div className="devider">Správa aktualit</div>
         {!showAddForm && (
           <button
             onClick={() => setShowAddForm(true)}
             className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-200"
           >
             <Plus size={20} />
-            <span>Přidat banner</span>
+            <span>Přidat aktualitu</span>
           </button>
         )}
       </div>
 
-      {/* Formulář pro přidání */}
+      {/* Formulář přidání */}
       {showAddForm && (
         <div className="bg-customWhite rounded-lg shadow-lg p-6 border-2 border-green-500">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-semibold text-gray-800">Nový banner</h3>
+            <h3 className="text-xl font-semibold text-gray-800">
+              Nová aktualita
+            </h3>
             <button
               onClick={cancelAdd}
               className="text-gray-400 hover:text-gray-600"
@@ -185,189 +458,172 @@ function AdminAktuality() {
               <X size={24} />
             </button>
           </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Název banneru */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Název banneru
-              </label>
-              <input
-                type="text"
-                value={newBanner.name}
-                onChange={(e) =>
-                  setNewBanner({ ...newBanner, name: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                placeholder="Např. Hlavní banner 2024"
-              />
-            </div>
-
-            {/* Upload obrázku */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Obrázek
-              </label>
-              <div className="flex items-center gap-4">
-                <label className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer transition-colors">
-                  <Upload size={20} />
-                  <span>Vybrat soubor</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                  />
-                </label>
-                {newBanner.image && (
-                  <span className="text-sm text-gray-600">
-                    {newBanner.image.name}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Aktivní/Neaktivní */}
-            <div>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={newBanner.active}
-                  onChange={(e) =>
-                    setNewBanner({ ...newBanner, active: e.target.checked })
-                  }
-                  className="w-5 h-5 text-green-600 rounded focus:ring-2 focus:ring-green-500"
-                />
-                <span className="text-sm font-medium text-gray-700">
-                  Banner aktivní (zobrazovat na webu)
-                </span>
-              </label>
-            </div>
-
-            {/* Náhled */}
-            {previewUrl && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Náhled
-                </label>
-                <img
-                  src={previewUrl}
-                  alt="Náhled"
-                  className="w-full max-w-md h-48 object-cover rounded-lg border-2 border-gray-200"
-                />
-              </div>
-            )}
-
-            {/* Tlačítka */}
-            <div className="flex gap-3 pt-4">
-              <button
-                type="submit"
-                disabled={uploading}
-                className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {uploading ? "Nahrávám..." : "Přidat banner"}
-              </button>
-              <button
-                type="button"
-                onClick={cancelAdd}
-                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors"
-              >
-                Zrušit
-              </button>
-            </div>
-          </form>
+          <EventForm
+            data={newEvent}
+            setData={setNewEvent}
+            onSubmit={handleSubmit}
+            onCancel={cancelAdd}
+            isSaving={saving}
+            error={formError}
+            onPhotosChange={handlePhotosChange}
+            newPhotoPreviews={newPhotoPreviews}
+            isEdit={false}
+          />
         </div>
       )}
 
-      {/* Seznam bannerů */}
-      {!banners.length ? (
+      {/* Seznam */}
+      {!events.length ? (
         <div className="bg-customWhite rounded-lg shadow p-8 text-center">
-          <ImageIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <p className="text-gray-500">Zatím nejsou žádné bannery</p>
+          <Newspaper className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+          <p className="text-gray-500">Zatím nejsou žádné aktuality</p>
         </div>
       ) : (
         <div className="space-y-4">
-          {banners.map((banner) => (
+          {events.map((event) => (
             <div
-              key={banner.id}
-              className={`bg-customWhite rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-4 ${
-                !banner.active ? "opacity-60" : ""
-              }`}
+              key={event.id}
+              className="bg-customWhite rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
             >
-              <div className="flex flex-col sm:flex-row items-center gap-4">
-                {/* ID Badge */}
-                <div className="flex-shrink-0">
-                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-green-100 text-green-800 font-semibold">
-                    {banner.id}
-                  </span>
-                </div>
+              {editingId === event.id ? (
+                /* EDIT FORMULÁŘ */
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-gray-700">
+                      Editace aktuality #{event.id}
+                    </span>
+                    <button
+                      onClick={cancelEdit}
+                      className="text-gray-400 hover:text-gray-600"
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
 
-                {/* Obrázek */}
-                <div className="flex-shrink-0 relative">
-                  <img
-                    src={banner.img_path}
-                    alt={banner.banner_name}
-                    className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
-                  />
-                  {!banner.active && (
-                    <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
-                      <EyeOff className="text-white" size={32} />
+                  {/* Stávající fotky při editaci */}
+                  {event.photos?.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
+                        <Images size={15} /> Stávající fotky
+                      </p>
+                      <PhotoGallery
+                        photos={event.photos}
+                        onDeletePhoto={(photoId) =>
+                          handleDeletePhoto(photoId, event.id)
+                        }
+                      />
                     </div>
                   )}
-                </div>
 
-                {/* Info */}
-                <div className="flex-1 text-center sm:text-left">
-                  <p className="text-sm text-gray-500 mb-1">Název banneru</p>
-                  <p className="text-lg font-semibold text-gray-800">
-                    {banner.banner_name}
-                  </p>
-                  <div className="mt-2">
-                    <span
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                        banner.active
-                          ? "bg-green-100 text-green-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {banner.active ? "Aktivní" : "Neaktivní"}
+                  <EventForm
+                    data={editEvent}
+                    setData={setEditEvent}
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleEditSubmit(event.id);
+                    }}
+                    onCancel={cancelEdit}
+                    isSaving={editSaving}
+                    error={editError}
+                    onPhotosChange={handleEditPhotosChange}
+                    newPhotoPreviews={editPhotoPreviews}
+                    isEdit={true}
+                  />
+                </div>
+              ) : (
+                /* ZOBRAZENÍ */
+                <div className="flex flex-col sm:flex-row items-start gap-4">
+                  {/* ID */}
+                  <div className="flex-shrink-0">
+                    <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-green-100 text-green-800 font-semibold text-sm">
+                      {event.id}
                     </span>
                   </div>
-                </div>
 
-                {/* Tlačítka */}
-                <div className="flex flex-col sm:flex-row gap-2">
-                  {/* Tlačítko aktivace/deaktivace */}
-                  <button
-                    onClick={() => handleToggleActive(banner.id, banner.active)}
-                    disabled={toggling === banner.id}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
-                      banner.active
-                        ? "bg-yellow-500 hover:bg-yellow-600 text-white"
-                        : "bg-green-500 hover:bg-green-600 text-white"
-                    }`}
-                  >
-                    {banner.active ? <EyeOff size={18} /> : <Eye size={18} />}
-                    <span>
-                      {toggling === banner.id
-                        ? "..."
-                        : banner.active
-                        ? "Skrýt"
-                        : "Zobrazit"}
-                    </span>
-                  </button>
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <p className="text-lg font-semibold text-gray-800">
+                        {event.title}
+                      </p>
+                      <span
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                          event.status === "Availible"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-gray-100 text-gray-500"
+                        }`}
+                      >
+                        {event.status === "Availible" ? (
+                          <>
+                            <Eye size={11} /> Dostupná
+                          </>
+                        ) : (
+                          <>
+                            <EyeOff size={11} /> Skrytá
+                          </>
+                        )}
+                      </span>
+                      {event.author && (
+                        <span className="text-xs text-gray-400">
+                          od {event.author}
+                        </span>
+                      )}
+                    </div>
 
-                  {/* Tlačítko smazat */}
-                  <button
-                    onClick={() => handleDelete(banner.id)}
-                    disabled={deleting === banner.id}
-                    className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Trash2 size={18} />
-                    <span>{deleting === banner.id ? "Mažu..." : "Smazat"}</span>
-                  </button>
+                    <div className="flex items-center gap-1 text-sm text-gray-500 mb-2">
+                      <Calendar size={13} />
+                      <span>{event.date_start}</span>
+                    </div>
+
+                    {event.body && (
+                      <p className="text-sm text-gray-600 line-clamp-2 mb-3">
+                        {event.body}
+                      </p>
+                    )}
+
+                    {/* Galerie fotek */}
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1 flex items-center gap-1">
+                        <Images size={12} />
+                        {event.photos?.length || 0}{" "}
+                        {event.photos?.length === 1
+                          ? "fotka"
+                          : event.photos?.length >= 2 &&
+                              event.photos?.length <= 4
+                            ? "fotky"
+                            : "fotek"}
+                      </p>
+                      <PhotoGallery
+                        photos={event.photos || []}
+                        onDeletePhoto={(photoId) =>
+                          handleDeletePhoto(photoId, event.id)
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  {/* Tlačítka */}
+                  <div className="flex gap-2 flex-shrink-0">
+                    <button
+                      onClick={() => startEdit(event)}
+                      className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200"
+                    >
+                      <Pencil size={18} />
+                      <span>Editovat</span>
+                    </button>
+                    <button
+                      onClick={() => handleDelete(event.id)}
+                      disabled={deleting === event.id}
+                      className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-200 disabled:opacity-50"
+                    >
+                      <Trash2 size={18} />
+                      <span>
+                        {deleting === event.id ? "Mažu..." : "Smazat"}
+                      </span>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           ))}
         </div>
