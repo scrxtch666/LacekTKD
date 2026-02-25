@@ -4,7 +4,6 @@ import {
   Plus,
   X,
   Pencil,
-  Upload,
   Newspaper,
   Calendar,
   Eye,
@@ -25,6 +24,8 @@ const EventForm = ({
   error,
   onPhotosChange,
   newPhotoPreviews,
+  onCoverChange,
+  coverPreview,
   isEdit,
 }) => (
   <form onSubmit={onSubmit} className="space-y-4">
@@ -79,7 +80,36 @@ const EventForm = ({
       </div>
     </div>
 
-    {/* Upload fotek */}
+    {/* Náhledová fotka */}
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Náhledová fotka{" "}
+        {isEdit && (
+          <span className="text-gray-400 font-normal">
+            (nepovinné – ponechá stávající)
+          </span>
+        )}
+      </label>
+      <label className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer transition-colors text-sm">
+        <ImagePlus size={16} />
+        <span>Vybrat náhledovou fotku</span>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={onCoverChange}
+          className="hidden"
+        />
+      </label>
+      {coverPreview && (
+        <img
+          src={coverPreview}
+          alt="Náhled cover"
+          className="mt-2 h-28 object-contain rounded-lg border border-gray-200"
+        />
+      )}
+    </div>
+
+    {/* Fotogalerie */}
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-1">
         Fotky{" "}
@@ -94,7 +124,7 @@ const EventForm = ({
       </label>
       <label className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer transition-colors text-sm">
         <ImagePlus size={16} />
-        <span>Vybrat fotky</span>
+        <span>Vybrat fotky galerie</span>
         <input
           type="file"
           accept="image/*"
@@ -104,7 +134,6 @@ const EventForm = ({
         />
       </label>
 
-      {/* Náhled nově vybraných fotek */}
       {newPhotoPreviews.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">
           {newPhotoPreviews.map((src, i) => (
@@ -172,7 +201,6 @@ const PhotoGallery = ({ photos, onDeletePhoto }) => {
         ))}
       </div>
 
-      {/* Lightbox */}
       {lightbox && (
         <div
           className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
@@ -209,6 +237,8 @@ function AdminAktuality() {
   });
   const [newPhotos, setNewPhotos] = useState([]);
   const [newPhotoPreviews, setNewPhotoPreviews] = useState([]);
+  const [newCover, setNewCover] = useState(null);
+  const [newCoverPreview, setNewCoverPreview] = useState(null);
   const [formError, setFormError] = useState("");
 
   // Editace
@@ -216,6 +246,8 @@ function AdminAktuality() {
   const [editEvent, setEditEvent] = useState({});
   const [editPhotos, setEditPhotos] = useState([]);
   const [editPhotoPreviews, setEditPhotoPreviews] = useState([]);
+  const [editCover, setEditCover] = useState(null);
+  const [editCoverPreview, setEditCoverPreview] = useState(null);
   const [editError, setEditError] = useState("");
   const [editSaving, setEditSaving] = useState(false);
 
@@ -253,6 +285,16 @@ function AdminAktuality() {
   };
 
   // --- ADD ---
+  const handleCoverChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setNewCover(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setNewCoverPreview(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handlePhotosChange = (e) => {
     const files = Array.from(e.target.files);
     setNewPhotos(files);
@@ -279,6 +321,7 @@ function AdminAktuality() {
     formData.append("body", newEvent.body);
     formData.append("date_start", newEvent.date_start);
     formData.append("status", newEvent.status);
+    if (newCover) formData.append("cover", newCover);
     newPhotos.forEach((file) => formData.append("photos", file));
 
     try {
@@ -307,6 +350,8 @@ function AdminAktuality() {
     setFormError("");
     setNewPhotos([]);
     setNewPhotoPreviews([]);
+    setNewCover(null);
+    setNewCoverPreview(null);
     setNewEvent({ title: "", body: "", date_start: "", status: "Availible" });
   };
 
@@ -321,6 +366,8 @@ function AdminAktuality() {
     });
     setEditPhotos([]);
     setEditPhotoPreviews([]);
+    setEditCover(null);
+    setEditCoverPreview(null);
     setEditError("");
   };
 
@@ -329,7 +376,19 @@ function AdminAktuality() {
     setEditEvent({});
     setEditPhotos([]);
     setEditPhotoPreviews([]);
+    setEditCover(null);
+    setEditCoverPreview(null);
     setEditError("");
+  };
+
+  const handleEditCoverChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setEditCover(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setEditCoverPreview(reader.result);
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleEditPhotosChange = (e) => {
@@ -357,6 +416,7 @@ function AdminAktuality() {
     formData.append("body", editEvent.body);
     formData.append("date_start", editEvent.date_start);
     formData.append("status", editEvent.status);
+    if (editCover) formData.append("cover", editCover);
     editPhotos.forEach((file) => formData.append("photos", file));
 
     try {
@@ -418,9 +478,6 @@ function AdminAktuality() {
     }
   };
 
-  const formatDate = (dateStr) =>
-    dateStr ? new Date(dateStr).toLocaleDateString("cs-CZ") : "—";
-
   if (loading)
     return (
       <div className="flex justify-center items-center h-64">
@@ -467,6 +524,8 @@ function AdminAktuality() {
             error={formError}
             onPhotosChange={handlePhotosChange}
             newPhotoPreviews={newPhotoPreviews}
+            onCoverChange={handleCoverChange}
+            coverPreview={newCoverPreview}
             isEdit={false}
           />
         </div>
@@ -486,7 +545,6 @@ function AdminAktuality() {
               className="bg-customWhite rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
             >
               {editingId === event.id ? (
-                /* EDIT FORMULÁŘ */
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="font-semibold text-gray-700">
@@ -500,11 +558,25 @@ function AdminAktuality() {
                     </button>
                   </div>
 
-                  {/* Stávající fotky při editaci */}
+                  {/* Stávající cover při editaci */}
+                  {event.cover_photo && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 mb-2">
+                        Stávající náhledová fotka
+                      </p>
+                      <img
+                        src={event.cover_photo}
+                        alt="Cover"
+                        className="h-24 object-contain rounded-lg border border-gray-200"
+                      />
+                    </div>
+                  )}
+
+                  {/* Stávající fotky galerie */}
                   {event.photos?.length > 0 && (
                     <div>
                       <p className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
-                        <Images size={15} /> Stávající fotky
+                        <Images size={15} /> Stávající fotky galerie
                       </p>
                       <PhotoGallery
                         photos={event.photos}
@@ -527,17 +599,26 @@ function AdminAktuality() {
                     error={editError}
                     onPhotosChange={handleEditPhotosChange}
                     newPhotoPreviews={editPhotoPreviews}
+                    onCoverChange={handleEditCoverChange}
+                    coverPreview={editCoverPreview}
                     isEdit={true}
                   />
                 </div>
               ) : (
-                /* ZOBRAZENÍ */
                 <div className="flex flex-col sm:flex-row items-start gap-4">
-                  {/* ID */}
+                  {/* Cover fotka nebo ID badge */}
                   <div className="flex-shrink-0">
-                    <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-green-100 text-green-800 font-semibold text-sm">
-                      {event.id}
-                    </span>
+                    {event.cover_photo ? (
+                      <img
+                        src={event.cover_photo}
+                        alt={event.title}
+                        className="w-16 h-16 rounded-lg object-cover border-2 border-gray-200"
+                      />
+                    ) : (
+                      <span className="inline-flex items-center justify-center w-16 h-16 rounded-lg bg-green-100 text-green-800 font-semibold text-sm">
+                        #{event.id}
+                      </span>
+                    )}
                   </div>
 
                   {/* Info */}
@@ -581,7 +662,6 @@ function AdminAktuality() {
                       </p>
                     )}
 
-                    {/* Galerie fotek */}
                     <div>
                       <p className="text-xs text-gray-400 mb-1 flex items-center gap-1">
                         <Images size={12} />

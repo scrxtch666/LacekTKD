@@ -40,7 +40,13 @@ const upload = multer({
   },
 });
 
-// GET / - všechny aktuality (původní route zachována + rozšířena o fotky)
+// upload.fields umožňuje přijímat cover (1 soubor) i photos (až 10) najednou
+const uploadFields = upload.fields([
+  { name: "cover", maxCount: 1 },
+  { name: "photos", maxCount: 10 },
+]);
+
+// GET / - všechny aktuality včetně fotek
 router.get("/", (req, res) => {
   db.query(
     `SELECT 
@@ -52,6 +58,7 @@ router.get("/", (req, res) => {
         e.user_id,
         u.login AS author,
         DATE_FORMAT(e.date_start, '%d.%m.%Y') AS date_start,
+        e.date_start AS date_start_raw,
         e.created_at
      FROM event e
      LEFT JOIN users u ON e.user_id = u.id
@@ -79,7 +86,7 @@ router.get("/", (req, res) => {
   );
 });
 
-// GET /latest - poslední 3 aktuality (původní route zachována)
+// GET /latest - poslední 3 aktuality
 router.get("/latest", (req, res) => {
   db.query(
     `SELECT 
@@ -119,7 +126,9 @@ router.get("/:id", (req, res) => {
   const { id } = req.params;
 
   db.query(
-    `SELECT e.*, u.login AS author, DATE_FORMAT(e.date_start, '%d.%m.%Y') AS date_start_formatted
+    `SELECT e.*, u.login AS author,
+        DATE_FORMAT(e.date_start, '%d.%m.%Y') AS date_start_formatted,
+        e.date_start AS date_start_raw
      FROM event e
      LEFT JOIN users u ON e.user_id = u.id
      WHERE e.id = ?`,
@@ -145,20 +154,28 @@ router.get("/:id", (req, res) => {
   );
 });
 
-// POST / - přidání aktuality + fotky
-router.post("/", upload.array("photos", 10), (req, res) => {
+// POST / - přidání aktuality + náhledová fotka + fotky galerie
+router.post("/", uploadFields, (req, res) => {
   const { title, body, status, date_start, user_id } = req.body;
 
   if (!title) return res.status(400).json({ error: "Chybí název aktuality" });
 
+  // Náhledová fotka (cover) – uloží se do sloupce photo v tabulce event
+  const coverFile = req.files?.cover?.[0];
+  const coverPath = coverFile ? "/uploads/events/" + coverFile.filename : null;
+
+  // Fotky galerie
+  const photoFiles = req.files?.photos || [];
+
   db.query(
-    `INSERT INTO event (title, body, status, date_start, user_id) VALUES (?, ?, ?, ?, ?)`,
+    `INSERT INTO event (title, body, status, date_start, user_id, photo) VALUES (?, ?, ?, ?, ?, ?)`,
     [
       title,
       body || null,
       status || "Availible",
       date_start || null,
       user_id || 1,
+      coverPath,
     ],
     (err, result) => {
       if (err)
@@ -166,8 +183,9 @@ router.post("/", upload.array("photos", 10), (req, res) => {
 
       const eventId = result.insertId;
 
-      if (req.files && req.files.length > 0) {
-        const photoValues = req.files.map((file, index) => [
+      // Ulož fotky galerie pokud existují
+      if (photoFiles.length > 0) {
+        const photoValues = photoFiles.map((file, index) => [
           eventId,
           "/uploads/events/" + file.filename,
           index,
@@ -177,67 +195,80 @@ router.post("/", upload.array("photos", 10), (req, res) => {
           "INSERT INTO event_photos (event_id, img_path, sort_order) VALUES ?",
           [photoValues],
           (err2) => {
-            if (err2) console.error("Chyba při ukládání fotek:", err2);
+            if (err2) console.error("Chyba při ukládání fotek galerie:", err2);
           },
         );
       }
 
-      res
-        .status(201)
-        .json({
-          success: true,
-          message: "Aktualita byla úspěšně přidána",
-          id: eventId,
-        });
+      res.status(201).json({
+        success: true,
+        message: "Aktualita byla úspěšně přidána",
+        id: eventId,
+      });
     },
   );
 });
 
 // PUT /:id - editace aktuality
-router.put("/:id", upload.array("photos", 10), (req, res) => {
+router.put("/:id", uploadFields, (req, res) => {
   const { id } = req.params;
   const { title, body, status, date_start } = req.body;
 
   if (!title) return res.status(400).json({ error: "Chybí název aktuality" });
 
-  db.query(
-    `UPDATE event SET title=?, body=?, status=?, date_start=? WHERE id=?`,
-    [title, body || null, status || "Availible", date_start || null, id],
-    (err, result) => {
-      if (err)
-        return res
-          .status(500)
-          .json({ error: "Chyba při aktualizaci aktuality" });
-      if (result.affectedRows === 0)
-        return res.status(404).json({ error: "Aktualita nenalezena" });
+  const coverFile = req.files?.cover?.[0];
+  const photoFiles = req.files?.photos || [];
 
-      // Přidej nové fotky ke stávajícím
-      if (req.files && req.files.length > 0) {
-        db.query(
-          "SELECT COALESCE(MAX(sort_order), -1) AS maxOrder FROM event_photos WHERE event_id = ?",
-          [id],
-          (err2, rows) => {
-            if (err2) return;
-            const startOrder = rows[0].maxOrder + 1;
-            const photoValues = req.files.map((file, index) => [
-              id,
-              "/uploads/events/" + file.filename,
-              startOrder + index,
-            ]);
-            db.query(
-              "INSERT INTO event_photos (event_id, img_path, sort_order) VALUES ?",
-              [photoValues],
-            );
-          },
-        );
-      }
+  // Pokud byl nahrán nový cover, aktualizuj i sloupec photo
+  // Pokud ne, ponech stávající (nekluč photo do UPDATE)
+  const updateQuery = coverFile
+    ? `UPDATE event SET title=?, body=?, status=?, date_start=?, photo=? WHERE id=?`
+    : `UPDATE event SET title=?, body=?, status=?, date_start=? WHERE id=?`;
 
-      res.json({ success: true, message: "Aktualita byla úspěšně upravena" });
-    },
-  );
+  const updateParams = coverFile
+    ? [
+        title,
+        body || null,
+        status || "Availible",
+        date_start || null,
+        "/uploads/events/" + coverFile.filename,
+        id,
+      ]
+    : [title, body || null, status || "Availible", date_start || null, id];
+
+  db.query(updateQuery, updateParams, (err, result) => {
+    if (err)
+      return res.status(500).json({ error: "Chyba při aktualizaci aktuality" });
+    if (result.affectedRows === 0)
+      return res.status(404).json({ error: "Aktualita nenalezena" });
+
+    // Přidej nové fotky galerie ke stávajícím
+    if (photoFiles.length > 0) {
+      db.query(
+        "SELECT COALESCE(MAX(sort_order), -1) AS maxOrder FROM event_photos WHERE event_id = ?",
+        [id],
+        (err2, rows) => {
+          if (err2) return;
+          const startOrder = rows[0].maxOrder + 1;
+          const photoValues = photoFiles.map((file, index) => [
+            id,
+            "/uploads/events/" + file.filename,
+            startOrder + index,
+          ]);
+          db.query(
+            "INSERT INTO event_photos (event_id, img_path, sort_order) VALUES ?",
+            [photoValues],
+          );
+        },
+      );
+    }
+
+    res.json({ success: true, message: "Aktualita byla úspěšně upravena" });
+  });
 });
 
-// DELETE /photo/:photoId - smazání jednotlivé fotky
+// DELETE /photo/:photoId - smazání jednotlivé fotky z galerie
+// ⚠️ MUSÍ být PŘED DELETE /:id aby Express nevyhodnotil "photo" jako :id
 router.delete("/photo/:photoId", (req, res) => {
   const { photoId } = req.params;
 
@@ -265,36 +296,49 @@ router.delete("/photo/:photoId", (req, res) => {
   );
 });
 
-// DELETE /:id - smazání celé aktuality (fotky v DB se smažou přes CASCADE)
+// DELETE /:id - smazání celé aktuality
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
 
-  // Načti cesty fotek před smazáním pro fyzické odstranění souborů
-  db.query(
-    "SELECT img_path FROM event_photos WHERE event_id = ?",
-    [id],
-    (err, photos) => {
-      db.query("DELETE FROM event WHERE id = ?", [id], (err2, result) => {
-        if (err2)
-          return res.status(500).json({ error: "Chyba při mazání aktuality" });
-        if (result.affectedRows === 0)
-          return res.status(404).json({ error: "Aktualita nenalezena" });
+  // Nejdřív načti cover foto a fotky galerie pro fyzické smazání souborů
+  db.query("SELECT photo FROM event WHERE id = ?", [id], (err, eventRows) => {
+    db.query(
+      "SELECT img_path FROM event_photos WHERE event_id = ?",
+      [id],
+      (err2, photos) => {
+        db.query("DELETE FROM event WHERE id = ?", [id], (err3, result) => {
+          if (err3)
+            return res
+              .status(500)
+              .json({ error: "Chyba při mazání aktuality" });
+          if (result.affectedRows === 0)
+            return res.status(404).json({ error: "Aktualita nenalezena" });
 
-        // Smaž fyzické soubory
-        if (photos) {
-          photos.forEach((photo) => {
-            const fullPath = path.join(
+          // Smaž cover foto fyzicky
+          if (eventRows?.[0]?.photo) {
+            const coverPath = path.join(
               "C:\\LacekTKD\\Frontend\\public",
-              photo.img_path,
+              eventRows[0].photo,
             );
-            if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
-          });
-        }
+            if (fs.existsSync(coverPath)) fs.unlinkSync(coverPath);
+          }
 
-        res.json({ success: true, message: "Aktualita byla smazána" });
-      });
-    },
-  );
+          // Smaž fotky galerie fyzicky (DB záznamy se smažou přes CASCADE)
+          if (photos) {
+            photos.forEach((photo) => {
+              const fullPath = path.join(
+                "C:\\LacekTKD\\Frontend\\public",
+                photo.img_path,
+              );
+              if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
+            });
+          }
+
+          res.json({ success: true, message: "Aktualita byla smazána" });
+        });
+      },
+    );
+  });
 });
 
 module.exports = router;

@@ -47,17 +47,8 @@ const Home = () => {
       <div className="devider">nadcházející akce</div>
 
       {/* Mřížka pro Kalendář a Karty - md - tablet */}
-      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-5">
-        <div className="md:grid-cols-2">
-          <Calendar tournaments={allEvents} onDateSelect={handleDateSelect} />
-        </div>
-        <div className="md:grid-cols-2">
-          {loading ? (
-            <p>Načítání akcí...</p>
-          ) : (
-            <CalendarTournament tournaments={filteredEvents} />
-          )}
-        </div>
+      <div className="">
+       <Calendar />
       </div>
 
       <Newsletter />
