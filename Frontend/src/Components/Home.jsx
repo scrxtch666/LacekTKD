@@ -10,31 +10,6 @@ const Home = () => {
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 1. Načtení dat pro obě komponenty najednou
-  useEffect(() => {
-    fetch("http://localhost:3000/api/tournaments/latest")
-      .then((res) => res.json())
-      .then((data) => {
-        const events = Array.isArray(data) ? data : [];
-        setAllEvents(events);
-        setFilteredEvents(events); // Na začátku ukážeme vše nebo filtr na dnešek
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Chyba:", err);
-        setLoading(false);
-      });
-  }, []);
-
-  // 2. Funkce pro filtraci, kterou předáme kalendáři
-  const handleDateSelect = (selectedDay) => {
-    const { isSameDay } = require("date-fns"); // nebo import nahoře
-    const filtered = allEvents.filter((event) =>
-      isSameDay(new Date(event.start_date), selectedDay),
-    );
-    setFilteredEvents(filtered);
-  };
-
   return (
     <>
       <ShowcaseCarousel />
@@ -46,10 +21,7 @@ const Home = () => {
 
       <div className="devider">nadcházející akce</div>
 
-      {/* Mřížka pro Kalendář a Karty - md - tablet */}
-      <div className="">
-       <Calendar />
-      </div>
+      <Calendar />
 
       <Newsletter />
     </>

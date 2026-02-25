@@ -29,8 +29,8 @@ const EventCard = () => {
     <div className="max-w-sm overflow-hidden bg-pink-50 rounded-2xl shadow-xl">
       <div className="relative">
         <img 
-          src={event.photo}
-          alt="Sports competition"
+          src={event.cover_photo}
+          alt={event.title}
           className="w-full h-52 object-cover"
         />
         

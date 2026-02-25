@@ -93,9 +93,11 @@ router.get("/latest", (req, res) => {
         e.id,
         e.title,
         e.body,
+        e.status,
         e.photo AS cover_photo,
         DATE_FORMAT(e.date_start, '%d.%m.%Y') AS date_start
      FROM event e
+     WHERE e.status = 'Availible'
      ORDER BY e.id DESC
      LIMIT 3`,
     (err, events) => {

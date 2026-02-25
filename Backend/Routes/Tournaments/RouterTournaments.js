@@ -14,9 +14,7 @@ const GOOGLE_SERVICE_ACCOUNT_KEY = path.join(
   "../../lacektkd-12aaabdf5383.json",
 );
 // Vlož Calendar ID svého Google Kalendáře
-const CALENDAR_ID =
-  process.env.GOOGLE_CALENDAR_ID ||
-  "peetr.svoboda@seznam.cz";
+const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID || "peetr.svoboda@seznam.cz";
 
 const getGoogleCalendarClient = () => {
   const auth = new google.auth.GoogleAuth({
@@ -29,15 +27,20 @@ const getGoogleCalendarClient = () => {
 // Vytvoří event v Google Kalendáři, vrátí google_event_id
 const createGoogleEvent = async (tournament) => {
   try {
+    console.log("📅 Vytvářím Google event...");
+    console.log("📅 Calendar ID:", CALENDAR_ID);
+    console.log("📅 JSON klíč:", GOOGLE_SERVICE_ACCOUNT_KEY);
+    console.log(
+      "📅 Soubor existuje:",
+      fs.existsSync(GOOGLE_SERVICE_ACCOUNT_KEY),
+    );
+
     const calendar = getGoogleCalendarClient();
     const event = {
       summary: tournament.name,
       location: tournament.location || "",
       description: tournament.info || "",
-      start: {
-        date: tournament.start_date, // YYYY-MM-DD
-        timeZone: "Europe/Prague",
-      },
+      start: { date: tournament.start_date, timeZone: "Europe/Prague" },
       end: {
         date: tournament.end_date || tournament.start_date,
         timeZone: "Europe/Prague",
@@ -49,9 +52,11 @@ const createGoogleEvent = async (tournament) => {
       resource: event,
     });
 
+    console.log("✅ Event vytvořen! ID:", response.data.id);
     return response.data.id;
   } catch (err) {
-    console.error("Google Calendar – chyba při vytváření eventu:", err.message);
+    console.error("❌ Chyba:", err.message);
+    console.error("❌ Detail:", err.errors || err.code);
     return null;
   }
 };
