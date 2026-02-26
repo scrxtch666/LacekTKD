@@ -67,6 +67,7 @@ Vymyslet jak udělám úspěchy
 - dodělat všechny sekce
 - vybrat a aplikovat font
 - dodělat všechno na karty
+- icons : https://lucide.dev/icons/
 
 # BACKEND
 - udělat pevnou databázi
@@ -144,3 +145,20 @@ CREATE TABLE IF NOT EXISTS `event_photos` (
 SHOW TABLES LIKE 'event_photos';
 
 Udělat to aby se aktualita nechala vytvořit z proběhlé akce, přenesou se závodníci, vyřešit fotografie, první - úvodní fotografie
+
+Backend
+- Routy
+- API -> RestAPI pricipy (GET, POST, PUT, DELETE)
+- JWT, hashing (ByCript)
+
+
+# ROUTY
+- Důležitou částí týkající se backendu je bezpochyb routování. Jedná se o mechanismus, který definuje, jaká komponenta nebo jaká data se mají aktuálně vykreslit. Vykreslovaný obsah se mění podle aktuální URL adresy na které se uživatel nachází. Pro realizaci backendových rout jsem využil Express.js. 
+
+Mé řešení obsahuje jeden centrální soubor Router.js ve kterém mám definované všechny backendové routy z kterých získávám data.
+
+V první části se nachází import routerů
+V druhé části je registrace routerů
+
+
+"Pro navigaci v aplikaci byl využit react-router-dom, který umožňuje okamžitou odezvu uživatelského rozhraní bez nutnosti opětovného načítání stránek. Komunikace se serverovou částí probíhá asynchronně skrze REST API definované v Express.js, které slouží výhradně jako poskytovatel dat."
