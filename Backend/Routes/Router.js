@@ -1,5 +1,6 @@
-const app = require("express");
-const router = app.Router();
+const express = require("express");
+const router = express.Router();
+
 const eventRouter = require("./Events/RouterEvents");
 const tournamentRouter = require("./Tournaments/RouterTournaments");
 const beltRouter = require("./Belts/RouterBelts");
@@ -12,8 +13,7 @@ const roleRouter = require("./Roles/RouterRoles");
 const categoryRouter = require("./Category/RouterCategory");
 const trainingRouter = require("./Trainings/RouterTrainings");
 
-// Router
-
+// Registrace routerů
 router.use("/events", eventRouter);
 router.use("/tournaments", tournamentRouter);
 router.use("/belts", beltRouter);
@@ -25,23 +25,5 @@ router.use("/banner", bannerRouter);
 router.use("/roles", roleRouter);
 router.use("/category", categoryRouter);
 router.use("/trainings", trainingRouter);
-
-// Konec routeru
-
-const verifyToken = (req, res, next) => {
-  const token = req.header("Authorization")?.split(" ")[1];
-  if (!token) return res.status(403).json({ error: "Přístup zamítnut" });
-
-  jwt.verify(token, SECRET_KEY, (err, user) => {
-    if (err) return res.status(403).json({ error: "Neplatný token" });
-    req.user = user;
-    next();
-  });
-};
-
-// Chráněná cesta (přístupná jen pro přihlášené uživatele)
-router.get("/protected", verifyToken, (req, res) => {
-  res.json({ message: "Toto je chráněná data", user: req.user });
-});
 
 module.exports = router;

@@ -160,5 +160,10 @@ Mé řešení obsahuje jeden centrální soubor Router.js ve kterém mám defino
 V první části se nachází import routerů
 V druhé části je registrace routerů
 
+# API
+
+# ZABEZPEČení
+
+
 
 "Pro navigaci v aplikaci byl využit react-router-dom, který umožňuje okamžitou odezvu uživatelského rozhraní bez nutnosti opětovného načítání stránek. Komunikace se serverovou částí probíhá asynchronně skrze REST API definované v Express.js, které slouží výhradně jako poskytovatel dat."
