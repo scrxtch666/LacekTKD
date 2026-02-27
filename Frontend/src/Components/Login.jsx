@@ -8,7 +8,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/login", {
+      const response = await fetch("http://localhost:3000/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -18,8 +18,14 @@ const Login = () => {
       if (data.token) {
         // Uložíme token do paměti prohlížeče
         localStorage.setItem("token", data.token);
-        navigate("/admin", { replace: true });
-        
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+
+          // ← přidej toto aby Header věděl o přihlášení
+          window.dispatchEvent(new Event("authChange"));
+
+          navigate("/admin", { replace: true });
+        }
       } else {
         alert(data.error);
       }
@@ -42,7 +48,9 @@ const Login = () => {
           type="password"
           placeholder="Heslo"
           className="w-full p-2 border rounded"
-          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, password: e.target.value })
+          }
         />
         <button className="w-full bg-customGreen text-white p-2 rounded">
           Přihlásit se

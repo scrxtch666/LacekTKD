@@ -4,7 +4,7 @@ const API_URL = "http://localhost:3000";
 export const authService = {
   // Přihlášení
   async login(login, password) {
-    const response = await fetch(`${API_URL}/login`, {
+    const response = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ login, password }),
@@ -41,7 +41,7 @@ export const authService = {
     if (!token) return null;
 
     try {
-      const response = await fetch(`${API_URL}/api/user/me`, {
+      const response = await fetch(`${API_URL}/auth/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

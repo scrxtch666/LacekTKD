@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
@@ -14,7 +15,7 @@ const GOOGLE_SERVICE_ACCOUNT_KEY = path.join(
   "../../lacektkd-12aaabdf5383.json",
 );
 // Vlož Calendar ID svého Google Kalendáře
-const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID || "peetr.svoboda@seznam.cz";
+const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID;
 
 const getGoogleCalendarClient = () => {
   const auth = new google.auth.GoogleAuth({
@@ -170,8 +171,8 @@ router.get("/calendar", (req, res) => {
         tournament.img_path,
         tournament.type_id,
         type.name AS type_name,
-        tournament.start_date,
-        tournament.end_date,
+        DATE_FORMAT(tournament.start_date, '%Y-%m-%d') AS start_date,
+        DATE_FORMAT(tournament.end_date, '%Y-%m-%d') AS end_date,
         tournament.google_event_id
      FROM tournament
      LEFT JOIN type ON tournament.type_id = type.id

@@ -3,6 +3,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const db = require("../../Libs/db");
+const { verifyToken, isAdmin } = require("../../auth/auth");
 
 const router = express.Router();
 
@@ -40,11 +41,12 @@ const upload = multer({
   },
 });
 
-// upload.fields umožňuje přijímat cover (1 soubor) i photos (až 10) najednou
 const uploadFields = upload.fields([
   { name: "cover", maxCount: 1 },
   { name: "photos", maxCount: 10 },
 ]);
+
+// ─── VEŘEJNÉ ROUTY (čtení) ───
 
 // GET / - všechny aktuality včetně fotek
 router.get("/", (req, res) => {
@@ -156,17 +158,19 @@ router.get("/:id", (req, res) => {
   );
 });
 
-// POST / - přidání aktuality + náhledová fotka + fotky galerie
-router.post("/", uploadFields, (req, res) => {
+// ─── CHRÁNĚNÉ ROUTY (zápis) – pouze přihlášený admin ───
+
+// POST / - přidání aktuality
+router.post("/", verifyToken, isAdmin, uploadFields, (req, res) => {
   const { title, body, status, date_start, user_id } = req.body;
 
   if (!title) return res.status(400).json({ error: "Chybí název aktuality" });
 
-  // Náhledová fotka (cover) – uloží se do sloupce photo v tabulce event
   const coverFile = req.files?.cover?.[0];
-  const coverPath = coverFile ? "/uploads/events/" + coverFile.filename : null;
+  const coverPath = coverFile
+    ? "/uploads/events/" + coverFile.filename
+    : req.body.cover_url || null;
 
-  // Fotky galerie
   const photoFiles = req.files?.photos || [];
 
   db.query(
@@ -176,7 +180,7 @@ router.post("/", uploadFields, (req, res) => {
       body || null,
       status || "Availible",
       date_start || null,
-      user_id || 1,
+      req.user.id, // ← z JWT tokenu, ne z body
       coverPath,
     ],
     (err, result) => {
@@ -185,7 +189,6 @@ router.post("/", uploadFields, (req, res) => {
 
       const eventId = result.insertId;
 
-      // Ulož fotky galerie pokud existují
       if (photoFiles.length > 0) {
         const photoValues = photoFiles.map((file, index) => [
           eventId,
@@ -212,7 +215,7 @@ router.post("/", uploadFields, (req, res) => {
 });
 
 // PUT /:id - editace aktuality
-router.put("/:id", uploadFields, (req, res) => {
+router.put("/:id", verifyToken, isAdmin, uploadFields, (req, res) => {
   const { id } = req.params;
   const { title, body, status, date_start } = req.body;
 
@@ -221,8 +224,6 @@ router.put("/:id", uploadFields, (req, res) => {
   const coverFile = req.files?.cover?.[0];
   const photoFiles = req.files?.photos || [];
 
-  // Pokud byl nahrán nový cover, aktualizuj i sloupec photo
-  // Pokud ne, ponech stávající (nekluč photo do UPDATE)
   const updateQuery = coverFile
     ? `UPDATE event SET title=?, body=?, status=?, date_start=?, photo=? WHERE id=?`
     : `UPDATE event SET title=?, body=?, status=?, date_start=? WHERE id=?`;
@@ -244,7 +245,6 @@ router.put("/:id", uploadFields, (req, res) => {
     if (result.affectedRows === 0)
       return res.status(404).json({ error: "Aktualita nenalezena" });
 
-    // Přidej nové fotky galerie ke stávajícím
     if (photoFiles.length > 0) {
       db.query(
         "SELECT COALESCE(MAX(sort_order), -1) AS maxOrder FROM event_photos WHERE event_id = ?",
@@ -269,9 +269,9 @@ router.put("/:id", uploadFields, (req, res) => {
   });
 });
 
-// DELETE /photo/:photoId - smazání jednotlivé fotky z galerie
-// ⚠️ MUSÍ být PŘED DELETE /:id aby Express nevyhodnotil "photo" jako :id
-router.delete("/photo/:photoId", (req, res) => {
+// DELETE /photo/:photoId - smazání jednotlivé fotky
+// ⚠️ MUSÍ být PŘED DELETE /:id
+router.delete("/photo/:photoId", verifyToken, isAdmin, (req, res) => {
   const { photoId } = req.params;
 
   db.query(
@@ -299,10 +299,9 @@ router.delete("/photo/:photoId", (req, res) => {
 });
 
 // DELETE /:id - smazání celé aktuality
-router.delete("/:id", (req, res) => {
+router.delete("/:id", verifyToken, isAdmin, (req, res) => {
   const { id } = req.params;
 
-  // Nejdřív načti cover foto a fotky galerie pro fyzické smazání souborů
   db.query("SELECT photo FROM event WHERE id = ?", [id], (err, eventRows) => {
     db.query(
       "SELECT img_path FROM event_photos WHERE event_id = ?",
@@ -316,7 +315,6 @@ router.delete("/:id", (req, res) => {
           if (result.affectedRows === 0)
             return res.status(404).json({ error: "Aktualita nenalezena" });
 
-          // Smaž cover foto fyzicky
           if (eventRows?.[0]?.photo) {
             const coverPath = path.join(
               "C:\\LacekTKD\\Frontend\\public",
@@ -325,7 +323,6 @@ router.delete("/:id", (req, res) => {
             if (fs.existsSync(coverPath)) fs.unlinkSync(coverPath);
           }
 
-          // Smaž fotky galerie fyzicky (DB záznamy se smažou přes CASCADE)
           if (photos) {
             photos.forEach((photo) => {
               const fullPath = path.join(

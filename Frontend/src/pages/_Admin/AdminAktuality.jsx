@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import {
   Trash2,
   Plus,
@@ -14,6 +15,11 @@ import {
 
 const API = "http://localhost:3000";
 
+// Pomocná funkce – vrátí Authorization header s JWT tokenem
+const authHeader = () => ({
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+});
+
 // ─── FORMULÁŘ – mimo AdminAktuality aby nedocházelo k remount při psaní ───
 const EventForm = ({
   data,
@@ -26,6 +32,7 @@ const EventForm = ({
   newPhotoPreviews,
   onCoverChange,
   coverPreview,
+  existingCoverUrl,
   isEdit,
 }) => (
   <form onSubmit={onSubmit} className="space-y-4">
@@ -90,9 +97,28 @@ const EventForm = ({
           </span>
         )}
       </label>
+
+      {/* Pokud je předán existingCoverUrl (z turnaje) a ještě nebyl vybrán nový soubor */}
+      {existingCoverUrl && !coverPreview && (
+        <div className="mb-2">
+          <p className="text-xs text-gray-400 mb-1">
+            Převzatý obrázek z turnaje:
+          </p>
+          <img
+            src={existingCoverUrl}
+            alt="Cover z turnaje"
+            className="h-28 object-contain rounded-lg border border-green-200 border-2"
+          />
+        </div>
+      )}
+
       <label className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer transition-colors text-sm">
         <ImagePlus size={16} />
-        <span>Vybrat náhledovou fotku</span>
+        <span>
+          {existingCoverUrl && !coverPreview
+            ? "Vybrat jiný obrázek"
+            : "Vybrat náhledovou fotku"}
+        </span>
         <input
           type="file"
           accept="image/*"
@@ -222,6 +248,10 @@ const PhotoGallery = ({ photos, onDeletePhoto }) => {
 
 // ─── HLAVNÍ KOMPONENTA ───
 function AdminAktuality() {
+  // Načtení prefill dat z React Router navigate state (z AdminTurnaje)
+  const location = useLocation();
+  const prefill = location.state?.prefill || null;
+
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(null);
@@ -239,6 +269,8 @@ function AdminAktuality() {
   const [newPhotoPreviews, setNewPhotoPreviews] = useState([]);
   const [newCover, setNewCover] = useState(null);
   const [newCoverPreview, setNewCoverPreview] = useState(null);
+  // existingCoverUrl = URL obrázku převzatého z turnaje (není File objekt)
+  const [existingCoverUrl, setExistingCoverUrl] = useState(null);
   const [formError, setFormError] = useState("");
 
   // Editace
@@ -250,6 +282,26 @@ function AdminAktuality() {
   const [editCoverPreview, setEditCoverPreview] = useState(null);
   const [editError, setEditError] = useState("");
   const [editSaving, setEditSaving] = useState(false);
+
+  // Pokud přišel prefill z AdminTurnaje → otevři formulář s předvyplněnými daty
+  useEffect(() => {
+    if (prefill) {
+      setNewEvent({
+        title: prefill.title || "",
+        body: prefill.body || "",
+        date_start: prefill.date_start || "",
+        status: prefill.status || "Availible",
+      });
+      if (prefill.existingCoverUrl) {
+        setExistingCoverUrl(prefill.existingCoverUrl);
+      }
+      setShowAddForm(true);
+      // Scroll na formulář
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 100);
+    }
+  }, []);
 
   useEffect(() => {
     fetchEvents();
@@ -289,6 +341,7 @@ function AdminAktuality() {
     const file = e.target.files[0];
     if (file) {
       setNewCover(file);
+      // Jakmile uživatel vybere vlastní soubor, existingCoverUrl se přestane zobrazovat
       const reader = new FileReader();
       reader.onloadend = () => setNewCoverPreview(reader.result);
       reader.readAsDataURL(file);
@@ -321,12 +374,21 @@ function AdminAktuality() {
     formData.append("body", newEvent.body);
     formData.append("date_start", newEvent.date_start);
     formData.append("status", newEvent.status);
-    if (newCover) formData.append("cover", newCover);
+
+    // Pokud uživatel vybral nový soubor → pošli ho
+    // Pokud ne ale má existingCoverUrl (z turnaje) → pošli URL jako text
+    if (newCover) {
+      formData.append("cover", newCover);
+    } else if (existingCoverUrl) {
+      formData.append("cover_url", existingCoverUrl);
+    }
+
     newPhotos.forEach((file) => formData.append("photos", file));
 
     try {
       const response = await fetch(`${API}/api/events`, {
         method: "POST",
+        headers: authHeader(),
         body: formData,
       });
       if (response.ok) {
@@ -352,6 +414,7 @@ function AdminAktuality() {
     setNewPhotoPreviews([]);
     setNewCover(null);
     setNewCoverPreview(null);
+    setExistingCoverUrl(null);
     setNewEvent({ title: "", body: "", date_start: "", status: "Availible" });
   };
 
@@ -422,6 +485,7 @@ function AdminAktuality() {
     try {
       const response = await fetch(`${API}/api/events/${id}`, {
         method: "PUT",
+        headers: authHeader(),
         body: formData,
       });
       if (response.ok) {
@@ -446,6 +510,7 @@ function AdminAktuality() {
     try {
       const response = await fetch(`${API}/api/events/${id}`, {
         method: "DELETE",
+        headers: authHeader(),
       });
       if (response.ok) setEvents(events.filter((e) => e.id !== id));
       else alert("Nepodařilo se smazat aktualitu");
@@ -461,6 +526,7 @@ function AdminAktuality() {
     try {
       const response = await fetch(`${API}/api/events/photo/${photoId}`, {
         method: "DELETE",
+        headers: authHeader(),
       });
       if (response.ok) {
         setEvents(
@@ -501,13 +567,22 @@ function AdminAktuality() {
         )}
       </div>
 
-      {/* Formulář přidání */}
+      {/* Formulář přidání – zobrazí se i při přesměrování z turnajů */}
       {showAddForm && (
         <div className="bg-customWhite rounded-lg shadow-lg p-6 border-2 border-green-500">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-semibold text-gray-800">
-              Nová aktualita
-            </h3>
+            <div>
+              <h3 className="text-xl font-semibold text-gray-800">
+                Nová aktualita
+              </h3>
+              {/* Upozornění pokud byl formulář předvyplněn z turnaje */}
+              {prefill && (
+                <p className="text-sm text-purple-600 mt-1 flex items-center gap-1">
+                  <Newspaper size={14} />
+                  Předvyplněno z turnaje – zkontroluj a doplň text
+                </p>
+              )}
+            </div>
             <button
               onClick={cancelAdd}
               className="text-gray-400 hover:text-gray-600"
@@ -526,6 +601,7 @@ function AdminAktuality() {
             newPhotoPreviews={newPhotoPreviews}
             onCoverChange={handleCoverChange}
             coverPreview={newCoverPreview}
+            existingCoverUrl={existingCoverUrl}
             isEdit={false}
           />
         </div>
@@ -558,7 +634,6 @@ function AdminAktuality() {
                     </button>
                   </div>
 
-                  {/* Stávající cover při editaci */}
                   {event.cover_photo && (
                     <div>
                       <p className="text-sm font-medium text-gray-700 mb-2">
@@ -572,7 +647,6 @@ function AdminAktuality() {
                     </div>
                   )}
 
-                  {/* Stávající fotky galerie */}
                   {event.photos?.length > 0 && (
                     <div>
                       <p className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
@@ -601,12 +675,12 @@ function AdminAktuality() {
                     newPhotoPreviews={editPhotoPreviews}
                     onCoverChange={handleEditCoverChange}
                     coverPreview={editCoverPreview}
+                    existingCoverUrl={null}
                     isEdit={true}
                   />
                 </div>
               ) : (
                 <div className="flex flex-col sm:flex-row items-start gap-4">
-                  {/* Cover fotka nebo ID badge */}
                   <div className="flex-shrink-0">
                     {event.cover_photo ? (
                       <img
@@ -621,7 +695,6 @@ function AdminAktuality() {
                     )}
                   </div>
 
-                  {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
                       <p className="text-lg font-semibold text-gray-800">
@@ -682,7 +755,6 @@ function AdminAktuality() {
                     </div>
                   </div>
 
-                  {/* Tlačítka */}
                   <div className="flex gap-2 flex-shrink-0">
                     <button
                       onClick={() => startEdit(event)}

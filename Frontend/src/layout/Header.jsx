@@ -3,7 +3,7 @@ import Nabor from "../Components/Nabor";
 import LogInButton from "../Components/LogInButton";
 import LogoutButton from "../Components/LogoutButton";
 import { useState, useEffect } from "react";
-import { authService } from "../utils/auth"; // Import auth service
+import { authService } from "../utils/auth";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
