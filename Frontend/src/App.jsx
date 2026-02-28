@@ -18,10 +18,8 @@ import Turnaje from "./Components/Turnaje";
 import AboutUs from "./Components/AboutUS";
 import Detail from "./pages/Turnaje/Detail";
 import SideBar from "./layout/_test/Sidebar";
-import AdminContainer from "./layout/AdminContainer";
 import AddFighter from "./Components/AddFighter";
 import FightersAdmin from "./Components/FightersAdmin";
-import FooterTest from "./layout/_test/FooterTest";
 import Login from "./Components/Login";
 import Register from "./Components/Register";
 import ProtectedRoute from "./pages/Login/ProtectedRoute";
@@ -36,9 +34,9 @@ function Layout() {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith("/admin");
 
-  // Dynamické routování
   if (isAdmin) {
     return (
+      // Chráněné admin routy
       <ProtectedRoute>
         <div className="flex min-h-screen bg-slate-100">
           <SideBar />
