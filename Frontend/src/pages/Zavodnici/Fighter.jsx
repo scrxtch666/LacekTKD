@@ -50,6 +50,7 @@ function Fighter() {
                 {fighter.name} {fighter.surname}
               </span>
 
+          {/* TOP 3 úspěchy nebo tak něco */}
               <div class="flex flex-col">
                 <span class="text-xs">
                   1. místo Children Championship (2011)

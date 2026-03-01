@@ -12,6 +12,7 @@ const bannerRouter = require("./Banner/RouterBanner");
 const roleRouter = require("./Roles/RouterRoles");
 const categoryRouter = require("./Category/RouterCategory");
 const trainingRouter = require("./Trainings/RouterTrainings");
+const tournamentRegistrationRouter = require("./TournamentRegistration/RouterTournamentRegistration")
 
 // Registrace routerů
 router.use("/events", eventRouter);
@@ -25,5 +26,7 @@ router.use("/banner", bannerRouter);
 router.use("/roles", roleRouter);
 router.use("/category", categoryRouter);
 router.use("/trainings", trainingRouter);
+router.use("/tournamentRegistration", tournamentRegistrationRouter);
+
 
 module.exports = router;

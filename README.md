@@ -152,18 +152,11 @@ Backend
 - JWT, hashing (ByCript)
 
 
-# ROUTY
-- Důležitou částí týkající se backendu je bezpochyb routování. Jedná se o mechanismus, který definuje, jaká komponenta nebo jaká data se mají aktuálně vykreslit. Vykreslovaný obsah se mění podle aktuální URL adresy na které se uživatel nachází. Pro realizaci backendových rout jsem využil Express.js. 
-
-Mé řešení obsahuje jeden centrální soubor Router.js ve kterém mám definované všechny backendové routy z kterých získávám data.
-
-V první části se nachází import routerů
-V druhé části je registrace routerů
-
-# API
-
-# ZABEZPEČení
 
 
 
-"Pro navigaci v aplikaci byl využit react-router-dom, který umožňuje okamžitou odezvu uživatelského rozhraní bez nutnosti opětovného načítání stránek. Komunikace se serverovou částí probíhá asynchronně skrze REST API definované v Express.js, které slouží výhradně jako poskytovatel dat."
+# SPUŠTĚNÍ 
+Frontend - cd .\Frontend\ - npm run dev
+Backend - cd  .\Backend\ - node server.js
+
+
