@@ -153,10 +153,20 @@ Backend
 
 
 
-
-
 # SPUŠTĚNÍ 
 Frontend - cd .\Frontend\ - npm run dev
 Backend - cd  .\Backend\ - node server.js
+
+
+# TASKS
+- udělat úspěchy pro závodníky
+- udělat detaily akcí, turnajů...
+- zprovoznit newsletter
+- v adminu to rozdělit na to co uživatel vidí a co ne
+- přihlášení na zkoušky a turnaje
+- upravit aktuality - search bar, řazení podle data
+- upravit zkoušky - rozložení, klíčové pojmy
+- karty pro turnaje
+- závodníci - předělat
 
 
