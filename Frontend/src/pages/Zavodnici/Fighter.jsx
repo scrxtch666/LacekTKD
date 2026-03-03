@@ -1,115 +1,171 @@
 import React, { useState, useEffect } from "react";
 
-function Fighter() {
-  const [fighters, setFighters] = useState([]); // Stav pro uchování dat turnajů
-  const [loading, setLoading] = useState(true); // Stav pro zobrazení načítání dat
+const API = "http://localhost:3000";
 
-  // Funkce pro načítání dat o turnajích
+const BELT_ORDER = [
+  "5. DAN",
+  "4. DAN",
+  "3. DAN",
+  "2. DAN",
+  "1. DAN",
+  "1. CUP",
+  "2. CUP",
+  "3. CUP",
+  "4. CUP",
+  "5. CUP",
+  "6. CUP",
+  "7. CUP",
+  "8. CUP",
+];
+
+function Fighter() {
+  const [fighters, setFighters] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    // Načítání dat z backendu
-    fetch("http://localhost:3000/api/fighters")
+    fetch(`${API}/api/fighters`)
       .then((response) => response.json())
       .then((data) => {
-        setFighters(data); // Nastavení získaných dat do stavu
-        setLoading(false); // Nastavení stavu načítání na false
+        setFighters(Array.isArray(data) ? data : []);
+        setLoading(false);
       })
       .catch((error) => {
         console.error("Chyba při načítání dat:", error);
-        setLoading(false); // I když dojde k chybě, stav načítání bude false
+        setLoading(false);
       });
   }, []);
 
   if (loading) {
-    return <div>Načítám data...</div>; // Zobrazení textu při načítání
+    return <div>Načítám data...</div>;
   }
+
+  // Seskup závodníky podle pásu
+  const groups = fighters.reduce((acc, fighter) => {
+    const key = fighter.cup || "Ostatní";
+    if (!acc[key]) acc[key] = { fighters: [], belt_path: fighter.belt_path };
+    acc[key].fighters.push(fighter);
+    return acc;
+  }, {});
+
+  // Seřaď skupiny podle BELT_ORDER
+  const sortedGroups = Object.entries(groups).sort(([a], [b]) => {
+    const ai = BELT_ORDER.indexOf(a);
+    const bi = BELT_ORDER.indexOf(b);
+    if (ai === -1 && bi === -1) return 0;
+    if (ai === -1) return 1;
+    if (bi === -1) return -1;
+    return ai - bi;
+  });
+
   return (
-    <>
-      {fighters.map((fighter) => (
-        
-        <div>
-          <div className="devider flex justify-between">
-            <img
-              src={fighter.belt_path}
-              alt="test"
-              class="w-9 object-cover object-center"
-            />
-            <span class="">{fighter.cup}</span>
+    <div className="space-y-8">
+      {sortedGroups.map(([cup, group]) => (
+        <div key={cup}>
+          {/* Header skupiny */}
+          <div className="devider flex justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <img
+                src={group.belt_path}
+                alt={cup}
+                className="w-9 object-cover object-center"
+              />
+              <span>{cup}</span>
+            </div>
+            <span className="text-customGreen">
+              {group.fighters?.length || 0}{" "}
+              {group.fighters?.length === 1
+                ? "závodník"
+                : group.fighters?.length >= 2 && group.fighters?.length <= 4
+                  ? "závodníci"
+                  : "závodníků"}
+            </span>
           </div>
 
-          <div class="w-[400px] h-40 bg-customWhite text-customBlack rounded-md p-2 flex flex-row justify-between">
-            <div class="w-28 h-full rounded-xl overflow-hidden">
-              <img
-                src={fighter.img_path}
-                alt="test"
-                class="w-full h-full object-cover object-center"
-              />
-            </div>
+          {/* Mřížka závodníků */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {group.fighters.map((fighter) => (
+              <div
+                key={fighter.id}
+                className="w-full h-40 bg-customWhite text-customBlack rounded-md p-2 flex flex-row justify-between"
+              >
+                <div className="w-28 h-full rounded-xl overflow-hidden">
+                  <img
+                    src={fighter.img_path}
+                    alt={fighter.name}
+                    className="w-full h-full object-cover object-center"
+                  />
+                </div>
 
-            <div class="flex flex-col text-left w-64 justify-between overflow-hidden">
-              <span class="font-semibold">
-                {fighter.name} {fighter.surname}
-              </span>
+                <div className="flex flex-col text-left w-64 justify-between overflow-hidden">
+                  <span className="font-semibold">
+                    {fighter.name} {fighter.surname}
+                  </span>
 
-          {/* TOP 3 úspěchy nebo tak něco */}
-              <div class="flex flex-col">
-                <span class="text-xs">
-                  1. místo Children Championship (2011)
-                </span>
-                <span class="text-xs">
-                  2. místo Children Championship (2011)
-                </span>
-                <span class="text-xs">
-                  3. místo Children Championship (2011)
-                </span>
+                  {/* TOP 3 úspěchy */}
+                  <div className="flex flex-col">
+                    {(fighter.tournament_results || []).length > 0 ? (
+                      fighter.tournament_results.map((result, i) => (
+                        <span key={i} className="text-xs">
+                          {result.place}. místo – {result.tournament} (
+                          {result.date})
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-xs text-gray-400 italic">
+                        Závodník zatím nemá žádný úspěch
+                      </span>
+                    )}
+                  </div>
 
-                {/*
-            <span class="text-[10px] text-customGreen font-bold text-right">zobrazit vše...</span>
-*/}
+                  <span className="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-full w-full max-h-5 h-full flex items-center justify-around">
+                    ÚSPĚCHY
+                  </span>
+
+                  <div className="flex justify-between">
+                    <span className="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-20 w-full max-h-5 h-full flex items-center justify-around">
+                      <div className="relative inline-flex rounded-full h-4 w-4 bg-customGreen">
+                        <img
+                          className="px-0.5 py-0.5 flex align-middle items-center"
+                          src="../src/assets/icons/belt.png"
+                          alt=""
+                        />
+                      </div>
+                      {fighter.cup}
+                    </span>
+
+                    {fighter.best === 1 && (
+                      <span className="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-20 w-full max-h-5 h-full flex items-center justify-around">
+                        <div className="relative inline-flex rounded-full h-4 w-4 bg-customGreen">
+                          <img
+                            className="px-0.5 py-0.5 flex align-middle items-center"
+                            src="../src/assets/icons/medal.png"
+                            alt=""
+                          />
+                        </div>
+                        BEST
+                      </span>
+                    )}
+
+                    {fighter.legend === 1 && (
+                      <span className="border border-customGreen text-customGreen text-[8px] font-medium px-2.5 py-0.5 rounded max-w-20 w-full max-h-5 h-full flex items-center justify-around">
+                        <div className="relative inline-flex rounded-full h-4 w-4 bg-customGreen">
+                          <img
+                            className="px-0.5 py-0.5 flex align-middle items-center"
+                            src="../src/assets/icons/trophy.png"
+                            alt=""
+                          />
+                        </div>
+                        LEGEND
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
-
-              <span class="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-full w-full max-h-5 h-full flex items-center justify-around">
-                ÚSPĚCHY
-              </span>
-
-              <div class="flex justify-between">
-                <span class="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-20 w-full max-h-5 h-full flex items-center justify-around">
-                  <div class="relative inline-flex rounded-full h-4 w-4 bg-customGreen">
-                    <img
-                      class="px-0.5 py-0.5 flex align-middle items-center"
-                      src="../src/assets/icons/belt.png"
-                      alt="image description"
-                    ></img>
-                  </div>
-                  {fighter.cup}
-                </span>
-
-                <span class="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-20 w-full max-h-5 h-full flex items-center justify-around">
-                  <div class="relative inline-flex rounded-full h-4 w-4 bg-customGreen">
-                    <img
-                      class="px-0.5 py-0.5 flex align-middle items-center"
-                      src="../src/assets/icons/medal.png"
-                      alt="image description"
-                    ></img>
-                  </div>
-                  BEST
-                </span>
-
-                <span class="border border-customGreen text-customGreen text-[8px] font-medium px-2.5 py-0.5 rounded max-w-20 w-full max-h-5 h-full flex items-center justify-around">
-                  <div class="relative inline-flex rounded-full h-4 w-4 bg-customGreen">
-                    <img
-                      class="px-0.5 py-0.5 flex align-middle items-center"
-                      src="../src/assets/icons/trophy.png"
-                      alt="image description"
-                    ></img>
-                  </div>
-                  LEGEND
-                </span>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       ))}
-    </>
+    </div>
   );
 }
 
