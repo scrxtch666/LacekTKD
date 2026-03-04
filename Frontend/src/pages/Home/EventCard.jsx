@@ -5,6 +5,8 @@ const API = "http://localhost:3000";
 function EventCard() {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [selectedPeriod, setSelectedPeriod] = useState(""); // ← nový stav
 
   useEffect(() => {
     fetch(`${API}/api/events`)
@@ -18,25 +20,87 @@ function EventCard() {
 
   if (loading) return <div>Načítám data...</div>;
 
-  // Seskup aktuality podle roku
-  const groups = news.reduce((acc, event) => {
-    // date_start_raw je ve formátu YYYY-MM-DD HH:MM:SS
+  // Získej unikátní období pro select – automaticky z dat
+  const periods = [
+    ...new Set(
+      news.map((event) => {
+        const d = new Date(event.date_start_raw);
+        return `${d.toLocaleString("cs-CZ", { month: "long" })} ${d.getFullYear()}`;
+      }),
+    ),
+  ].sort((a, b) => b.localeCompare(a));
+
+  // Filtruj podle textu i období
+  const filtered = news.filter((event) => {
+    const matchesSearch = event.title
+      ?.toLowerCase()
+      .includes(search.toLowerCase());
+
+    const d = new Date(event.date_start_raw);
+    const period = `${d.toLocaleString("cs-CZ", { month: "long" })} ${d.getFullYear()}`;
+    const matchesPeriod = selectedPeriod === "" || period === selectedPeriod;
+
+    return matchesSearch && matchesPeriod;
+  });
+
+  // Seskup filtrovaná data
+  const groups = filtered.reduce((acc, event) => {
     const d = new Date(event.date_start_raw);
     const year = `${d.toLocaleString("cs-CZ", { month: "long" })} ${d.getFullYear()}`;
-
     if (!acc[year]) acc[year] = [];
     acc[year].push(event);
     return acc;
   }, {});
 
-  // Seřaď roky od nejnovějšího
   const sortedGroups = Object.entries(groups).sort(([a], [b]) => b - a);
 
   return (
     <div className="space-y-8">
+      {/* Searchbar + filtr období */}
+      <div className="flex gap-3 flex-col sm:flex-row">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Hledat aktualitu..."
+          className="bg-customWhite flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
+        />
+        <select
+          value={selectedPeriod}
+          onChange={(e) => setSelectedPeriod(e.target.value)}
+          className="bg-customWhite px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
+        >
+          <option value="">Všechna období</option>
+          {periods.map((period) => (
+            <option key={period} value={period}>
+              {period}
+            </option>
+          ))}
+        </select>
+
+        {/* Reset filtrů – zobrazí se jen když je něco vyplněno */}
+        {(search || selectedPeriod) && (
+          <button
+            onClick={() => {
+              setSearch("");
+              setSelectedPeriod("");
+            }}
+            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition-colors"
+          >
+            Zrušit filtry
+          </button>
+        )}
+      </div>
+
+      {/* Žádné výsledky */}
+      {sortedGroups.length === 0 && (
+        <p className="text-gray-400 text-center italic py-8">
+          Žádná aktualita neodpovídá zadaným filtrům
+        </p>
+      )}
+
       {sortedGroups.map(([year, events]) => (
         <div key={year}>
-          {/* Header roku */}
           <div className="devider flex justify-between mb-4">
             <span>{year}</span>
             <span className="text-customGreen">
@@ -49,7 +113,6 @@ function EventCard() {
             </span>
           </div>
 
-          {/* Mřížka aktualit */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {events.map((event) => (
               <div
