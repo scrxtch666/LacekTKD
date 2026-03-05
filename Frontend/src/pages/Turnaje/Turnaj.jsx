@@ -73,7 +73,7 @@ function Turnaj() {
                   className="h-5"
                 />
                 <span className="text-customGreen font-bold">Datum: </span>
-                {event.start_date} - {event.end_date}
+                {event.start_date_formatted} - {event.end_date_formatted}
               </p>
               <br />
               <p className="flex gap-1 items-center">
