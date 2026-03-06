@@ -27,10 +27,10 @@ function Turnaj() {
     <>
       {events.map((event) => (
         <div className="card w-full flex items-center overflow-hidden h-64">
-          <div className=" flex gap-2 h-full w-full">
-            <div className="flex max-w-52 object-cover object-center items-center h-full">
+          <div className=" flex gap-2 h-full">
+            <div className="flex max-w-36 object-cover object-center items-center h-full">
               <img
-                src="../src/assets/Events/BT_open.jpg"
+                src={event.img_path}
                 alt={event.name}
                 className="object-cover object-center rounded-md h-full hidden lg:flex"
               />

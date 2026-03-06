@@ -11,7 +11,7 @@ function Zkousky() {
       <div class="devider">ZKOUŠKY</div>
 
       {/* Sekce ve které je to obalené */}
-      <div className="grid grid-cols-2 gap-5 lg:grid-cols-1">
+      <div className="grid gap-5 lg:grid-cols-2 md:grid-cols-1">
         <Pasky />
         <Cenik />
       </div>
