@@ -19,44 +19,48 @@ function SideBar() {
   const location = useLocation();
   const userRole = getUserRole(); // např. "admin", "trainer", "user"
 
+
   const sections = [
     {
       title: "Obecné",
-      adminOnly: false,
+      adminOnly: true,
       items: [
         { name: "Dashboard", path: "/admin", icon: LayoutDashboard },
-        { name: "Náš oddíl", path: "/admin/nas-oddil", icon: LayoutDashboard },
         { name: "Aktuality", path: "/admin/aktuality", icon: LayoutDashboard },
         { name: "Zkoušky", path: "/admin/zkousky", icon: LayoutDashboard },
         { name: "Turnaje", path: "/admin/turnaje", icon: LayoutDashboard },
         { name: "Závodníci", path: "/admin/zavodnici", icon: Users },
         { name: "Kontakt", path: "/admin/kontakt", icon: Phone },
-        { name: "Dokumenty", path: "/admin/dokumenty", icon: FileText },
       ],
     },
     {
       title: "Správa webu",
-      adminOnly: false,
+      adminOnly: true,
       items: [
         { name: "Banner", path: "/admin/banner", icon: Image },
-        { name: "Newsletter", path: "/admin/newsletter", icon: Mailbox },
         { name: "Sponzoři", path: "/admin/sponsors", icon: Image },
-        { name: "Nastavení", path: "/admin/nastaveni", icon: Settings },
+        { name: "Uživatelé", path: "/admin/users", icon: Users },
+        { name: "Newsletter", path: "/admin/newsletter", icon: Mailbox },
       ],
     },
+
     {
-      title: "Administrace",
-      adminOnly: true, // 👈 viditelné pouze pro admina
+      title: "Uživatelské možnosti",
+      adminOnly: false,
+      userOnly: true,
       items: [
-        { name: "Uživatelé", path: "/admin/users", icon: Users },
-        { name: "Role a oprávnění", path: "/admin/roles", icon: ShieldAlert },
+        { name: "Můj účet", path: "/admin/me", icon: Image },
+        { name: "Zkoušky", path: "/admin/test-reg", icon: Image },
+        { name: "Turnaje", path: "/admin/tournaments-reg", icon: Users },
       ],
     },
   ];
 
-  const visibleSections = sections.filter(
-    (section) => !section.adminOnly || userRole === "admin",
-  );
+  const visibleSections = sections.filter((section) => {
+    if (section.adminOnly && userRole !== "admin") return false;
+    if (section.userOnly && userRole !== "user") return false;
+    return true;
+  });
 
   return (
     <>

@@ -80,9 +80,10 @@ router.post("/login", (req, res) => {
 // Informace o přihlášeném uživateli
 router.get("/me", verifyToken, (req, res) => {
   db.query(
-    `SELECT users.id, users.login, users.email, role.role_name
+    `SELECT users.id, users.login, users.email, users.phone, role.role_name, fighters.name, fighters.surname,  DATE_FORMAT(fighters.birth, '%d.%m.%Y') AS birth, fighters.img_path, fighters.actual_weight_category
      FROM users
      LEFT JOIN role ON users.role_id = role.id
+     LEFT JOIN fighters ON users.fighter_id = fighters.id
      WHERE users.id = ?`,
     [req.user.id],
     (err, results) => {
@@ -95,7 +96,13 @@ router.get("/me", verifyToken, (req, res) => {
         id: user.id,
         login: user.login,
         email: user.email,
+        phone: user.phone,
         role: user.role_name,
+        name: user.name,
+        surname: user.surname,
+        birth: user.birth,
+        img_path: user.img_path,
+        actual_weight_category: user.actual_weight_category,
       });
     },
   );
