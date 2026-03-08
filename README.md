@@ -7,6 +7,8 @@ Použité technologie:
 > [!IMPORTANT]
 > Nejdříve udělat databázi
 
+> upravit READ.ME
+
 > [!TIP]
 >Ikonky: https://icons8.com/icons/set/facebook
 
