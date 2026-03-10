@@ -108,4 +108,78 @@ router.get("/me", verifyToken, (req, res) => {
   );
 });
 
+// PUT /auth/me – úprava vlastního profilu
+router.put("/me", verifyToken, async (req, res) => {
+  const {
+    name,
+    surname,
+    phone,
+    actual_weight_category,
+    currentPassword,
+    newPassword,
+  } = req.body;
+
+  try {
+    // Pokud chce měnit heslo
+    if (newPassword) {
+      // Načti aktuální hash hesla
+      db.query(
+        "SELECT password FROM users WHERE id = ?",
+        [req.user.id],
+        async (err, results) => {
+          if (err) return res.status(500).json({ error: "Chyba serveru" });
+
+          const isMatch = await bcrypt.compare(
+            currentPassword,
+            results[0].password,
+          );
+          if (!isMatch)
+            return res
+              .status(401)
+              .json({ error: "Stávající heslo je nesprávné" });
+
+          const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+          db.query(
+            `UPDATE users 
+           LEFT JOIN fighters ON fighters.id = users.fighter_id
+           SET fighters.name = ?, fighters.surname = ?, users.phone = ?,
+               fighters.actual_weight_category = ?, users.password = ?
+           WHERE users.id = ?`,
+            [
+              name,
+              surname,
+              phone,
+              actual_weight_category,
+              hashedPassword,
+              req.user.id,
+            ],
+            (err2) => {
+              if (err2)
+                return res.status(500).json({ error: "Chyba při ukládání" });
+              res.json({ success: true, message: "Profil byl upraven" });
+            },
+          );
+        },
+      );
+    } else {
+      // Bez změny hesla
+      db.query(
+        `UPDATE users 
+         LEFT JOIN fighters ON fighters.id = users.fighter_id
+         SET fighters.name = ?, fighters.surname = ?, users.phone = ?,
+             fighters.actual_weight_category = ?
+         WHERE users.id = ?`,
+        [name, surname, phone, actual_weight_category, req.user.id],
+        (err) => {
+          if (err) return res.status(500).json({ error: "Chyba při ukládání" });
+          res.json({ success: true, message: "Profil byl upraven" });
+        },
+      );
+    }
+  } catch {
+    res.status(500).json({ error: "Interní chyba serveru" });
+  }
+});
+
 module.exports = router;
