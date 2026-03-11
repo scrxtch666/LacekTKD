@@ -80,7 +80,11 @@ router.post("/login", (req, res) => {
 // Informace o přihlášeném uživateli
 router.get("/me", verifyToken, (req, res) => {
   db.query(
-    `SELECT users.id, users.login, users.email, users.phone, role.role_name, fighters.name, fighters.surname,  DATE_FORMAT(fighters.birth, '%d.%m.%Y') AS birth, fighters.img_path, fighters.actual_weight_category
+    `SELECT users.id, users.login, users.email, users.phone, role.role_name,
+            fighters.id AS fighter_id,
+            fighters.name, fighters.surname,
+            DATE_FORMAT(fighters.birth, '%d.%m.%Y') AS birth,
+            fighters.img_path, fighters.actual_weight_category
      FROM users
      LEFT JOIN role ON users.role_id = role.id
      LEFT JOIN fighters ON users.fighter_id = fighters.id
@@ -88,23 +92,57 @@ router.get("/me", verifyToken, (req, res) => {
     [req.user.id],
     (err, results) => {
       if (err) return res.status(500).json({ error: "Chyba serveru" });
-      if (!results.length)
-        return res.status(404).json({ error: "Uživatel nenalezen" });
+      if (!results.length) return res.status(404).json({ error: "Uživatel nenalezen" });
 
       const user = results[0];
-      res.json({
-        id: user.id,
-        login: user.login,
-        email: user.email,
-        phone: user.phone,
-        role: user.role_name,
-        name: user.name,
-        surname: user.surname,
-        birth: user.birth,
-        img_path: user.img_path,
-        actual_weight_category: user.actual_weight_category,
-      });
-    },
+
+      // Pokud nemá přiřazeného závodníka, vrať bez výsledků
+      if (!user.fighter_id) {
+        return res.json({
+          id: user.id,
+          login: user.login,
+          email: user.email,
+          phone: user.phone,
+          role: user.role_name,
+          name: user.name,
+          surname: user.surname,
+          birth: user.birth,
+          img_path: user.img_path,
+          actual_weight_category: user.actual_weight_category,
+          tournament_results: [],
+        });
+      }
+
+      // Načti výsledky závodníka
+      db.query(
+        `SELECT 
+            tr.place,
+            t.name AS tournament,
+            DATE_FORMAT(t.start_date, '%d.%m.%Y') AS date
+         FROM tournament_registration tr
+         JOIN tournament t ON t.id = tr.tournament_id
+         WHERE tr.fighter_id = ? AND tr.place IS NOT NULL
+         ORDER BY t.start_date DESC`,
+        [user.fighter_id],
+        (err2, results2) => {
+          if (err2) return res.status(500).json({ error: "Chyba serveru" });
+
+          res.json({
+            id: user.id,
+            login: user.login,
+            email: user.email,
+            phone: user.phone,
+            role: user.role_name,
+            name: user.name,
+            surname: user.surname,
+            birth: user.birth,
+            img_path: user.img_path,
+            actual_weight_category: user.actual_weight_category,
+            tournament_results: results2,
+          });
+        }
+      );
+    }
   );
 });
 

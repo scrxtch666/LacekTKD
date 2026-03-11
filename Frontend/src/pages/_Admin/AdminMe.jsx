@@ -400,9 +400,34 @@ function AdminMe() {
         )}
       </div>
 
-      <div className="card">Uspechy</div>
-      
-
+      {user.tournament_results?.length > 0 && (
+        <div className="px-6 pb-5">
+          <div className="border-t border-gray-100 pt-4">
+            <p className="text-sm font-medium text-gray-600 mb-3">
+              Výsledky z turnajů
+            </p>
+            <div className="space-y-2">
+              {user.tournament_results.map((result, i) => (
+                <div key={i} className="flex items-center gap-3 text-sm">
+                  <span className="font-bold w-6 text-center">
+                    {result.place === 1
+                      ? "🥇"
+                      : result.place === 2
+                        ? "🥈"
+                        : result.place === 3
+                          ? "🥉"
+                          : `${result.place}.`}
+                  </span>
+                  <span className="flex-1 text-gray-700">
+                    {result.tournament}
+                  </span>
+                  <span className="text-gray-400 text-xs">{result.date}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
