@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Navigate, redirect, useNavigate } from "react-router-dom";
+import { getUserRole } from "../utils/auth";
 
 const Login = () => {
   const [formData, setFormData] = useState({ login: "", password: "" });
@@ -22,9 +23,16 @@ const Login = () => {
           localStorage.setItem("token", data.token);
 
           window.dispatchEvent(new Event("authChange"));
+          // Přečti roli AŽ po uložení tokenu
+          const role = getUserRole();
 
-          navigate("/admin/banner", { replace: true });
-          // udělat tady to, že to bude podle rolí 
+          if (role === "admin") {
+            navigate("/admin", { replace: true });
+          } else if (role === "trainer") {
+            navigate("/admin/zavodnici", { replace: true });
+          } else {
+            navigate("/admin/me", { replace: true });
+          }
         }
       } else {
         alert(data.error);

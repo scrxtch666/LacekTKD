@@ -33,16 +33,8 @@ Barvy:
 Komentář:
 {/*  */}
 
-Pokud bude problém s portem, tak se podívat do server.js na origin: 'http://localhost:5173' a změnit port
-
-Spuštění backendu: cd backend, node server.js
-
 DB návrh: https://community.dbdiagram.io/t/upgrade-for-database-relationships-zero-to-one-many-relationships-colors-and-more/4184?utm_source=dbdiagram&utm_medium=ads
 
-
-Jak budou fungovat pásky:
-- bude tabulka na pásky, kde budou hodnoty jako je ID, img, korean_name, czech_name (cup), price...
-- devidery a závodníci budou podle toho id
 
 Nechá se tam někde udělat dynamické routování, tak se na to podívat
 
@@ -51,18 +43,6 @@ Rozdělení závodníků do kategorií -> junior, senior, veterán... podle věk
 Uživatelské účty bude moci vytvářet trenér + administrátor
 U těch závodníků potřebuju, aby se to zobrazovalo podle id - různě
 
-# Vazby v DB
-- jeden fighter může mít jeden pásek, jeden pásek může mít více fighterů => **1:N**
-- jeden fighter může být přihlášen na více akcí, akce mohou mít více fighterů => **M:N**
-- uživatel může mít jednu roli, role může mít více uživatelů => **1:N**
-
-
-Kategorie - jeden fighter má jednu kategorii a kategorie připadá více fighterům
-Články, akce, závody - založeny jedním uživatelem, více článků může patřit jednomu uživateli => **1:N**
-Login, email, telefonní číslo => **1:1**
-Fotky k akcím - více fotek patří k jedné akci, k jedné akci patří více fotek...
-
-Vymyslet jak udělám úspěchy 
 
 # FRONTEND
 - doladit responzivitu
