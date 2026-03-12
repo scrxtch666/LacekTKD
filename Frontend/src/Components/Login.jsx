@@ -21,10 +21,10 @@ const Login = () => {
         if (data.token) {
           localStorage.setItem("token", data.token);
 
-          // ← přidej toto aby Header věděl o přihlášení
           window.dispatchEvent(new Event("authChange"));
 
-          navigate("/admin", { replace: true });
+          navigate("/admin/banner", { replace: true });
+          // udělat tady to, že to bude podle rolí 
         }
       } else {
         alert(data.error);

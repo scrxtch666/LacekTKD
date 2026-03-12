@@ -89,11 +89,17 @@ function Fighter() {
                 className="w-full h-40 bg-customWhite text-customBlack rounded-md p-2 flex flex-row justify-between"
               >
                 <div className="w-28 h-full rounded-xl overflow-hidden">
-                  <img
-                    src={fighter.img_path}
-                    alt={fighter.name}
-                    className="w-full h-full object-cover object-center"
-                  />
+                  {fighter.img_path ? (
+                    <img
+                      src={fighter.img_path}
+                      alt={fighter.name}
+                      className="w-full h-full object-cover object-center"
+                    />
+                  ) : (
+                    <div className="w-28 h-full rounded-xl bg-gradient-to-br bg-customGreen flex items-center justify-center text-customWhite text-2xl font-bold">
+                      {fighter.name?.charAt(0).toUpperCase() || "U"}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex flex-col text-left w-64 justify-between overflow-hidden">

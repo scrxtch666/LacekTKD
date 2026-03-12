@@ -89,7 +89,7 @@ Vymyslet jak udělám úspěchy
 - vzít si inspiraci a udělat shadow jako mám u newsletter shadow-xl border-2
 - u pásků udělat menu na pásky na levé straně, jakože sloupec
 - upravit Detail.jsx
-- udělat jednotné styly - c tailwindCss.cfg zkusit udělat nějakou jednotnou class
+- udělat jednotné styly - v tailwindCss.cfg zkusit udělat nějakou jednotnou class
 - nápad je že poté co se všichni závnodnící přihlásí na turnaj, tak si to trenér bude moci vyexportovat a poté zde nahrát ten soubor a ten mu uloží statisitky
 - musím udělat základ backendu, minimálně login
 - udělat více responzivní kartu na turnaje - při určité šířce se nebude zobrazovat fotografie

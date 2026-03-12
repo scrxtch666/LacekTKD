@@ -139,7 +139,8 @@ function AdminMe() {
     <div className="space-y-4">
       <div className="devider">Můj účet</div>
 
-      <div className="bg-customWhite rounded-2xl shadow-md overflow-hidden w-1/2 max-w-full">
+<div className="grid gap-5 lg:grid-cols-2 md:grid-cols-1">
+      <div className="bg-customWhite rounded-2xl shadow-md overflow-hidden w-full">
         {/* Banner */}
         <div className="h-24 bg-gradient-to-r from-customGreen to-green-400 relative">
           <div className="absolute -bottom-10 left-6">
@@ -401,7 +402,7 @@ function AdminMe() {
       </div>
 
       {user.tournament_results?.length > 0 && (
-        <div className="px-6 pb-5">
+        <div className="px-6 pb-5 bg-customWhite rounded-2xl shadow-md overflow-hidden w-full">
           <div className="border-t border-gray-100 pt-4">
             <p className="text-sm font-medium text-gray-600 mb-3">
               Výsledky z turnajů
@@ -410,13 +411,7 @@ function AdminMe() {
               {user.tournament_results.map((result, i) => (
                 <div key={i} className="flex items-center gap-3 text-sm">
                   <span className="font-bold w-6 text-center">
-                    {result.place === 1
-                      ? "🥇"
-                      : result.place === 2
-                        ? "🥈"
-                        : result.place === 3
-                          ? "🥉"
-                          : `${result.place}.`}
+                    {result.place}
                   </span>
                   <span className="flex-1 text-gray-700">
                     {result.tournament}
@@ -427,7 +422,7 @@ function AdminMe() {
             </div>
           </div>
         </div>
-      )}
+      )}</div>
     </div>
   );
 }

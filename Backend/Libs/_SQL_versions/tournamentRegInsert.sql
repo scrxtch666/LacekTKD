@@ -1,4 +1,4 @@
-INSERT INTO fighter_results (fighter_id, tournament_id, note, status, place) VALUES
+INSERT INTO tournament_registration (fighter_id, tournament_id, note, status, place) VALUES
 -- Fighter 1
 (1, 3, 'Dominant performance', 'completed', 1),
 (1, 5, 'TKO victory', 'completed', 1),
