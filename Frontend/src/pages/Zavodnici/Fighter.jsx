@@ -35,11 +35,8 @@ function Fighter() {
       });
   }, []);
 
-  if (loading) {
-    return <div>Načítám data...</div>;
-  }
+  if (loading) return <div>Načítám data...</div>;
 
-  // Seskup závodníky podle pásu
   const groups = fighters.reduce((acc, fighter) => {
     const key = fighter.cup || "Ostatní";
     if (!acc[key]) acc[key] = { fighters: [], belt_path: fighter.belt_path };
@@ -47,7 +44,6 @@ function Fighter() {
     return acc;
   }, {});
 
-  // Seřaď skupiny podle BELT_ORDER
   const sortedGroups = Object.entries(groups).sort(([a], [b]) => {
     const ai = BELT_ORDER.indexOf(a);
     const bi = BELT_ORDER.indexOf(b);
@@ -86,9 +82,10 @@ function Fighter() {
             {group.fighters.map((fighter) => (
               <div
                 key={fighter.id}
-                className="w-full h-40 bg-customWhite text-customBlack rounded-md p-2 flex flex-row justify-between"
+                className="w-full min-h-40 bg-customWhite text-customBlack rounded-md p-2 flex flex-row gap-2"
               >
-                <div className="w-28 h-full rounded-xl overflow-hidden">
+                {/* Fotka */}
+                <div className="w-28 flex-shrink-0 rounded-xl overflow-hidden self-stretch">
                   {fighter.img_path ? (
                     <img
                       src={fighter.img_path}
@@ -96,74 +93,78 @@ function Fighter() {
                       className="w-full h-full object-cover object-center"
                     />
                   ) : (
-                    <div className="w-28 h-full rounded-xl bg-gradient-to-br bg-customGreen flex items-center justify-center text-customWhite text-2xl font-bold">
-                      {fighter.name?.charAt(0).toUpperCase() || "U"}
+                    <div className="w-full h-full rounded-xl bg-customGreen flex items-center justify-center text-white text-2xl font-bold">
+                      {fighter.name?.charAt(0).toUpperCase() || "?"}
                     </div>
                   )}
                 </div>
 
-                <div className="flex flex-col text-left w-64 justify-between overflow-hidden">
-                  <span className="font-semibold">
+                {/* Obsah */}
+                <div className="flex flex-col text-left flex-1 justify-between overflow-hidden">
+                  {/* Jméno */}
+                  <span className="font-semibold truncate">
                     {fighter.name} {fighter.surname}
                   </span>
 
-                  {/* TOP 3 úspěchy */}
-                  <div className="flex flex-col">
+                  {/* Úspěchy – vždy stejná výška */}
+                  <div className="flex flex-col gap-0.5 min-h-[48px] justify-center">
                     {(fighter.tournament_results || []).length > 0 ? (
                       fighter.tournament_results.map((result, i) => (
-                        <span key={i} className="text-xs">
-                          {result.place}. místo – {result.tournament} (
-                          {result.date})
+                        <span key={i} className="text-xs truncate">
+                          {result.place}. {result.tournament} ({result.date})
                         </span>
                       ))
                     ) : (
-                      <span className="text-xs text-gray-400 italic">
-                        Závodník zatím nemá žádný úspěch
+                      <span className="text-xs text-gray-400 italic justify-center flex">
+                        Zatím žádný úspěch
                       </span>
                     )}
                   </div>
 
-                  <span className="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-full w-full max-h-5 h-full flex items-center justify-around">
-                    ÚSPĚCHY
-                  </span>
-
-                  <div className="flex justify-between">
-                    <span className="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-20 w-full max-h-5 h-full flex items-center justify-around">
-                      <div className="relative inline-flex rounded-full h-4 w-4 bg-customGreen">
-                        <img
-                          className="px-0.5 py-0.5 flex align-middle items-center"
-                          src="../src/assets/icons/belt.png"
-                          alt=""
-                        />
-                      </div>
-                      {fighter.cup}
+                  {/* Spodní část – vždy dole */}
+                  <div className="flex flex-col gap-1">
+                    <span className="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded w-full flex items-center justify-center">
+                      ÚSPĚCHY
                     </span>
 
-                    {fighter.best === 1 && (
-                      <span className="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-20 w-full max-h-5 h-full flex items-center justify-around">
-                        <div className="relative inline-flex rounded-full h-4 w-4 bg-customGreen">
+                    <div className="flex justify-evenly gap-1">
+                      <span className="border border-customGreen text-customGreen text-xs font-medium px-2 py-0.5 rounded flex items-center gap-1 flex-1 justify-center">
+                        <div className="inline-flex rounded-full h-4 w-4 bg-customGreen flex-shrink-0">
                           <img
-                            className="px-0.5 py-0.5 flex align-middle items-center"
-                            src="../src/assets/icons/medal.png"
+                            className="px-0.5 py-0.5"
+                            src="../src/assets/icons/belt.png"
                             alt=""
                           />
                         </div>
-                        BEST
+                        {fighter.cup}
                       </span>
-                    )}
 
-                    {fighter.legend === 1 && (
-                      <span className="border border-customGreen text-customGreen text-[8px] font-medium px-2.5 py-0.5 rounded max-w-20 w-full max-h-5 h-full flex items-center justify-around">
-                        <div className="relative inline-flex rounded-full h-4 w-4 bg-customGreen">
-                          <img
-                            className="px-0.5 py-0.5 flex align-middle items-center"
-                            src="../src/assets/icons/trophy.png"
-                            alt=""
-                          />
-                        </div>
-                        LEGEND
-                      </span>
-                    )}
+                      {fighter.best === 1 && (
+                        <span className="border border-customGreen text-customGreen text-xs font-medium px-2 py-0.5 rounded flex items-center gap-1 flex-1 justify-center">
+                          <div className="inline-flex rounded-full h-4 w-4 bg-customGreen flex-shrink-0">
+                            <img
+                              className="px-0.5 py-0.5"
+                              src="../src/assets/icons/medal.png"
+                              alt=""
+                            />
+                          </div>
+                          BEST
+                        </span>
+                      )}
+
+                      {fighter.legend === 1 && (
+                        <span className="border border-customGreen text-customGreen text-xs font-medium px-2 py-0.5 rounded flex items-center gap-1 flex-1 justify-center">
+                          <div className="inline-flex rounded-full h-4 w-4 bg-customGreen flex-shrink-0">
+                            <img
+                              className="px-0.5 py-0.5"
+                              src="../src/assets/icons/trophy.png"
+                              alt=""
+                            />
+                          </div>
+                          LEGEND
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
