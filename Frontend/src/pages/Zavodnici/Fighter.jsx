@@ -21,6 +21,10 @@ const BELT_ORDER = [
 function Fighter() {
   const [fighters, setFighters] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [filterBelt, setFilterBelt] = useState("");
+  const [filterBest, setFilterBest] = useState(false);
+  const [filterLegend, setFilterLegend] = useState(false);
 
   useEffect(() => {
     fetch(`${API}/api/fighters`)
@@ -53,9 +57,90 @@ function Fighter() {
     return ai - bi;
   });
 
+  const filteredGroups = sortedGroups
+    .map(([cup, group]) => [
+      cup,
+      {
+        ...group,
+        fighters: group.fighters.filter((fighter) => {
+          const matchesSearch = `${fighter.name} ${fighter.surname}`
+            .toLowerCase()
+            .includes(search.toLowerCase());
+          const matchesBelt = filterBelt === "" || fighter.cup === filterBelt;
+          const matchesBest = !filterBest || fighter.best === 1;
+          const matchesLegend = !filterLegend || fighter.legend === 1;
+          return matchesSearch && matchesBelt && matchesBest && matchesLegend;
+        }),
+      },
+    ])
+    .filter(([, group]) => group.fighters.length > 0);
+
   return (
     <div className="space-y-8">
-      {sortedGroups.map(([cup, group]) => (
+      <div className="flex gap-3 flex-col sm:flex-row flex-wrap">
+        {/* Vyhledávání */}
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Hledat závodníka..."
+          className="bg-customWhite flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
+        />
+
+        {/* Filtr pásu */}
+        <select
+          value={filterBelt}
+          onChange={(e) => setFilterBelt(e.target.value)}
+          className="bg-customWhite px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
+        >
+          <option value="">Všechny pásy</option>
+          {BELT_ORDER.map((belt) => (
+            <option key={belt} value={belt}>
+              {belt}
+            </option>
+          ))}
+        </select>
+
+        {/* Filtr Best */}
+        <button
+          onClick={() => setFilterBest(!filterBest)}
+          className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
+            filterBest
+              ? "bg-customGreen text-white border-customGreen"
+              : "bg-customWhite text-gray-600 border-gray-300"
+          }`}
+        >
+          🏅 BEST
+        </button>
+
+        {/* Filtr Legend */}
+        <button
+          onClick={() => setFilterLegend(!filterLegend)}
+          className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
+            filterLegend
+              ? "bg-customGreen text-white border-customGreen"
+              : "bg-customWhite text-gray-600 border-gray-300"
+          }`}
+        >
+          🏆 LEGEND
+        </button>
+
+        {/* Reset – zobrazí se jen když je něco aktivní */}
+        {(search || filterBelt || filterBest || filterLegend) && (
+          <button
+            onClick={() => {
+              setSearch("");
+              setFilterBelt("");
+              setFilterBest(false);
+              setFilterLegend(false);
+            }}
+            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-sm transition-colors"
+          >
+            Zrušit filtry
+          </button>
+        )}
+      </div>
+      {filteredGroups.map(([cup, group]) => (
         <div key={cup}>
           {/* Header skupiny */}
           <div className="devider flex justify-between mb-4">
