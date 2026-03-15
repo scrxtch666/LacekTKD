@@ -650,7 +650,7 @@ function AdminUsers() {
                       </span>
                       {/* Badge závodníka */}
                       {user.fighter_id && (
-                        <span className="inline-flex items-center gap-1 p2-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                           <ShieldCheck size={11} />
                           Přiřazený účet
                         </span>

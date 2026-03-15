@@ -13,7 +13,6 @@ const CoachCard = ({ ocoach }) => {
           alt={`${ocoach.name} ${ocoach.surname}`}
           className="rounded-full h-32 w-32 object-cover object-center ring-4 ring-customGreen/10"
         />
-        <div className="absolute bottom-1 right-1 bg-customGreen h-5 w-5 rounded-full border-2 border-white"></div>
       </div>
 
       {/* Jméno a detaily */}
@@ -29,6 +28,7 @@ const CoachCard = ({ ocoach }) => {
 
       {/* Kontaktní údaje jako interaktivní prvky */}
       <div className="w-full space-y-2 mt-2">
+        {ocoach.email && (
         <a
           href={`mailto:${ocoach.email}`}
           className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors group"
@@ -38,7 +38,8 @@ const CoachCard = ({ ocoach }) => {
           </div>
           <span className="text-sm text-gray-600 truncate">{ocoach.email}</span>
         </a>
-
+)}
+      {ocoach.phone  && (
         <a
           href={`tel:+420${ocoach.phone}`}
           className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors group"
@@ -48,6 +49,7 @@ const CoachCard = ({ ocoach }) => {
           </div>
           <span className="text-sm text-gray-600">+420 {ocoach.phone}</span>
         </a>
+        )}
       </div>
     </div>
   );

@@ -151,4 +151,9 @@ Backend - cd  .\Backend\ - node server.js
 - karty pro turnaje
 - závodníci - předělat
 
+# CO MUSÍM UDĚLAT
+- detail akcí, závodníků...
+- intra doladit -> ty cesty 
+
+
 
