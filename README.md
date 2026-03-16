@@ -154,6 +154,7 @@ Backend - cd  .\Backend\ - node server.js
 # CO MUSÍM UDĚLAT
 - detail akcí, závodníků...
 - intra doladit -> ty cesty 
-
+- pořešit zkoušky
+- vyřešit vytváření účtu
 
 

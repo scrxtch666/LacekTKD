@@ -27,6 +27,7 @@ function AdminMe() {
     name: "",
     surname: "",
     phone: "",
+    email: "",
     actual_weight_category: "",
     currentPassword: "",
     newPassword: "",
@@ -40,6 +41,7 @@ function AdminMe() {
         name: data?.name || "",
         surname: data?.surname || "",
         phone: data?.phone || "",
+        email: data?.email || "",
         actual_weight_category: data?.actual_weight_category || "",
         currentPassword: "",
         newPassword: "",
@@ -82,6 +84,7 @@ function AdminMe() {
           name: form.name,
           surname: form.surname,
           phone: form.phone,
+          emial: form.email,
           actual_weight_category: form.actual_weight_category,
           currentPassword: form.currentPassword || undefined,
           newPassword: form.newPassword || undefined,
@@ -111,6 +114,7 @@ function AdminMe() {
       name: user?.name || "",
       surname: user?.surname || "",
       phone: user?.phone || "",
+      email: user?.email || "",
       actual_weight_category: user?.actual_weight_category || "",
       currentPassword: "",
       newPassword: "",
@@ -244,6 +248,7 @@ function AdminMe() {
                   </div>
                 </div>
               )}
+
               {user.birth && (
                 <div className="flex items-center gap-3 text-sm">
                   <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center flex-shrink-0">
@@ -301,6 +306,19 @@ function AdminMe() {
                 </div>
                 <div>
                   <label className="text-xs text-gray-500 mb-1 block">
+                    Email
+                  </label>
+                  <input
+                    type="text"
+                    value={form.email}
+                    onChange={(e) =>
+                      setForm({ ...form, email: e.target.value })
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-customGreen focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 mb-1 block">
                     Telefon
                   </label>
                   <input
@@ -312,6 +330,7 @@ function AdminMe() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-customGreen focus:border-transparent"
                   />
                 </div>
+
                 <div>
                   <label className="text-xs text-gray-500 mb-1 block">
                     Váhová kategorie (kg)

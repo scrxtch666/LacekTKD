@@ -38,29 +38,100 @@ function Layout() {
   if (isAdmin) {
     return (
       // Chráněné admin routy
-      <ProtectedRoute>
-        <div className="flex min-h-screen bg-slate-100">
-          <SideBar />
 
-          <main className="flex-1 p-8 lg:ml-64 w-full">
-            <Routes>
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/admin/pridani-zavodnika" element={<AddFighter />} />
-              <Route
-                path="/admin/vsichni-zavodnici"
-                element={<FightersAdmin />}
-              />
-              <Route path="/admin/banner" element={<AdminBanner />} />
-              <Route path="/admin/aktuality" element={<AdminAktuality />} />
-              <Route path="/admin/users" element={<AdminUsers />} />
-              <Route path="/admin/sponsors" element={<AdminSponsors />} />
-              <Route path="/admin/zavodnici" element={<AdminZavodnici />} />
-              <Route path="/admin/turnaje" element={<AdminTurnaje />} />
-              <Route path="/admin/me" element={<AdminMe />} />
-            </Routes>
-          </main>
-        </div>
-      </ProtectedRoute>
+      <div className="flex min-h-screen bg-slate-100">
+        <SideBar />
+
+        <main className="flex-1 p-8 lg:ml-64 w-full">
+          <Routes>
+            {/* Veřejné admin routy – jen přihlášený */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute allowedRoles={["admin", "trainer", "user"]}>
+                  <Admin />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/me"
+              element={
+                <ProtectedRoute allowedRoles={["admin", "trainer", "user"]}>
+                  <AdminMe />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Admin + trenér */}
+            <Route
+              path="/admin/zavodnici"
+              element={
+                <ProtectedRoute allowedRoles={["admin", "trainer"]}>
+                  <AdminZavodnici />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/turnaje"
+              element={
+                <ProtectedRoute allowedRoles={["admin", "trainer"]}>
+                  <AdminTurnaje />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/pridani-zavodnika"
+              element={
+                <ProtectedRoute allowedRoles={["admin", "trainer"]}>
+                  <AddFighter />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/vsichni-zavodnici"
+              element={
+                <ProtectedRoute allowedRoles={["admin", "trainer"]}>
+                  <FightersAdmin />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Pouze admin */}
+            <Route
+              path="/admin/aktuality"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminAktuality />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/banner"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminBanner />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminUsers />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/sponsors"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminSponsors />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </main>
+      </div>
     );
   }
 
