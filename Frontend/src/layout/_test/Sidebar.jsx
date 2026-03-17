@@ -61,7 +61,20 @@ function SideBar() {
       items: [
         { name: "Můj účet", path: "/admin/me", icon: User },
         { name: "Zkoušky", path: "/admin/test-reg", icon: Image },
+        { name: "Turnaje", path: "/admin/turnaje", icon: Users },
+      ],
+    },
+
+    {
+      title: "Trenérské možnosti",
+      adminOnly: false,
+      trainerOnly: true,
+      items: [
+        { name: "Můj účet", path: "/admin/me", icon: User },
+        { name: "Zkoušky", path: "/admin/test-reg", icon: Image },
         { name: "Turnaje", path: "/admin/tournaments-reg", icon: Users },
+        { name: "Závodníci", path: "/admin/zavodnici", icon: Users },
+        { name: "Aktuality", path: "/admin/aktuality", icon: LayoutDashboard },
       ],
     },
   ];
@@ -69,6 +82,7 @@ function SideBar() {
   const visibleSections = sections.filter((section) => {
     if (section.adminOnly && userRole !== "admin") return false;
     if (section.userOnly && userRole !== "user") return false;
+    if (section.trainerOnly && userRole !== "trainer") return false;
     return true;
   });
 

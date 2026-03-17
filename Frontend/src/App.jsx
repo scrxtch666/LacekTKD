@@ -74,7 +74,7 @@ function Layout() {
             <Route
               path="/admin/turnaje"
               element={
-                <ProtectedRoute allowedRoles={["admin", "trainer"]}>
+                <ProtectedRoute allowedRoles={["admin", "trainer", "user"]}>
                   <AdminTurnaje />
                 </ProtectedRoute>
               }
@@ -100,7 +100,7 @@ function Layout() {
             <Route
               path="/admin/aktuality"
               element={
-                <ProtectedRoute allowedRoles={["admin"]}>
+                <ProtectedRoute allowedRoles={["admin", "trainer"]}>
                   <AdminAktuality />
                 </ProtectedRoute>
               }

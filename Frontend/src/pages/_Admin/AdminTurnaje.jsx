@@ -581,6 +581,13 @@ function AdminTurnaje() {
                   <div className="flex gap-2 flex-shrink-0">
                     <button
                       onClick={() => startEdit(tournament)}
+                      className="flex items-center gap-2 px-4 py-2 bg-customGreen/85 hover:bg-customGreen text-white rounded-lg transition-colors duration-200"
+                    >
+                      <Plus size={18} />
+                      <span>Přihlásit se</span>
+                    </button>
+                    <button
+                      onClick={() => startEdit(tournament)}
                       className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200"
                     >
                       <Pencil size={18} />
