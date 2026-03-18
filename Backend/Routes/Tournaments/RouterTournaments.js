@@ -5,6 +5,9 @@ const path = require("path");
 const fs = require("fs");
 const db = require("../../Libs/db");
 const { google } = require("googleapis");
+const { verifyToken } = require("../../auth/auth");
+const payload = jwt.verify(token, SECRET_KEY); // ← jwt a SECRET_KEY nejsou importované
+
 
 const router = express.Router();
 
@@ -189,6 +192,15 @@ router.get("/calendar", (req, res) => {
 
 // GET / – všechny turnaje
 router.get("/", (req, res) => {
+    // Zkus získat user_id z tokenu pokud existuje
+  const token = req.headers["authorization"]?.split(" ")[1];
+  let userId = null;
+  if (token) {
+    try {
+      const payload = jwt.verify(token, SECRET_KEY);
+      userId = payload.id;
+    } catch {}
+  }
   db.query(
     `SELECT
         tournament.id,
@@ -212,6 +224,19 @@ router.get("/", (req, res) => {
         return res.status(500).json({ error: "Chyba při načítání turnajů" });
       res.json(results);
     },
+  );
+});
+
+router.delete("/:id/register", verifyToken, (req, res) => {
+  db.query(
+    `DELETE tr FROM tournament_registration tr
+     JOIN users u ON u.fighter_id = tr.fighter_id
+     WHERE tr.tournament_id = ? AND u.id = ?`,
+    [req.params.id, req.user.id],
+    (err) => {
+      if (err) return res.status(500).json({ error: "Chyba při odhlašování" });
+      res.json({ success: true });
+    }
   );
 });
 
@@ -420,6 +445,32 @@ router.put("/:id", upload.single("image"), async (req, res) => {
       } else {
         doUpdate(undefined);
       }
+    },
+  );
+});
+
+router.post("/:id/register", verifyToken, (req, res) => {
+  // Najdi fighter_id přihlášeného uživatele
+  db.query(
+    "SELECT fighter_id FROM users WHERE id = ?",
+    [req.user.id],
+    (err, results) => {
+      if (err || !results.length)
+        return res
+          .status(400)
+          .json({ error: "Uživatel nemá přiřazeného závodníka" });
+
+      const fighter_id = results[0].fighter_id;
+
+      db.query(
+        "INSERT INTO tournament_registration (tournament_id, fighter_id) VALUES (?, ?)",
+        [req.params.id, fighter_id],
+        (err2) => {
+          if (err2)
+            return res.status(500).json({ error: "Chyba při přihlašování na turnaj" });
+          res.json({ success: true });
+        },
+      );
     },
   );
 });
