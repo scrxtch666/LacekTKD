@@ -233,57 +233,57 @@ function AdminTurnaje() {
   }, []);
 
   const fetchTournaments = () => {
-  const token = localStorage.getItem("token");
-  fetch("http://localhost:3000/api/tournaments", {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      setTournaments(Array.isArray(data) ? data : []);
-      setLoading(false);
+    const token = localStorage.getItem("token");
+    fetch("http://localhost:3000/api/tournaments", {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
     })
-    .catch(() => {
-      setTournaments([]);
-      setLoading(false);
-    });
-};
+      .then((res) => res.json())
+      .then((data) => {
+        setTournaments(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch(() => {
+        setTournaments([]);
+        setLoading(false);
+      });
+  };
 
-const handleRegister = async (tournamentId) => {
-  try {
-    const token = localStorage.getItem("token");
-    const response = await fetch(
-      `http://localhost:3000/api/tournaments/${tournamentId}/register`,
-      { method: "POST", headers: { Authorization: `Bearer ${token}` } }
-    );
-    const data = await response.json();
-    if (response.ok) {
-      fetchTournaments(); // ← obnov seznam místo alert
-    } else {
-      alert(data.error || "Nepodařilo se přihlásit na turnaj.");
+  const handleRegister = async (tournamentId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:3000/api/tournaments/${tournamentId}/register`,
+        { method: "POST", headers: { Authorization: `Bearer ${token}` } },
+      );
+      const data = await response.json();
+      if (response.ok) {
+        fetchTournaments(); // ← obnov seznam místo alert
+      } else {
+        alert(data.error || "Nepodařilo se přihlásit na turnaj.");
+      }
+    } catch {
+      alert("Chyba při přihlašování na turnaj!");
     }
-  } catch {
-    alert("Chyba při přihlašování na turnaj!");
-  }
-};
+  };
 
-const handleUnregister = async (tournamentId) => {
-  if (!confirm("Opravdu se chcete odhlásit z turnaje?")) return;
-  try {
-    const token = localStorage.getItem("token");
-    const response = await fetch(
-      `http://localhost:3000/api/tournaments/${tournamentId}/register`,
-      { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
-    );
-    const data = await response.json();
-    if (response.ok) {
-      fetchTournaments();
-    } else {
-      alert(data.error || "Nepodařilo se odhlásit z turnaje.");
+  const handleUnregister = async (tournamentId) => {
+    if (!confirm("Opravdu se chcete odhlásit z turnaje?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:3000/api/tournaments/${tournamentId}/register`,
+        { method: "DELETE", headers: { Authorization: `Bearer ${token}` } },
+      );
+      const data = await response.json();
+      if (response.ok) {
+        fetchTournaments();
+      } else {
+        alert(data.error || "Nepodařilo se odhlásit z turnaje.");
+      }
+    } catch {
+      alert("Chyba při odhlašování.");
     }
-  } catch {
-    alert("Chyba při odhlašování.");
-  }
-};
+  };
   const validateForm = (data, setError) => {
     if (!data.name) {
       setError("Vyplňte prosím název turnaje.");
@@ -626,68 +626,98 @@ const handleUnregister = async (tournamentId) => {
                     )}
                   </div>
 
-               {/* Tlačítka */}
-<div className="flex gap-2 flex-shrink-0 flex-wrap">
+                  {/* Tlačítka */}
+                  <div className="flex gap-2 flex-shrink-0 flex-wrap">
+                    {userRole === "user" &&
+                      (() => {
+                        const isRegistered = !!tournament.is_registered;
+                        const canRegister =
+                          new Date() < new Date(tournament.registrable_date);
 
-  {/* Přihlášení/odhlášení – pouze pro uživatele */}
-  {userRole === "user" && (() => {
-    const isRegistered = !!tournament.is_registered;
-    const registrableDate = new Date(tournament.registrable_date);
-    const canUnregister = new Date() < registrableDate;
+                        if (isRegistered) {
+                          return (
+                            <div className="flex items-center gap-2">
+                              <span className="flex items-center gap-1.5 px-3 py-2 bg-green-50 text-green-700 border border-green-300 rounded-lg text-sm font-medium">
+                                ✓ Přihlášen
+                              </span>
+                              <button
+                                onClick={
+                                  canRegister
+                                    ? () => handleUnregister(tournament.id)
+                                    : undefined
+                                }
+                                disabled={!canRegister}
+                                className={`flex items-center gap-1.5 px-3 py-2 border rounded-lg text-sm transition-colors ${
+                                  canRegister
+                                    ? "bg-red-50 hover:bg-red-100 text-red-600 border-red-300"
+                                    : "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
+                                }`}
+                                title={
+                                  !canRegister
+                                    ? "Uzávěrka přihlášek již proběhla"
+                                    : ""
+                                }
+                              >
+                                {canRegister ? "Odhlásit se" : "Po uzávěrce"}
+                              </button>
+                            </div>
+                          );
+                        }
 
-    if (isRegistered) {
-      return (
-        <div className="flex items-center gap-2">
-          {/* Fajfka */}
-          <span className="flex items-center gap-1.5 px-3 py-2 bg-green-50 text-green-700 border border-green-300 rounded-lg text-sm font-medium">
-            ✓ Přihlášen
-          </span>
-          {/* Odhlášení jen do uzávěrky */}
-          {canUnregister && (
-            <button
-              onClick={() => handleUnregister(tournament.id)}
-              className="flex items-center gap-1.5 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-300 rounded-lg text-sm transition-colors"
-            >
-              Odhlásit se
-            </button>
-          )}
-        </div>
-      );
-    }
+                        return (
+                          <button
+                            onClick={
+                              canRegister
+                                ? () => handleRegister(tournament.id)
+                                : undefined
+                            }
+                            disabled={!canRegister}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ${
+                              canRegister
+                                ? "bg-customGreen hover:bg-green-700 text-white"
+                                : "bg-gray-50 text-gray-400 border border-gray-200 cursor-not-allowed"
+                            }`}
+                            title={
+                              !canRegister
+                                ? "Uzávěrka přihlášek již proběhla"
+                                : ""
+                            }
+                          >
+                            {canRegister ? (
+                              <>
+                                <Plus size={18} />
+                                <span>Přihlásit se</span>
+                              </>
+                            ) : (
+                              "Po uzávěrce"
+                            )}
+                          </button>
+                        );
+                      })()}
 
-    return (
-      <button
-        onClick={() => handleRegister(tournament.id)}
-        className="flex items-center gap-2 px-4 py-2 bg-customGreen hover:bg-green-700 text-white rounded-lg transition-colors"
-      >
-        <Plus size={18} />
-        <span>Přihlásit se</span>
-      </button>
-    );
-  })()}
-
-  {/* Editace a mazání – pouze admin a trenér */}
-  {(userRole === "admin" || userRole === "trainer") && (
-    <>
-      <button
-        onClick={() => startEdit(tournament)}
-        className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-      >
-        <Pencil size={18} />
-        <span>Editovat</span>
-      </button>
-      <button
-        onClick={() => handleDelete(tournament.id)}
-        disabled={deleting === tournament.id}
-        className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors disabled:opacity-50"
-      >
-        <Trash2 size={18} />
-        <span>{deleting === tournament.id ? "Mažu..." : "Smazat"}</span>
-      </button>
-    </>
-  )}
-
-</div>
+                    {/* Editace a mazání – pouze admin a trenér */}
+                    {(userRole === "admin" || userRole === "trainer") && (
+                      <>
+                        <button
+                          onClick={() => startEdit(tournament)}
+                          className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                        >
+                          <Pencil size={18} />
+                          <span>Editovat</span>
+                        </button>
+                        <button
+                          onClick={() => handleDelete(tournament.id)}
+                          disabled={deleting === tournament.id}
+                          className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          <Trash2 size={18} />
+                          <span>
+                            {deleting === tournament.id ? "Mažu..." : "Smazat"}
+                          </span>
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
               )}
             </div>

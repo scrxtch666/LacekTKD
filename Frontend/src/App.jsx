@@ -30,6 +30,7 @@ import AdminSponsors from "./pages/_Admin/AdminSponsors";
 import AdminZavodnici from "./pages/_Admin/AdminZavodnici";
 import AdminTurnaje from "./pages/_Admin/AdminTurnaje";
 import AdminMe from "./pages/_Admin/AdminMe";
+import AktualitaDetail from "./pages/Home/AktualitaDetail";
 
 function Layout() {
   const location = useLocation();
@@ -150,6 +151,7 @@ function Layout() {
           <Route path="/detail" element={<Detail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/aktuality/:id" element={<AktualitaDetail />} />
         </Routes>
       </Container>
       <Footer />

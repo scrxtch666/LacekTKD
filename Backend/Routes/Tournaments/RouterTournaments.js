@@ -1,4 +1,5 @@
 require("dotenv").config();
+const SECRET_KEY = process.env.ACCESS_TOKEN_SECRET || "tajnyklic";
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
@@ -6,8 +7,7 @@ const fs = require("fs");
 const db = require("../../Libs/db");
 const { google } = require("googleapis");
 const { verifyToken } = require("../../auth/auth");
-const payload = jwt.verify(token, SECRET_KEY); // ← jwt a SECRET_KEY nejsou importované
-
+const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 
@@ -192,15 +192,27 @@ router.get("/calendar", (req, res) => {
 
 // GET / – všechny turnaje
 router.get("/", (req, res) => {
-    // Zkus získat user_id z tokenu pokud existuje
   const token = req.headers["authorization"]?.split(" ")[1];
   let userId = null;
   if (token) {
     try {
       const payload = jwt.verify(token, SECRET_KEY);
       userId = payload.id;
-    } catch {}
+      console.log("✅ Token OK, userId:", userId); // ← přidej
+    } catch (err) {
+      console.log("❌ Token error:", err.message); // ← přidej
+    }
+  } else {
+    console.log("⚠️ Žádný token"); // ← přidej
   }
+
+  const isRegisteredSQL = userId
+    ? `(SELECT COUNT(*) FROM tournament_registration tr 
+     WHERE tr.tournament_id = tournament.id 
+     AND tr.fighter_id = (SELECT fighter_id FROM users WHERE id = ${db.escape(userId)})
+    ) AS is_registered`
+    : `0 AS is_registered`;
+
   db.query(
     `SELECT
         tournament.id,
@@ -215,7 +227,8 @@ router.get("/", (req, res) => {
         DATE_FORMAT(tournament.start_date, '%d.%m.') AS start_date_formatted,
         DATE_FORMAT(tournament.end_date, '%d.%m.%Y') AS end_date_formatted,
         tournament.start_date AS start_date_raw,
-        tournament.end_date AS end_date_raw
+        tournament.end_date AS end_date_raw,
+        ${isRegisteredSQL}
      FROM tournament
      LEFT JOIN type ON tournament.type_id = type.id
      ORDER BY tournament.start_date DESC`,
@@ -236,7 +249,7 @@ router.delete("/:id/register", verifyToken, (req, res) => {
     (err) => {
       if (err) return res.status(500).json({ error: "Chyba při odhlašování" });
       res.json({ success: true });
-    }
+    },
   );
 });
 
@@ -467,7 +480,9 @@ router.post("/:id/register", verifyToken, (req, res) => {
         [req.params.id, fighter_id],
         (err2) => {
           if (err2)
-            return res.status(500).json({ error: "Chyba při přihlašování na turnaj" });
+            return res
+              .status(500)
+              .json({ error: "Chyba při přihlašování na turnaj" });
           res.json({ success: true });
         },
       );

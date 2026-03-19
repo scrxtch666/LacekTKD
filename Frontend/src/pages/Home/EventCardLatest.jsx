@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 const EventCardLatest = () => {
   const [news, setNews] = useState([]); // Stav pro uchování dat turnajů
   const [loading, setLoading] = useState(true); // Stav pro zobrazení načítání dat
+  const navigate = useNavigate(); // ← toto chybí
 
   // Funkce pro načítání dat o turnajích
   useEffect(() => {
@@ -39,7 +42,10 @@ const EventCardLatest = () => {
   return (
     <>
       {news.map((event) => (
-        <div className="max-w-sm overflow-hidden bg-pink-50 rounded-2xl shadow-xl">
+        <div 
+        key={event.id}
+        onClick={() => navigate(`/aktuality/${event.id}`)}
+        className="max-w-sm overflow-hidden bg-pink-50 rounded-2xl shadow-xl">
           <div className="relative">
             <img
               src={event.cover_photo}
