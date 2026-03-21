@@ -156,5 +156,6 @@ Backend - cd  .\Backend\ - node server.js
 - intra doladit -> ty cesty 
 - pořešit zkoušky
 - vyřešit vytváření účtu
+- projít ty soubory a smazat komentáře
 
 

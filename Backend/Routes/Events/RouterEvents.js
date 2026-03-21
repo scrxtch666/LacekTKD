@@ -132,6 +132,7 @@ router.get("/:id", (req, res) => {
   db.query(
     `SELECT e.*, u.login AS author,
         DATE_FORMAT(e.date_start, '%d.%m.%Y') AS date_start_formatted,
+        DATE_FORMAT(e.created_at, '%d.%m.%Y') AS created_at_formatted,
         e.date_start AS date_start_raw
      FROM event e
      LEFT JOIN users u ON e.user_id = u.id
