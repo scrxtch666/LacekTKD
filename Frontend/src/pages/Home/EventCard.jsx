@@ -7,8 +7,8 @@ function EventCard() {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [selectedPeriod, setSelectedPeriod] = useState(""); // ← nový stav
-  const navigate = useNavigate(); // ← toto chybí
+  const [selectedPeriod, setSelectedPeriod] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${API}/api/events`)
@@ -22,7 +22,7 @@ function EventCard() {
 
   if (loading) return <div>Načítám data...</div>;
 
-  // Získej unikátní období pro select – automaticky z dat
+  
   const periods = [
     ...new Set(
       news.map((event) => {
