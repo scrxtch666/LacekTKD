@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { MapPin, Euro, Tag, Calendar, Info } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const API = "http://localhost:3000";
 
 function Turnaj() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${API}/api/tournaments/`)
@@ -33,6 +35,7 @@ function Turnaj() {
       {events.map((event) => (
         <div
           key={event.id}
+          onClick={() => navigate(`/turnaje/${event.id}`)}
           className="bg-customWhite rounded-2xl shadow-md overflow-hidden flex flex-col sm:flex-row"
         >
           {/* Obrázek */}

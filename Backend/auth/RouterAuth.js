@@ -7,6 +7,24 @@ const { verifyToken } = require("./auth");
 
 // Tajný klíč z .env
 const SECRET_KEY = process.env.ACCESS_TOKEN_SECRET || "tajnyklic";
+
+const formatCzechPhoneNumber = (phone) => {
+  if (!phone) return phone;
+  // Odstraní všechny znaky, které nejsou čísla
+  const cleaned = phone.toString().replace(/\D/g, "");
+  
+  // Pokud má číslo 9 cifer (klasické české bez předvolby), rozdělí ho po 3
+  if (cleaned.length === 9) {
+    return cleaned.replace(/(\d{3})(\d{3})(\d{3})/, "$1 $2 $3");
+  }
+  
+  // Pokud je tam i předvolba (např. 420721642937), můžeš ji nechat nebo upravit
+  if (cleaned.length === 12) {
+    return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{3})/, "+$1 $2 $3 $4");
+  }
+
+  return phone; // Vrátí původní, pokud formát nesedí
+};
 // Registrace
 router.post("/register", async (req, res) => {
   const { login, password, email } = req.body;
@@ -92,7 +110,8 @@ router.get("/me", verifyToken, (req, res) => {
     [req.user.id],
     (err, results) => {
       if (err) return res.status(500).json({ error: "Chyba serveru" });
-      if (!results.length) return res.status(404).json({ error: "Uživatel nenalezen" });
+      if (!results.length)
+        return res.status(404).json({ error: "Uživatel nenalezen" });
 
       const user = results[0];
 
@@ -140,9 +159,9 @@ router.get("/me", verifyToken, (req, res) => {
             actual_weight_category: user.actual_weight_category,
             tournament_results: results2,
           });
-        }
+        },
       );
-    }
+    },
   );
 });
 
@@ -156,6 +175,8 @@ router.put("/me", verifyToken, async (req, res) => {
     currentPassword,
     newPassword,
   } = req.body;
+
+  const formattedPhone = formatCzechPhoneNumber(phone);
 
   try {
     // Pokud chce měnit heslo
@@ -187,7 +208,7 @@ router.put("/me", verifyToken, async (req, res) => {
             [
               name,
               surname,
-              phone,
+              formattedPhone,
               actual_weight_category,
               hashedPassword,
               req.user.id,
@@ -208,7 +229,7 @@ router.put("/me", verifyToken, async (req, res) => {
          SET fighters.name = ?, fighters.surname = ?, users.phone = ?,
              fighters.actual_weight_category = ?
          WHERE users.id = ?`,
-        [name, surname, phone, actual_weight_category, req.user.id],
+        [name, surname, formattedPhone, actual_weight_category, req.user.id],
         (err) => {
           if (err) return res.status(500).json({ error: "Chyba při ukládání" });
           res.json({ success: true, message: "Profil byl upraven" });

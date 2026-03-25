@@ -157,5 +157,6 @@ Backend - cd  .\Backend\ - node server.js
 - pořešit zkoušky
 - vyřešit vytváření účtu
 - projít ty soubory a smazat komentáře
+- udělat formulář na registraci - když uživatel vyplní registrační formulář, tak to padne v administraci do položky žádosti o členství
 
 

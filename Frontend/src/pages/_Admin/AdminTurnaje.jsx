@@ -728,96 +728,133 @@ function AdminTurnaje() {
       )}
 
       {/* ─── TAB: PŘIHLÁŠKY ─── */}
-      {activeTab === "prihlasky" && (
-        <div className="space-y-4">
-          {loadingReg ? (
-            <div className="text-center text-gray-400 py-8">
-              Načítám přihlášky...
-            </div>
-          ) : registrations.length === 0 ? (
-            <div className="bg-customWhite rounded-lg shadow p-8 text-center">
-              <Trophy className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <p className="text-gray-500">Žádné přihlášky</p>
-            </div>
-          ) : (
-            Object.entries(
-              registrations.reduce((acc, reg) => {
-                const key = `${reg.tournament_id}__${reg.tournament_name}`;
-                if (!acc[key]) acc[key] = [];
-                acc[key].push(reg);
-                return acc;
-              }, {}),
-            ).map(([key, regs]) => {
-              const [tournamentId, tournamentName] = key.split("__");
-              const isExpanded = expandedTournament === tournamentId;
-              return (
-                <div
-                  key={key}
-                  className="bg-customWhite rounded-lg shadow-md overflow-hidden"
-                >
-                  <button
-                    onClick={() =>
-                      setExpandedTournament(isExpanded ? null : tournamentId)
-                    }
-                    className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <Trophy size={18} className="text-customGreen" />
-                      <span className="font-semibold text-gray-800">
-                        {tournamentName}
-                      </span>
-                      <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">
-                        {regs.length}{" "}
-                        {regs.length === 1
-                          ? "závodník"
-                          : regs.length <= 4
-                            ? "závodníci"
-                            : "závodníků"}
-                      </span>
-                    </div>
-                    <span className="text-gray-400 text-lg">
-                      {isExpanded ? "▲" : "▼"}
-                    </span>
-                  </button>
-                  {isExpanded && (
-                    <div className="border-t border-gray-100">
-                      {regs.map((reg) => (
-                        <div
-                          key={reg.id}
-                          className="flex items-center justify-between px-4 py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-xs font-bold">
-                              {reg.fighter_name?.charAt(0)}
-                              {reg.fighter_surname?.charAt(0)}
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium text-gray-800">
-                                {reg.fighter_name} {reg.fighter_surname}
-                              </p>
-                              {reg.fighter_weight && (
-                                <p className="text-xs text-gray-400">
-                                  {reg.fighter_weight} kg
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => handleAdminUnregister(reg.id)}
-                            className="flex items-center gap-1 px-3 py-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-lg text-xs transition-colors"
-                          >
-                            <X size={12} /> Odhlásit
-                          </button>
-                        </div>
-                      ))}
+    {activeTab === "prihlasky" && (
+  <div className="space-y-4">
+    {loadingReg ? (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-gray-500">Načítám přihlášky...</div>
+      </div>
+    ) : registrations.length === 0 ? (
+      <div className="bg-customWhite rounded-lg shadow p-8 text-center">
+        <Trophy className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+        <p className="text-gray-500">Žádné přihlášky</p>
+      </div>
+    ) : (
+      Object.entries(
+        registrations.reduce((acc, reg) => {
+          const key = `${reg.tournament_id}__${reg.tournament_name}`;
+          if (!acc[key]) acc[key] = {
+            fighters: [],
+            tournament_name: reg.tournament_name,
+            tournament_location: reg.tournament_location,
+            tournament_start_date: reg.tournament_start_date,
+            tournament_end_date: reg.tournament_end_date,
+            tournament_img: reg.tournament_img,
+            type_name: reg.type_name,
+          };
+          acc[key].fighters.push(reg);
+          return acc;
+        }, {})
+      ).map(([key, group]) => {
+        const [tournamentId] = key.split("__");
+        const isExpanded = expandedTournament === tournamentId;
+
+        return (
+          <div key={key} className="bg-customWhite rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+
+            {/* Header – stejný styl jako karta turnaje */}
+            <div className="p-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+
+                {/* Foto */}
+                <div className="flex-shrink-0">
+                  {group.tournament_img ? (
+                    <img src={group.tournament_img} alt={group.tournament_name}
+                      className="w-16 h-16 rounded-lg object-cover border-2 border-gray-200" />
+                  ) : (
+                    <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white">
+                      <Trophy size={28} />
                     </div>
                   )}
                 </div>
-              );
-            })
-          )}
-        </div>
-      )}
+
+                {/* Info */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
+                    <p className="text-lg font-semibold text-gray-800">{group.tournament_name}</p>
+                    {group.type_name && (
+                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        {group.type_name}
+                      </span>
+                    )}
+                    <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">
+                      {group.fighters.length} {group.fighters.length === 1 ? "závodník" : group.fighters.length <= 4 ? "závodníci" : "závodníků"}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-500">
+                    {group.tournament_location && (
+                      <span className="flex items-center gap-1">
+                        <MapPin size={13} /> {group.tournament_location}
+                      </span>
+                    )}
+                    {group.tournament_start_date && (
+                      <span className="flex items-center gap-1">
+                        <Calendar size={13} />
+                        {formatDate(group.tournament_start_date)}
+                        {group.tournament_end_date && group.tournament_end_date !== group.tournament_start_date
+                          ? ` – ${formatDate(group.tournament_end_date)}` : ""}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Rozbalit */}
+                <button
+                  onClick={() => setExpandedTournament(isExpanded ? null : tournamentId)}
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-sm transition-colors flex-shrink-0"
+                >
+                  {isExpanded ? "Skrýt závodníky ▲" : "Zobrazit závodníky ▼"}
+                </button>
+              </div>
+            </div>
+
+            {/* Závodníci */}
+            {isExpanded && (
+              <div className="border-t border-gray-100">
+                {group.fighters.map((reg) => (
+                  <div key={reg.id}
+                    className="flex items-center justify-between px-4 py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-sm font-bold">
+                        {reg.fighter_name?.charAt(0)}{reg.fighter_surname?.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-800">
+                          {reg.fighter_name} {reg.fighter_surname}
+                        </p>
+                        {reg.fighter_weight && (
+                          <p className="text-xs text-gray-400">{reg.fighter_weight} kg</p>
+                        )}
+                      </div>
+                    </div>
+                    {(userRole === "admin" || userRole === "trainer") && (
+                      <button
+                        onClick={() => handleAdminUnregister(reg.id)}
+                        className="flex items-center gap-1 px-3 py-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-lg text-xs transition-colors"
+                      >
+                        <X size={12} /> Odhlásit
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })
+    )}
+  </div>
+)}
     </div>
   );
 }
