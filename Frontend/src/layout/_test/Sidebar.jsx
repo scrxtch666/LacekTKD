@@ -52,6 +52,7 @@ function SideBar() {
         { name: "Sponzoři", path: "/admin/sponsors", icon: Image },
         { name: "Uživatelé", path: "/admin/users", icon: Users },
         { name: "Newsletter", path: "/admin/newsletter", icon: Mailbox },
+        { name: "Žádosti", path: "/admin/zadosti", icon: Users },
       ],
     },
     {

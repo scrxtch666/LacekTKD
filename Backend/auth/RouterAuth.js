@@ -12,12 +12,12 @@ const formatCzechPhoneNumber = (phone) => {
   if (!phone) return phone;
   // Odstraní všechny znaky, které nejsou čísla
   const cleaned = phone.toString().replace(/\D/g, "");
-  
+
   // Pokud má číslo 9 cifer (klasické české bez předvolby), rozdělí ho po 3
   if (cleaned.length === 9) {
     return cleaned.replace(/(\d{3})(\d{3})(\d{3})/, "$1 $2 $3");
   }
-  
+
   // Pokud je tam i předvolba (např. 420721642937), můžeš ji nechat nebo upravit
   if (cleaned.length === 12) {
     return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{3})/, "+$1 $2 $3 $4");
@@ -38,7 +38,6 @@ router.post("/register", async (req, res) => {
           return res
             .status(500)
             .json({ error: "Chyba serveru při kontrole e-mailu" });
-
         if (results.length > 0)
           return res
             .status(409)
@@ -47,12 +46,14 @@ router.post("/register", async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         db.query(
-          "INSERT INTO users (login, email, password) VALUES (?, ?, ?)",
+          "INSERT INTO users (login, email, password, status) VALUES (?, ?, ?, 'pending')",
           [login, email, hashedPassword],
           (err2) => {
             if (err2)
               return res.status(500).json({ error: "Chyba při zápisu do DB" });
-            res.status(201).json({ message: "Registrace úspěšná" });
+            res.status(201).json({
+              message: "Registrace odeslána – čeká na schválení adminem.",
+            });
           },
         );
       },
@@ -67,8 +68,7 @@ router.post("/login", (req, res) => {
   const { login, password } = req.body;
 
   db.query(
-    `SELECT users.*, role.role_name
-     FROM users
+    `SELECT users.*, role.role_name FROM users
      LEFT JOIN role ON users.role_id = role.id
      WHERE login = ?`,
     [login],
@@ -79,16 +79,63 @@ router.post("/login", (req, res) => {
 
       const user = results[0];
 
+      // Zkontroluj status
+      if (user.status === "pending") {
+        return res
+          .status(403)
+          .json({ error: "Účet čeká na schválení adminem." });
+      }
+      if (user.status === "rejected") {
+        return res
+          .status(403)
+          .json({ error: "Registrace byla zamítnuta. Kontaktuj admina." });
+      }
+
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) return res.status(401).json({ error: "Nesprávné heslo" });
 
       const token = jwt.sign(
         { id: user.id, login: user.login, role: user.role_name },
         SECRET_KEY,
-        { expiresIn: "1h" },
+        { expiresIn: "7d" },
       );
 
       res.json({ message: "Přihlášení úspěšné", token });
+    },
+  );
+});
+
+// GET /auth/pending – seznam čekajících žádostí
+router.get("/pending", verifyToken, (req, res) => {
+  db.query(
+    `SELECT id, login, email, created_at FROM users WHERE status = 'pending' ORDER BY id DESC`,
+    (err, results) => {
+      if (err) return res.status(500).json({ error: "Chyba serveru" });
+      res.json(results);
+    },
+  );
+});
+
+// PUT /auth/approve/:id – schválení
+router.put("/approve/:id", verifyToken, (req, res) => {
+  db.query(
+    "UPDATE users SET status = 'approved' WHERE id = ?",
+    [req.params.id],
+    (err) => {
+      if (err) return res.status(500).json({ error: "Chyba serveru" });
+      res.json({ success: true, message: "Účet byl schválen" });
+    },
+  );
+});
+
+// PUT /auth/reject/:id – zamítnutí
+router.put("/reject/:id", verifyToken, (req, res) => {
+  db.query(
+    "UPDATE users SET status = 'rejected' WHERE id = ?",
+    [req.params.id],
+    (err) => {
+      if (err) return res.status(500).json({ error: "Chyba serveru" });
+      res.json({ success: true, message: "Účet byl zamítnut" });
     },
   );
 });

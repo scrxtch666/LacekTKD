@@ -475,6 +475,12 @@ router.post("/:id/register", verifyToken, (req, res) => {
 
       const fighter_id = results[0].fighter_id;
 
+      if (!fighter_id) {
+        return res.status(400).json({
+          error: "Nemáš přiřazeného závodníka. Kontaktuj trenéra.",
+        });
+      }
+
       db.query(
         "INSERT INTO tournament_registration (tournament_id, fighter_id) VALUES (?, ?)",
         [req.params.id, fighter_id],

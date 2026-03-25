@@ -32,6 +32,7 @@ import AdminTurnaje from "./pages/_Admin/AdminTurnaje";
 import AdminMe from "./pages/_Admin/AdminMe";
 import AktualitaDetail from "./pages/Home/AktualitaDetail";
 import TurnajDetail from "./pages/Turnaje/TurnajDetail";
+import AdminRequests from "./pages/_Admin/AdminRequests";
 
 function Layout() {
   const location = useLocation();
@@ -120,6 +121,14 @@ function Layout() {
               element={
                 <ProtectedRoute allowedRoles={["admin"]}>
                   <AdminUsers />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/zadosti"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminRequests />
                 </ProtectedRoute>
               }
             />

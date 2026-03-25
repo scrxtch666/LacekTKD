@@ -34,7 +34,7 @@ const Register = () => {
       if (response.ok) {
         setFormData({ login: "", password: "", passwordConfirm: "", email: "" });
         setError("");
-        alert(data.message || "Registrace proběhla úspěšně.");
+        alert(data.message || "Registrace odeslána! Počkej na schválení od admina.");
       } else {
         setError(data.error || "Chyba při registraci.");
       }
