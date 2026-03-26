@@ -33,6 +33,7 @@ import AdminMe from "./pages/_Admin/AdminMe";
 import AktualitaDetail from "./pages/Home/AktualitaDetail";
 import TurnajDetail from "./pages/Turnaje/TurnajDetail";
 import AdminRequests from "./pages/_Admin/AdminRequests";
+import FighterDetail from "./pages/Zavodnici/FighterDetail";
 
 function Layout() {
   const location = useLocation();
@@ -163,6 +164,7 @@ function Layout() {
           <Route path="/register" element={<Register />} />
           <Route path="/aktuality/:id" element={<AktualitaDetail />} />
           <Route path="/turnaje/:id" element={<TurnajDetail />} />
+          <Route path="/zavodnik/:id" element={<FighterDetail />} />
         </Routes>
       </Container>
       <Footer />

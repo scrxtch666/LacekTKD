@@ -153,6 +153,56 @@ router.post("/", upload.single("image"), (req, res) => {
   );
 });
 
+router.get("/:id", (req, res) => {
+  const { id } = req.params;
+
+  // 1. detail závodníka
+  db.query(
+    `SELECT 
+        f.id, f.img_path, f.name, f.surname,
+        f.birth, f.best, f.legend, f.active,
+        f.actual_weight_category, f.belts_id, f.category_id,
+        TIMESTAMPDIFF(YEAR, f.birth, CURDATE()) AS age,
+        b.cup, b.img_path AS belt_path,
+        u.id AS user_id, u.login AS user_login,
+        u.email AS user_email, u.phone AS user_phone
+     FROM fighters f
+     JOIN belts b ON f.belts_id = b.id
+     LEFT JOIN users u ON u.fighter_id = f.id
+     WHERE f.id = ?`,
+    [id],
+    (err, fighterResults) => {
+      if (err) return res.status(500).json({ error: "Chyba" });
+      if (!fighterResults.length)
+        return res.status(404).json({ error: "Závodník nenalezen" });
+
+      const fighter = fighterResults[0];
+
+      // 2. výsledky jen pro něj
+      db.query(
+        `SELECT 
+            tr.place,
+            t.name AS tournament,
+            DATE_FORMAT(t.start_date, '%d.%m.%Y') AS date
+         FROM tournament_registration tr
+         JOIN tournament t ON t.id = tr.tournament_id
+         WHERE tr.place IS NOT NULL
+           AND tr.fighter_id = ?
+         ORDER BY t.start_date DESC
+         LIMIT 3`,
+        [id],
+        (err2, results) => {
+          if (err2) return res.status(500).json({ error: "Chyba" });
+
+          fighter.tournament_results = results;
+
+          res.json(fighter);
+        },
+      );
+    },
+  );
+});
+
 // PUT /:id - uprava zavodnika
 router.put("/:id", upload.single("image"), (req, res) => {
   const { id } = req.params;

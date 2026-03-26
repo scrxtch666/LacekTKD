@@ -29,7 +29,7 @@ function ShowcaseCarousel() {
   }
 
   if (!banners.length) {
-    return null; // nebo nějaký fallback
+    return null;
   }
 
   return (

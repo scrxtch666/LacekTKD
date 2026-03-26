@@ -160,3 +160,6 @@ Backend - cd  .\Backend\ - node server.js
 - udělat formulář na registraci - když uživatel vyplní registrační formulář, tak to padne v administraci do položky žádosti o členství
 
 
+# DEBUGGING
+- upravit to, že jeden závodník může mít jenom jeden účet
+- opravit searchbar v administraci v závodníkách

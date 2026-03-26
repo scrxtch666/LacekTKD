@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const API = "http://localhost:3000";
 
@@ -25,6 +26,7 @@ function Fighter() {
   const [filterBelt, setFilterBelt] = useState("");
   const [filterBest, setFilterBest] = useState(false);
   const [filterLegend, setFilterLegend] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${API}/api/fighters`)
@@ -167,6 +169,7 @@ function Fighter() {
             {group.fighters.map((fighter) => (
               <div
                 key={fighter.id}
+                onClick={() => navigate(`/zavodnik/${fighter.id}`)}
                 className="w-full min-h-40 bg-customWhite text-customBlack rounded-md p-2 flex flex-row gap-2"
               >
                 {/* Fotka */}

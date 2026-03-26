@@ -1,94 +1,127 @@
-import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { ArrowLeft, Calendar, Users, Info } from "lucide-react";
+
+const API = "http://localhost:3000";
 
 function FighterDetail() {
-  const [fighters, setFighters] = useState([]); // Stav pro uchování dat turnajů
-    const [loading, setLoading] = useState(true); // Stav pro zobrazení načítání dat
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [fighter, setFighter] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    // Funkce pro načítání dat o turnajích
-      useEffect(() => {
-        // Načítání dat z backendu
-        fetch("http://localhost:3000/fighters")
-          .then((response) => response.json())
-          .then((data) => {
-            setFighters(data); // Nastavení získaných dat do stavu
-            setLoading(false); // Nastavení stavu načítání na false
-          })
-          .catch((error) => {
-            console.error("Chyba při načítání dat:", error);
-            setLoading(false); // I když dojde k chybě, stav načítání bude false
-          });
-      }, []);
-    
-      if (loading) {
-        return <div>Načítám data...</div>; // Zobrazení textu při načítání
-      }
+  useEffect(() => {
+    fetch(`${API}/api/fighters/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setFighter(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [id]);
+
+  const formatDate = (dateStr) =>
+    dateStr ? new Date(dateStr).toLocaleDateString("cs-CZ") : "—";
+
+  if (loading)
+    return (
+      <div className="flex items-center justify-center h-64 text-gray-400">
+        Načítám...
+      </div>
+    );
+
+  if (!fighter)
+    return (
+      <div className="flex items-center justify-center h-64 text-gray-400">
+        Závodník nebyl nalezen!
+      </div>
+    );
+
   return (
-    <>
-     {fighters.map((fighter) => (
-      <div class="w-[400px] h-40 bg-customWhite text-customBlack rounded-md p-2 flex flex-row justify-between">
-        <div class="w-28 h-full rounded-xl overflow-hidden">
-          <img
-            src={fighter.profile_pic_path}
-            alt="test"
-            class="w-full h-full object-cover object-center"
-          />
-        </div>
+    <div className="max-w-4xl space-y-6">
+      {/* Zpět */}
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 text-sm text-gray-500 hover:text-customGreen transition-colors"
+      >
+        <ArrowLeft size={16} /> Zpět na závodníky
+      </button>
 
-        <div class="flex flex-col text-left w-64 justify-between overflow-hidden">
-          <span class="font-semibold">{fighter.first_name} {fighter.last_name}</span>
+      {/* Hlavní karta */}
+      <div className="bg-customWhite rounded-2xl shadow-md overflow-hidden p-6 flex gap-6">
+        {/* Obrázek */}
+        <img
+          src={fighter.img_path}
+          alt={fighter.name}
+          className="w-40 h-40 object-cover rounded-xl"
+        />
 
-          <div class="flex flex-col">
-            <span class="text-xs">1. místo Children Championship (2011)</span>
-            <span class="text-xs">2. místo Children Championship (2011)</span>
-            <span class="text-xs">3. místo Children Championship (2011)</span>
+        {/* Info */}
+        <div className="flex flex-col justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">
+              {fighter.name} {fighter.surname}
+            </h1>
 
-            {/*
-            <span class="text-[10px] text-customGreen font-bold text-right">zobrazit vše...</span>
-*/}
+            <p className="text-gray-500">Věk: {fighter.age} let</p>
+
+            <p className="text-gray-500">
+              Váhová kategorie: {fighter.actual_weight_category}
+            </p>
+
+            <p className="text-gray-500">
+              Stav: {fighter.active ? "Aktivní" : "Neaktivní"}
+            </p>
           </div>
 
-          <span class="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-full w-full max-h-5 h-full flex items-center justify-around">
-            ÚSPĚCHY
-          </span>
-
-          <div class="flex justify-between">
-            <span class="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-20 w-full max-h-5 h-full flex items-center justify-around">
-              <div class="relative inline-flex rounded-full h-4 w-4 bg-customGreen">
-                <img
-                  class="px-0.5 py-0.5 flex align-middle items-center"
-                  src="../src/assets/icons/belt.png"
-                  alt="image description"
-                ></img>
-              </div>
-              {fighter.belt}
-            </span>
-
-            <span class="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-20 w-full max-h-5 h-full flex items-center justify-around">
-              <div class="relative inline-flex rounded-full h-4 w-4 bg-customGreen">
-                <img
-                  class="px-0.5 py-0.5 flex align-middle items-center"
-                  src="../src/assets/icons/medal.png"
-                  alt="image description"
-                ></img>
-              </div>
-              BEST
-            </span>
-
-            <span class="border border-customGreen text-customGreen text-[8px] font-medium px-2.5 py-0.5 rounded max-w-20 w-full max-h-5 h-full flex items-center justify-around">
-              <div class="relative inline-flex rounded-full h-4 w-4 bg-customGreen">
-                <img
-                  class="px-0.5 py-0.5 flex align-middle items-center"
-                  src="../src/assets/icons/trophy.png"
-                  alt="image description"
-                ></img>
-              </div>
-              LEGEND
-            </span>
+          {/* Pás */}
+          <div className="flex items-center gap-3 mt-3">
+            <img src={fighter.belt_path} alt="belt" className="w-10 h-10" />
+            <span>{fighter.cup}</span>
           </div>
         </div>
       </div>
-      ))} 
-    </>
+
+      {/* Výsledky */}
+      <div className="bg-customWhite rounded-2xl shadow-md p-6">
+        <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+          <Users size={18} /> Poslední výsledky
+        </h2>
+
+        {fighter.tournament_results?.length ? (
+          <div className="space-y-3">
+            {fighter.tournament_results.map((r, i) => (
+              <div
+                key={i}
+                className="flex justify-between border-b pb-2 text-sm"
+              >
+                <div>
+                  <p className="font-medium">{r.tournament}</p>
+                  <p className="text-gray-400 flex items-center gap-1">
+                    <Calendar size={14} /> {r.date}
+                  </p>
+                </div>
+
+                <div className="font-semibold">{r.place}. místo</div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-400">Žádné výsledky</p>
+        )}
+      </div>
+
+      {/* Další info */}
+      <div className="bg-customWhite rounded-2xl shadow-md p-6">
+        <h2 className="text-xl font-semibold mb-2 flex items-center gap-2">
+          <Info size={18} /> Informace
+        </h2>
+
+        <p className="text-gray-500">Největší úspěch: {fighter.best || "—"}</p>
+
+        <p className="text-gray-500">Poznámka: {fighter.legend || "—"}</p>
+      </div>
+    </div>
   );
 }
 

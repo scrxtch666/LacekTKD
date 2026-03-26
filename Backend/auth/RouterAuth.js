@@ -108,7 +108,7 @@ router.post("/login", (req, res) => {
 // GET /auth/pending – seznam čekajících žádostí
 router.get("/pending", verifyToken, (req, res) => {
   db.query(
-    `SELECT id, login, email, created_at FROM users WHERE status = 'pending' ORDER BY id DESC`,
+    `SELECT id, login, email FROM users WHERE status = 'pending' ORDER BY id DESC`,
     (err, results) => {
       if (err) return res.status(500).json({ error: "Chyba serveru" });
       res.json(results);
@@ -286,6 +286,19 @@ router.put("/me", verifyToken, async (req, res) => {
   } catch {
     res.status(500).json({ error: "Interní chyba serveru" });
   }
+});
+
+router.delete("/delete/:id", verifyToken, (req, res) => {
+  db.query(
+    "DELETE FROM users WHERE id = ? AND status = 'pending'",
+    [req.params.id],
+    (err, result) => {
+      if (err) return res.status(500).json({ error: "Chyba serveru" });
+      if (result.affectedRows === 0)
+        return res.status(404).json({ error: "Žádost nenalezena" });
+      res.json({ success: true, message: "Žádost byla smazána" });
+    },
+  );
 });
 
 module.exports = router;

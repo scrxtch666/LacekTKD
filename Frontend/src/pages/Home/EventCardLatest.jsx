@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const EventCardLatest = () => {
   const [news, setNews] = useState([]); // Stav pro uchování dat turnajů
   const [loading, setLoading] = useState(true); // Stav pro zobrazení načítání dat
-  const navigate = useNavigate(); // ← toto chybí
+  const navigate = useNavigate();
 
   // Funkce pro načítání dat o turnajích
   useEffect(() => {

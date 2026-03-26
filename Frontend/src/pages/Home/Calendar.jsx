@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, MapPin, Calendar as CalendarIcon, Trophy, Info } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const API = "http://localhost:3000";
 
@@ -34,6 +35,7 @@ function Calendar() {
   const [selectedDate, setSelectedDate] = useState(toDateStr(today));
   const [tournaments, setTournaments] = useState([]); // turnaje pro aktuální měsíc
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Načti turnaje při změně měsíce
   useEffect(() => {
@@ -115,7 +117,6 @@ function Calendar() {
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={prevMonth}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <ChevronLeft size={20} className="text-gray-600" />
           </button>
@@ -124,7 +125,6 @@ function Calendar() {
           </h2>
           <button
             onClick={nextMonth}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <ChevronRight size={20} className="text-gray-600" />
           </button>
@@ -162,7 +162,7 @@ function Calendar() {
                     ? "bg-green-600 text-white shadow-md"
                     : isToday
                     ? "bg-green-100 text-green-800 font-bold"
-                    : "text-gray-700 hover:bg-gray-100"
+                    : "text-gray-700 hover:border-customGreen border"
                   }
                 `}
               >
@@ -216,7 +216,8 @@ function Calendar() {
             {selectedTournaments.map((tournament) => (
               <div
                 key={tournament.id}
-                className="flex gap-4 p-4 rounded-xl border border-gray-100 hover:border-green-200 hover:shadow-sm transition-all duration-200"
+                onClick={() => navigate(`/turnaje/${tournament.id}`)}
+                className="flex gap-4 p-4 rounded-xl border border-gray-100 hover:border-customGreen hover:shadow-sm transition-all duration-200"
               >
                 {/* Obrázek nebo ikona */}
                 <div className="flex-shrink-0">

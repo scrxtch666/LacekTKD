@@ -31,7 +31,7 @@ const CoachCard = ({ ocoach }) => {
         {ocoach.email && (
         <a
           href={`mailto:${ocoach.email}`}
-          className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors group"
+          className="flex items-center gap-3 p-2 rounded-xl hover:border border-customGreen transition-colors group"
         >
           <div className="bg-customGreen p-2 rounded-full group-hover:scale-110 transition-transform">
              <Mail size={11} />
@@ -42,7 +42,7 @@ const CoachCard = ({ ocoach }) => {
       {ocoach.phone  && (
         <a
           href={`tel:+420${ocoach.phone}`}
-          className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors group"
+          className="flex items-center gap-3 p-2 rounded-xl hover:border border-customGreen transition-colors group"
         >
           <div className="bg-customGreen p-2 rounded-full group-hover:scale-110 transition-transform">
              <Phone size={11} />
