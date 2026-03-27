@@ -161,5 +161,3 @@ Backend - cd  .\Backend\ - node server.js
 
 
 # DEBUGGING
-- upravit to, že jeden závodník může mít jenom jeden účet
-- opravit searchbar v administraci v závodníkách

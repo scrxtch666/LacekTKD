@@ -110,17 +110,6 @@ function FighterDetail() {
           <p className="text-gray-400">Žádné výsledky</p>
         )}
       </div>
-
-      {/* Další info */}
-      <div className="bg-customWhite rounded-2xl shadow-md p-6">
-        <h2 className="text-xl font-semibold mb-2 flex items-center gap-2">
-          <Info size={18} /> Informace
-        </h2>
-
-        <p className="text-gray-500">Největší úspěch: {fighter.best || "—"}</p>
-
-        <p className="text-gray-500">Poznámka: {fighter.legend || "—"}</p>
-      </div>
     </div>
   );
 }

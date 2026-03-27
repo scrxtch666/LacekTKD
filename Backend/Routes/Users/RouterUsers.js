@@ -92,36 +92,42 @@ router.put("/:id", async (req, res) => {
   }
 
   try {
+    let query, params;
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
-      db.query(
-        `UPDATE users SET login=?, password=?, email=?, role_id=?, fighter_id=? WHERE id=?`,
-        [login, hashedPassword, email || null, role_id, fighter_id || null, id],
-        (err, result) => {
-          if (err)
-            return res
-              .status(500)
-              .json({ error: "Chyba při ukládání do databáze" });
-          if (result.affectedRows === 0)
-            return res.status(404).json({ error: "Uživatel nenalezen" });
-          res.json({ success: true, message: "Uživatel byl úspěšně upraven" });
-        },
-      );
+      query = `UPDATE users SET login=?, password=?, email=?, role_id=?, fighter_id=? WHERE id=?`;
+      params = [
+        login,
+        hashedPassword,
+        email || null,
+        role_id,
+        fighter_id || null,
+        id,
+      ];
     } else {
-      db.query(
-        `UPDATE users SET login=?, email=?, role_id=?, fighter_id=? WHERE id=?`,
-        [login, email || null, role_id, fighter_id || null, id],
-        (err, result) => {
-          if (err)
-            return res
-              .status(500)
-              .json({ error: "Chyba při ukládání do databáze" });
-          if (result.affectedRows === 0)
-            return res.status(404).json({ error: "Uživatel nenalezen" });
-          res.json({ success: true, message: "Uživatel byl úspěšně upraven" });
-        },
-      );
+      query = `UPDATE users SET login=?, email=?, role_id=?, fighter_id=? WHERE id=?`;
+      params = [login, email || null, role_id, fighter_id || null, id];
     }
+
+    db.query(query, params, (err, result) => {
+      if (err) {
+        if (err.code === "ER_DUP_ENTRY") {
+          return res
+            .status(409)
+            .json({ error: "Tento závodník nebo login je již obsazen." });
+        }
+        console.error(err);
+        return res
+          .status(500)
+          .json({ error: "Chyba při ukládání do databáze" });
+      }
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: "Uživatel nenalezen" });
+      }
+
+      res.json({ success: true, message: "Uživatel byl úspěšně upraven" });
+    });
   } catch (error) {
     console.error("Chyba:", error);
     res.status(500).json({ error: "Interní chyba serveru" });
