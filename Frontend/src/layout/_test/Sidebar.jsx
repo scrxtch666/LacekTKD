@@ -41,7 +41,6 @@ function SideBar() {
         { name: "Zkoušky", path: "/admin/zkousky", icon: LayoutDashboard },
         { name: "Turnaje", path: "/admin/turnaje", icon: LayoutDashboard },
         { name: "Závodníci", path: "/admin/zavodnici", icon: Users },
-        { name: "Kontakt", path: "/admin/kontakt", icon: Phone },
       ],
     },
     {

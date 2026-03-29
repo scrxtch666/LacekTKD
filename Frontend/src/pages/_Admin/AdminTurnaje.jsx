@@ -214,6 +214,12 @@ function AdminTurnaje() {
   const [editError, setEditError] = useState("");
   const [editSaving, setEditSaving] = useState(false);
 
+  // Filtry
+  const [search, setSearch] = useState("");
+  const [filterActual, setFilterActual] = useState(false);
+  const [filterOld, setFilterOld] = useState(false);
+  const [filterTournament, setFilterTournament] = useState(""); // "completed" | "uncompleted" |
+
   useEffect(() => {
     const handleAuthChange = () => setUserRole(getUserRole());
     window.addEventListener("authChange", handleAuthChange);
@@ -473,6 +479,45 @@ function AdminTurnaje() {
   const formatDate = (dateStr) =>
     dateStr ? new Date(dateStr).toLocaleDateString("cs-CZ") : "—";
 
+  // Filtrování
+
+  // --- OPRAVENÉ FILTROVÁNÍ ---
+  const today = new Date().setHours(0, 0, 0, 0);
+
+  const filteredTournaments = tournaments.filter((t) => {
+    // 1. Vyhledávání v názvu (vždy aktivní, pokud je něco v inputu)
+    const matchesSearch = t.name.toLowerCase().includes(search.toLowerCase());
+
+    // 2. Časová logika turnaje
+    const tourDate = new Date(t.end_date_raw || t.start_date_raw).setHours(
+      0,
+      0,
+      0,
+      0,
+    );
+    const isActual = tourDate >= today;
+    const isOld = tourDate < today;
+
+    // 3. Logika pro přepínače "Aktuální" a "Staré"
+    // Pokud není aktivní žádný filtr (oba jsou false), propustíme vše.
+    // Pokud je aktivní aspoň jeden, musí turnaj odpovídat danému filtru.
+    const timeFilterActive = filterActual || filterOld;
+    const matchesTime =
+      !timeFilterActive || (filterActual && isActual) || (filterOld && isOld);
+
+    // 4. Logika pro status (Vydané / Nevydané)
+    const matchesStatus =
+      filterTournament === "" ||
+      (filterTournament === "completed" && t.status === "uncompleted") ||
+      (filterTournament === "uncompleted" &&
+        (!t.status || t.status === 0));
+
+    // Všechny podmínky musí platit najednou
+    return matchesSearch && matchesTime && matchesStatus;
+  });
+
+  const hasActiveFilter =
+    search || filterOld || filterActual || filterTournament;
   if (loading)
     return (
       <div className="flex justify-center items-center h-64">
@@ -523,6 +568,55 @@ function AdminTurnaje() {
         </div>
       )}
 
+      <div className="flex gap-3 flex-col sm:flex-row flex-wrap">
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Hledat turnaj..."
+          className="bg-customWhite flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
+        />
+
+        {/* Filtr účtu */}
+        <select
+          value={filterTournament}
+          onChange={(e) => setFilterTournament(e.target.value)}
+          className="bg-customWhite px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
+        >
+          <option value="">Všechny turnaje</option>
+          <option value="completed">✅ Vydané</option>
+          <option value="uncompleted">❌ Nevydané</option>
+        </select>
+
+        <button
+          onClick={() => setFilterActual(!filterActual)}
+          className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${filterActual ? "bg-customGreen text-white border-customGreen" : "bg-customWhite text-gray-600 border-gray-300"}`}
+        >
+          Aktuální
+        </button>
+
+        <button
+          onClick={() => setFilterOld(!filterOld)}
+          className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${filterOld ? "bg-customGreen text-white border-customGreen" : "bg-customWhite text-gray-600 border-gray-300"}`}
+        >
+          Staré
+        </button>
+
+        {hasActiveFilter && (
+          <button
+            onClick={() => {
+              setSearch("");
+              setFilterActual(false);
+              setFilterOld(false);
+              setFilterTournament("");
+            }}
+            className="px-4 py-2 bg-customWhite border border-gray-300 text-gray-600 rounded-lg text-sm transition-colors hover:bg-gray-50"
+          >
+            Zrušit filtry
+          </button>
+        )}
+      </div>
+
       {/* Záložky */}
       <div className="flex gap-2 border-b border-gray-200">
         <button
@@ -545,13 +639,17 @@ function AdminTurnaje() {
       {/* ─── TAB: TURNAJE ─── */}
       {activeTab === "turnaje" && (
         <div className="space-y-4">
-          {!tournaments.length ? (
+          {filteredTournaments.length === 0 ? (
             <div className="bg-customWhite rounded-lg shadow p-8 text-center">
               <Trophy className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              <p className="text-gray-500">Zatím nejsou žádné turnaje</p>
+              <p className="text-gray-500">
+                {tournaments.length === 0
+                  ? "Zatím nejsou žádné turnaje"
+                  : "Žádné turnaje neodpovídají filtrům"}
+              </p>
             </div>
           ) : (
-            tournaments.map((tournament) => (
+            filteredTournaments.map((tournament) => (
               <div
                 key={tournament.id}
                 className="bg-customWhite rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
@@ -633,71 +731,9 @@ function AdminTurnaje() {
                               : ""}
                           </span>
                         )}
-                        {tournament.price && (
-                          <span className="flex items-center gap-1">
-                            <Coins size={13} /> {tournament.price} Kč
-                          </span>
-                        )}
                       </div>
-                      {tournament.registrable_date && (
-                        <p className="text-xs text-orange-600 mt-1">
-                          Uzávěrka přihlášek:{" "}
-                          {formatDate(tournament.registrable_date)}
-                        </p>
-                      )}
-                      {tournament.info && (
-                        <p className="text-xs text-gray-400 mt-1 truncate">
-                          {tournament.info}
-                        </p>
-                      )}
                     </div>
                     <div className="flex gap-2 flex-shrink-0 flex-wrap">
-                      {userRole === "user" &&
-                        (() => {
-                          const isRegistered = !!tournament.is_registered;
-                          const canRegister =
-                            new Date() < new Date(tournament.registrable_date);
-                          if (isRegistered) {
-                            return (
-                              <div className="flex items-center gap-2">
-                                <span className="flex items-center gap-1.5 px-3 py-2 bg-green-50 text-green-700 border border-green-300 rounded-lg text-sm font-medium">
-                                  ✓ Přihlášen
-                                </span>
-                                <button
-                                  onClick={
-                                    canRegister
-                                      ? () => handleUnregister(tournament.id)
-                                      : undefined
-                                  }
-                                  disabled={!canRegister}
-                                  className={`flex items-center gap-1.5 px-3 py-2 border rounded-lg text-sm transition-colors ${canRegister ? "bg-red-50 hover:bg-red-100 text-red-600 border-red-300" : "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"}`}
-                                >
-                                  {canRegister ? "Odhlásit se" : "Po uzávěrce"}
-                                </button>
-                              </div>
-                            );
-                          }
-                          return (
-                            <button
-                              onClick={
-                                canRegister
-                                  ? () => handleRegister(tournament.id)
-                                  : undefined
-                              }
-                              disabled={!canRegister}
-                              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ${canRegister ? "bg-customGreen hover:bg-green-700 text-white" : "bg-gray-50 text-gray-400 border border-gray-200 cursor-not-allowed"}`}
-                            >
-                              {canRegister ? (
-                                <>
-                                  <Plus size={18} />
-                                  <span>Přihlásit se</span>
-                                </>
-                              ) : (
-                                "Po uzávěrce"
-                              )}
-                            </button>
-                          );
-                        })()}
                       {(userRole === "admin" || userRole === "trainer") && (
                         <>
                           <button

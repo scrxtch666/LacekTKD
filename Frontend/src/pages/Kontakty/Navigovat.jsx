@@ -16,7 +16,7 @@ const navigateToGoogleMaps = () => {
 function Navigovat() {
   return (
     <>
-      <div className="md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse hidden lg:flex">
+      <div className="md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
         <button
           onClick={navigateToGoogleMaps}
           type="button"

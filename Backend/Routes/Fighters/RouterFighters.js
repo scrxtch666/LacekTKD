@@ -189,7 +189,7 @@ router.get("/:id", (req, res) => {
          WHERE tr.place IS NOT NULL
            AND tr.fighter_id = ?
          ORDER BY t.start_date DESC
-         LIMIT 3`,
+         LIMIT 4`,
         [id],
         (err2, results) => {
           if (err2) return res.status(500).json({ error: "Chyba" });

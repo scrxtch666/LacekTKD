@@ -158,6 +158,15 @@ Backend - cd  .\Backend\ - node server.js
 - vyřešit vytváření účtu
 - projít ty soubory a smazat komentáře
 - udělat formulář na registraci - když uživatel vyplní registrační formulář, tak to padne v administraci do položky žádosti o členství
+- udělat error stránku, že něco nebylo nalezeno
 
 
 # DEBUGGING
+- klasickej scénář ... uživatel se přihlásí na profil a na turnaj, co se potom stane
+- co se stane po proběhnutí turnaje
+
+# DO TEXTOVÉ ČÁSTI PŘIDAT
+- porovnání s aktuální webovou stránkou
+- něco o registraci
+- něco o kalendáři akcí 
+- přidávání úspěchů závodníkům

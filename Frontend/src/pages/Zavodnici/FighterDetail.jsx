@@ -66,11 +66,7 @@ function FighterDetail() {
             <p className="text-gray-500">Věk: {fighter.age} let</p>
 
             <p className="text-gray-500">
-              Váhová kategorie: {fighter.actual_weight_category}
-            </p>
-
-            <p className="text-gray-500">
-              Stav: {fighter.active ? "Aktivní" : "Neaktivní"}
+              Váhová kategorie: {fighter.actual_weight_category} kg
             </p>
           </div>
 
@@ -85,7 +81,8 @@ function FighterDetail() {
       {/* Výsledky */}
       <div className="bg-customWhite rounded-2xl shadow-md p-6">
         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-          <Users size={18} /> Poslední výsledky
+          <Users size={18} />
+          Výsledky turnajů
         </h2>
 
         {fighter.tournament_results?.length ? (

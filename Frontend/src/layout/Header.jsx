@@ -84,9 +84,12 @@ function Header() {
             <>
               {user ? (
                 <>
-                  <span className="text-sm font-medium hidden lg:block">
+                  <Link
+                    to="/admin/me"
+                    className="text-sm font-medium hidden lg:block hover:underline transition-colors"
+                  >
                     {user.login}
-                  </span>
+                  </Link>
                   <LogoutButton onLogout={() => setUser(null)} />
                 </>
               ) : (

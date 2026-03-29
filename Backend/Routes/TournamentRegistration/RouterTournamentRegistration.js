@@ -11,7 +11,8 @@ router.get("/", (req, res) => {
     SELECT tr.id, tr.tournament_id, tr.fighter_id, tr.place, tr.status,
            t.name AS tournament_name, t.location AS tournament_location,
            f.name AS fighter_name, f.surname AS fighter_surname,
-           f.actual_weight_category AS fighter_weight
+           f.actual_weight_category AS fighter_weight,
+           f.img_path AS fighter_pfp
     FROM tournament_registration tr
     LEFT JOIN tournament t ON t.id = tr.tournament_id
     LEFT JOIN fighters f ON f.id = tr.fighter_id

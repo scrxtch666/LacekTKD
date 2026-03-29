@@ -97,7 +97,7 @@ function AdminRequests() {
                 </button>
                 <button
                   onClick={() => handleReject(req.id)}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg text-sm transition-colors"
                 >
                   <X size={16} /> Zamítnout
                 </button>
