@@ -36,6 +36,7 @@ function SideBar() {
       title: "Obecné",
       adminOnly: true,
       items: [
+        { name: "Můj účet", path: "/admin/me", icon: User },
         { name: "Dashboard", path: "/admin", icon: LayoutDashboard },
         { name: "Aktuality", path: "/admin/aktuality", icon: LayoutDashboard },
         { name: "Zkoušky", path: "/admin/zkousky", icon: LayoutDashboard },
@@ -50,7 +51,6 @@ function SideBar() {
         { name: "Banner", path: "/admin/banner", icon: Image },
         { name: "Sponzoři", path: "/admin/sponsors", icon: Image },
         { name: "Uživatelé", path: "/admin/users", icon: Users },
-        { name: "Newsletter", path: "/admin/newsletter", icon: Mailbox },
         { name: "Žádosti", path: "/admin/zadosti", icon: Users },
       ],
     },

@@ -190,31 +190,38 @@ router.get("/calendar", (req, res) => {
   );
 });
 
-// GET / – všechny turnaje
 router.get("/", (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
+  const { status } = req.query;
   let userId = null;
+
   if (token) {
     try {
       const payload = jwt.verify(token, SECRET_KEY);
       userId = payload.id;
-      console.log("✅ Token OK, userId:", userId); // ← přidej
+      console.log("✅ Token OK, userId:", userId);
     } catch (err) {
-      console.log("❌ Token error:", err.message); // ← přidej
+      console.log("❌ Token error:", err.message);
     }
   } else {
-    console.log("⚠️ Žádný token"); // ← přidej
+    console.log("⚠️ Žádný token");
   }
 
+  // Poddotaz pro registraci
   const isRegisteredSQL = userId
     ? `(SELECT COUNT(*) FROM tournament_registration tr 
-     WHERE tr.tournament_id = tournament.id 
-     AND tr.fighter_id = (SELECT fighter_id FROM users WHERE id = ${db.escape(userId)})
-    ) AS is_registered`
+       WHERE tr.tournament_id = tournament.id 
+       AND tr.fighter_id = (SELECT fighter_id FROM users WHERE id = ${db.escape(userId)})
+      ) AS is_registered`
     : `0 AS is_registered`;
 
-  db.query(
-    `SELECT
+  // Dynamická WHERE klauzule
+  let whereClause = status
+    ? `WHERE tournament.status = ${db.escape(status)}`
+    : "";
+
+  const query = `
+    SELECT
         tournament.id,
         tournament.name,
         tournament.location,
@@ -222,7 +229,7 @@ router.get("/", (req, res) => {
         tournament.info,
         tournament.img_path,
         tournament.registrable_date,
-        tournament.status,
+        tournament.status, -- Tady chyběla čárka!
         tournament.type_id,
         type.name AS type_name,
         DATE_FORMAT(tournament.start_date, '%d.%m.') AS start_date_formatted,
@@ -231,14 +238,17 @@ router.get("/", (req, res) => {
         tournament.end_date AS end_date_raw,
         ${isRegisteredSQL}
      FROM tournament
-     LEFT JOIN type ON tournament.type_id = type.id
-     ORDER BY tournament.start_date DESC`,
-    (err, results) => {
-      if (err)
-        return res.status(500).json({ error: "Chyba při načítání turnajů" });
-      res.json(results);
-    },
-  );
+     LEFT JOIN type ON tournament.type_id = type.id -- Join musí být před WHERE
+     ${whereClause}
+     ORDER BY tournament.start_date DESC`;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("SQL Error:", err); // Loguj chybu do konzole pro debug
+      return res.status(500).json({ error: "Chyba při načítání turnajů" });
+    }
+    res.json(results);
+  });
 });
 
 router.delete("/:id/register", verifyToken, (req, res) => {
@@ -251,21 +261,6 @@ router.delete("/:id/register", verifyToken, (req, res) => {
       if (err) return res.status(500).json({ error: "Chyba při odhlašování" });
       res.json({ success: true });
     },
-  );
-});
-
-router.put("/:id/status", verifyToken, (req, res) => {
-  const { status } = req.body;
-  if (!["completed", "uncompleted"].includes(status))
-    return res.status(400).json({ error: "Neplatný status" });
-
-  db.query(
-    "UPDATE tournament SET status = ? WHERE id = ?",
-    [status, req.params.id],
-    (err) => {
-      if (err) return res.status(500).json({ error: "Chyba serveru" });
-      res.json({ success: true });
-    }
   );
 });
 
@@ -305,20 +300,19 @@ router.get("/types", (req, res) => {
 // GET /:id – detail turnaje
 router.get("/:id", (req, res) => {
   const { id } = req.params;
-
   db.query(
-    `SELECT tournament.*, type.name AS type_name,
-        tournament.start_date AS start_date_raw,
-        tournament.end_date AS end_date_raw
+    `SELECT tournament.*, type.name AS type_name
      FROM tournament
      LEFT JOIN type ON tournament.type_id = type.id
      WHERE tournament.id = ?`,
     [id],
     (err, results) => {
-      if (err) return res.status(500).json({ error: "Chyba při načítání turnaje" });
-      if (!results.length) return res.status(404).json({ error: "Turnaj nenalezen" });
+      if (err)
+        return res.status(500).json({ error: "Chyba při načítání turnaje" });
+      if (!results.length)
+        return res.status(404).json({ error: "Turnaj nenalezen" });
       res.json(results[0]);
-    }
+    },
   );
 });
 
@@ -475,6 +469,23 @@ router.put("/:id", upload.single("image"), async (req, res) => {
       } else {
         doUpdate(undefined);
       }
+    },
+  );
+});
+
+router.put("/:id/status", verifyToken, (req, res) => {
+  const { status } = req.body;
+  if (!["completed", "uncompleted"].includes(status)) {
+    return res.status(400).json({ error: "Neplatný status" });
+  }
+  db.query(
+    "UPDATE tournament SET status = ? WHERE id = ?",
+    [status, req.params.id],
+    (err, result) => {
+      if (err) return res.status(500).json({ error: "Chyba serveru" });
+      if (result.affectedRows === 0)
+        return res.status(404).json({ error: "Turnaj nenalezen" });
+      res.json({ success: true });
     },
   );
 });

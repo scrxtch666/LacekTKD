@@ -10,18 +10,14 @@ function Turnaj() {
   const navigate = useNavigate();
 
   useEffect(() => {
-  fetch(`${API}/api/tournaments/`)
-    .then((res) => res.json())
-    .then((data) => {
-      // Filtruj pouze zveřejněné
-      const completed = Array.isArray(data)
-        ? data.filter((t) => t.status === "completed")
-        : [];
-      setEvents(completed);
-      setLoading(false);
-    })
-    .catch(() => setLoading(false));
-}, []);
+    fetch(`${API}/api/tournaments/?status=completed`)
+      .then((res) => res.json())
+      .then((data) => {
+        setEvents(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
   if (loading)
     return (

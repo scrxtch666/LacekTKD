@@ -12,6 +12,8 @@ import {
   UserX,
   User,
   Trophy,
+  Mail,
+  Phone,
 } from "lucide-react";
 
 const API = "http://localhost:3000";
@@ -780,12 +782,18 @@ function AdminZavodnici() {
                     </div>
                     {fighter.user_login &&
                       (fighter.user_email || fighter.user_phone) && (
-                        <div className="flex flex-wrap gap-3 mt-1 justify-center sm:justify-start text-xs text-gray-500">
+                        <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 mt-1 justify-center sm:justify-start">
                           {fighter.user_email && (
-                            <span>✉ {fighter.user_email}</span>
+                            <>
+                            <Mail size={14} />
+                            <span>{fighter.user_email}</span>
+                            </>
                           )}
                           {fighter.user_phone && (
-                            <span>📞 {fighter.user_phone}</span>
+                            <>
+                            <Phone size={14} />
+                            <span>{fighter.user_phone}</span>
+                            </>
                           )}
                         </div>
                       )}

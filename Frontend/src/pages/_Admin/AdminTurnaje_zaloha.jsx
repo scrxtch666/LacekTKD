@@ -11,6 +11,7 @@ import {
   Coins,
 } from "lucide-react";
 import { getUserRole } from "../../utils/auth";
+import { useNavigate } from "react-router-dom";
 
 const TournamentForm = ({
   data,
@@ -213,6 +214,7 @@ function AdminTurnaje() {
   const [editPreviewUrl, setEditPreviewUrl] = useState(null);
   const [editError, setEditError] = useState("");
   const [editSaving, setEditSaving] = useState(false);
+  const navigate = useNavigate();
 
   // Filtry
   const [search, setSearch] = useState("");
@@ -284,31 +286,6 @@ function AdminTurnaje() {
     } catch {
       alert("Chyba při přihlašování na turnaj!");
     }
-  };
-
-  const handleToggleStatus = async (tournament) => {
-    const newStatus =
-      tournament.status === "completed" ? "uncompleted" : "completed";
-    if (
-      !confirm(
-        `Označit jako "${newStatus === "completed" ? "Zveřejněný" : "Nezveřejněný"}"?`,
-      )
-    )
-      return;
-    const token = localStorage.getItem("token");
-    const response = await fetch(
-      `http://localhost:3000/api/tournaments/${tournament.id}/status`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status: newStatus }),
-      },
-    );
-    if (response.ok) fetchTournaments();
-    else alert("Nepodařilo se změnit status");
   };
 
   const handleUnregister = async (tournamentId) => {
@@ -391,6 +368,33 @@ function AdminTurnaje() {
       reader.onloadend = () => setPreviewUrl(reader.result);
       reader.readAsDataURL(file);
     }
+  };
+
+  // Přidej funkci
+  const handleToggleStatus = async (tournament) => {
+    const newStatus =
+      tournament.status === "completed" ? "uncompleted" : "completed";
+    if (
+      !confirm(
+        `Označit turnaj jako "${newStatus === "completed" ? "dokončený" : "nedokončený"}"?`,
+      )
+    )
+      return;
+
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+      `http://localhost:3000/api/tournaments/${tournament.id}/status`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      },
+    );
+    if (response.ok) fetchTournaments();
+    else alert("Nepodařilo se změnit status");
   };
 
   const handleSubmit = async (e) => {
@@ -506,37 +510,28 @@ function AdminTurnaje() {
 
   // Filtrování
 
-  // --- OPRAVENÉ FILTROVÁNÍ ---
-  const today = new Date().setHours(0, 0, 0, 0);
+  const today = new Date();
+  const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
 
   const filteredTournaments = tournaments.filter((t) => {
-    // 1. Vyhledávání v názvu (vždy aktivní, pokud je něco v inputu)
     const matchesSearch = t.name.toLowerCase().includes(search.toLowerCase());
 
-    // 2. Časová logika turnaje
-    const tourDate = new Date(t.end_date_raw || t.start_date_raw).setHours(
-      0,
-      0,
-      0,
-      0,
-    );
+    const tourDate = new Date(t.end_date_raw || t.start_date_raw);
     const isActual = tourDate >= today;
     const isOld = tourDate < today;
+    const isThisMonth =
+      tourDate >= thisMonthStart &&
+      tourDate <= new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
-    // 3. Logika pro přepínače "Aktuální" a "Staré"
-    // Pokud není aktivní žádný filtr (oba jsou false), propustíme vše.
-    // Pokud je aktivní aspoň jeden, musí turnaj odpovídat danému filtru.
     const timeFilterActive = filterActual || filterOld;
     const matchesTime =
       !timeFilterActive || (filterActual && isActual) || (filterOld && isOld);
 
-    // 4. Logika pro status (Vydané / Nevydané)
     const matchesStatus =
       filterTournament === "" ||
       (filterTournament === "completed" && t.status === "completed") ||
       (filterTournament === "uncompleted" && t.status !== "completed");
 
-    // Všechny podmínky musí platit najednou
     return matchesSearch && matchesTime && matchesStatus;
   });
 
@@ -608,8 +603,8 @@ function AdminTurnaje() {
           className="bg-customWhite px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
         >
           <option value="">Všechny turnaje</option>
-          <option value="completed">✅ Vydané</option>
-          <option value="uncompleted">❌ Nevydané</option>
+          <option value="completed">✅ Dokončené</option>
+          <option value="uncompleted">❌ Nedokončené</option>
         </select>
 
         <button
@@ -737,19 +732,7 @@ function AdminTurnaje() {
                             {tournament.type_name}
                           </span>
                         )}
-                        <span
-                          className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                            tournament.status === "completed"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-gray-100 text-gray-500"
-                          }`}
-                        >
-                          {tournament.status === "completed"
-                            ? "✓ Zveřejněný"
-                            : "○ Nezveřejněný"}
-                        </span>
                       </div>
-
                       <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-500">
                         {tournament.location && (
                           <span className="flex items-center gap-1">
@@ -769,106 +752,51 @@ function AdminTurnaje() {
                         )}
                       </div>
                     </div>
+                    {tournament.status === "completed" && (
+                      <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        ✓ Dokončený
+                      </span>
+                    )}
                     <div className="flex gap-2 flex-shrink-0 flex-wrap">
-                      {/* Tlačítka */}
-                      <div className="flex gap-2 flex-shrink-0 flex-wrap">
-                        {userRole === "user" &&
-                          (() => {
-                            const isRegistered = !!tournament.is_registered;
-                            const canRegister =
-                              new Date() <
-                              new Date(tournament.registrable_date);
-
-                            if (isRegistered) {
-                              return (
-                                <div className="flex items-center gap-2">
-                                  <span className="flex items-center gap-1.5 px-3 py-2 bg-green-50 text-green-700 border border-green-300 rounded-lg text-sm font-medium">
-                                    ✓ Přihlášen
-                                  </span>
-                                  <button
-                                    onClick={
-                                      canRegister
-                                        ? () => handleUnregister(tournament.id)
-                                        : undefined
-                                    }
-                                    disabled={!canRegister}
-                                    className={`flex items-center gap-1.5 px-3 py-2 border rounded-lg text-sm transition-colors ${
-                                      canRegister
-                                        ? "bg-red-50 hover:bg-red-100 text-red-600 border-red-300"
-                                        : "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
-                                    }`}
-                                  >
-                                    {canRegister
-                                      ? "Odhlásit se"
-                                      : "Po uzávěrce"}
-                                  </button>
-                                </div>
-                              );
-                            }
-
-                            return (
-                              <button
-                                onClick={
-                                  canRegister
-                                    ? () => handleRegister(tournament.id)
-                                    : undefined
-                                }
-                                disabled={!canRegister}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ${
-                                  canRegister
-                                    ? "bg-customGreen hover:bg-green-700 text-white"
-                                    : "bg-gray-50 text-gray-400 border border-gray-200 cursor-not-allowed"
-                                }`}
-                              >
-                                {canRegister ? (
-                                  <>
-                                    <Plus size={18} />
-                                    <span>Přihlásit se</span>
-                                  </>
-                                ) : (
-                                  "Po uzávěrce"
-                                )}
-                              </button>
-                            );
-                          })()}
-
-                        {(userRole === "admin" || userRole === "trainer") && (
-                          <>
-                            {/* Zveřejnit/Skrýt */}
-                            <button
-                              onClick={() => handleToggleStatus(tournament)}
-                              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm transition-colors ${
-                                tournament.status === "completed"
-                                  ? "bg-orange-500 hover:bg-orange-600"
-                                  : "bg-green-500 hover:bg-green-600"
-                              }`}
-                            >
-                              {tournament.status === "completed"
-                                ? "Skrýt"
-                                : "Zveřejnit"}
-                            </button>
-                            <button
-                              onClick={() => startEdit(tournament)}
-                              className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-                            >
-                              <Pencil size={18} />
-                              <span>Editovat</span>
-                            </button>
-                            <button
-                              onClick={() => handleDelete(tournament.id)}
-                              disabled={deleting === tournament.id}
-                              className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors disabled:opacity-50"
-                            >
-                              <Trash2 size={18} />
-                              <span>
-                                {deleting === tournament.id
-                                  ? "Mažu..."
-                                  : "Smazat"}
-                              </span>
-                            </button>
-                          </>
-                        )}
-                      </div>
+                      {(userRole === "admin" || userRole === "trainer") && (
+                        <>
+                          <button
+                            onClick={() => startEdit(tournament)}
+                            className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                          >
+                            <Pencil size={18} />
+                            <span>Editovat</span>
+                          </button>
+                          <button
+                            onClick={() => handleDelete(tournament.id)}
+                            disabled={deleting === tournament.id}
+                            className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors disabled:opacity-50"
+                          >
+                            <Trash2 size={18} />
+                            <span>
+                              {deleting === tournament.id
+                                ? "Mažu..."
+                                : "Smazat"}
+                            </span>
+                          </button>
+                        </>
+                      )}
+                      {(userRole === "admin" || userRole === "trainer") && (
+                        <>
+                          <button
+                            onClick={() => handleToggleStatus(tournament)}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-white transition-colors text-sm ${
+                              tournament.status === "completed"
+                                ? "bg-orange-500 hover:bg-orange-600"
+                                : "bg-green-500 hover:bg-green-600"
+                            }`}
+                          >
+                            {tournament.status === "completed"
+                              ? "✗ Nedokončený"
+                              : "✓ Dokončený"}
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 )}
@@ -901,7 +829,7 @@ function AdminTurnaje() {
                     tournament_location: reg.tournament_location,
                     tournament_start_date: reg.tournament_start_date,
                     tournament_end_date: reg.tournament_end_date,
-                    tournament_img: reg.tournament_img,
+                    img_path: reg.tournament_img || reg.img_path,
                     type_name: reg.type_name,
                   };
                 acc[key].fighters.push(reg);
@@ -996,13 +924,24 @@ function AdminTurnaje() {
                       {group.fighters.map((reg) => (
                         <div
                           key={reg.id}
-                          className="flex items-center justify-between px-4 py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50"
+                          onClick={() =>
+                            navigate(`/zavodnik/${reg.fighter_id}`)
+                          }
+                          className="flex items-center justify-between px-4 py-3 cursor-pointer border-b border-gray-50 last:border-0 hover:bg-gray-50"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-sm font-bold">
-                              {reg.fighter_name?.charAt(0)}
-                              {reg.fighter_surname?.charAt(0)}
-                            </div>
+                            {reg.fighter_pfp ? (
+                              <img
+                                className="w-9 h-9 rounded-full object-cover"
+                                src={reg.fighter_pfp}
+                                alt={reg.fighter_name}
+                              />
+                            ) : (
+                              <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-sm font-bold flex-shrink-0">
+                                {reg.fighter_name?.charAt(0)}
+                                {reg.fighter_surname?.charAt(0)}
+                              </div>
+                            )}
                             <div>
                               <p className="text-sm font-medium text-gray-800">
                                 {reg.fighter_name} {reg.fighter_surname}
