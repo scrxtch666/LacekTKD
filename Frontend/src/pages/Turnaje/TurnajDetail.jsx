@@ -25,7 +25,7 @@ function TurnajDetail() {
   const userRole = getUserRole();
 
   useEffect(() => {
-      fetchRegistrations();
+    fetchRegistrations();
     fetch(`${API}/api/tournaments/${id}`)
       .then((res) => res.json())
       .then((data) => {
@@ -36,7 +36,7 @@ function TurnajDetail() {
 
     const token = localStorage.getItem("token");
 
-    fetch(`${API}/api/tournamentRegistration?tournamentId=${id}`, {
+    fetch(`${API}/api/tournamentRegistration/public?tournamentId=${id}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     })
       .then((res) => res.json())
@@ -64,40 +64,40 @@ function TurnajDetail() {
       .catch(() => {});
   }, [id]);
 
-const handleRegister = async () => {
-  const token = localStorage.getItem("token");
-  const response = await fetch(`${API}/api/tournaments/${id}/register`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const data = await response.json();
-
-  if (response.ok) {
-    setIsRegistered(true);
-
-    // 🔥 DŮLEŽITÉ – reload registrací
-    fetchRegistrations();
-  } else {
-    alert(data.error || "Nepodařilo se přihlásit.");
-  }
-};
-
-const fetchRegistrations = () => {
-  const token = localStorage.getItem("token");
-
-  fetch(`${API}/api/tournamentRegistration?tournamentId=${id}`, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      const filtered = Array.isArray(data)
-        ? data.filter((r) => String(r.tournament_id) === String(id))
-        : [];
-
-      setRegistrations(filtered);
+  const handleRegister = async () => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${API}/api/tournaments/${id}/register`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
     });
-};
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setIsRegistered(true);
+
+      // 🔥 DŮLEŽITÉ – reload registrací
+      fetchRegistrations();
+    } else {
+      alert(data.error || "Nepodařilo se přihlásit.");
+    }
+  };
+
+  const fetchRegistrations = () => {
+    const token = localStorage.getItem("token");
+
+    fetch(`${API}/api/tournamentRegistration/public?tournamentId=${id}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const filtered = Array.isArray(data)
+          ? data.filter((r) => String(r.tournament_id) === String(id))
+          : [];
+
+        setRegistrations(filtered);
+      });
+  };
 
   const handleUnregister = async () => {
     if (!confirm("Opravdu se odhlásit z turnaje?")) return;
