@@ -221,7 +221,7 @@ router.get("/", (req, res) => {
         tournament.price,
         tournament.info,
         tournament.img_path,
-        tournament.registrable_date,
+        DATE_FORMAT(tournament.registrable_date, '%d.%m.%Y') AS registrable_date_formatted,
         tournament.status,
         tournament.type_id,
         type.name AS type_name,

@@ -164,6 +164,7 @@ Backend - cd  .\Backend\ - node server.js
 # DEBUGGING
 - klasickej scénář ... uživatel se přihlásí na profil a na turnaj, co se potom stane
 - co se stane po proběhnutí turnaje
+- AdminTurnaje - po uzávěrce - nejde se přihlásit jako závodník, dát tam přidání výsledků pro ty závodníky, kteří se zúčastnili
 
 # DO TEXTOVÉ ČÁSTI PŘIDAT
 - porovnání s aktuální webovou stránkou

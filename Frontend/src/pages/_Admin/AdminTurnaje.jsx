@@ -9,6 +9,7 @@ import {
   MapPin,
   Calendar,
   Coins,
+  CalendarOff,
 } from "lucide-react";
 import { getUserRole } from "../../utils/auth";
 
@@ -767,6 +768,13 @@ function AdminTurnaje() {
                               : ""}
                           </span>
                         )}
+                        <>
+                        <span className="flex items-center gap-1 text-orange-700">
+                        <CalendarOff size={13} />
+                        <span>registrace do:</span>
+                         <span>{tournament.registrable_date_formatted}</span>
+                         </span>
+                         </>
                       </div>
                     </div>
                     <div className="flex gap-2 flex-shrink-0 flex-wrap">
