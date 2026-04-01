@@ -5,13 +5,17 @@ const db = require("../../Libs/db");
 
 // GET / – admin/trainer vidí vše, user vidí jen turnaje kde je přihlášen (+ spoluzávodníky)
 router.get("/", verifyToken, (req, res) => {
-  const userId = req.user.id;
-  const userRole = req.user.role || req.user.role_name;
+  console.log("req.user:", req.user); // ← ukaž mi co vypíše
 
-  if (userRole === "admin" || userRole === "trainer") {
-    // Admin a trainer vidí všechny registrace
+  const userId = req.user.id;
+  const userRole = req.user.role || req.user.role_name || "user";
+
+  // Pokud role není ani admin ani trainer, ber jako user
+  const isAdminOrTrainer = userRole === "admin" || userRole === "trainer";
+
+  if (isAdminOrTrainer) {
     db.query(
-      `SELECT tr.id, tr.tournament_id, tr.fighter_id, tr.place, tr.status,
+      `SELECT tr.id, tr.tournament_id, tr.fighter_id, tr.place,
               t.name AS tournament_name, t.location AS tournament_location,
               t.start_date AS tournament_start_date, t.end_date AS tournament_end_date,
               t.img_path AS tournament_img, ty.name AS type_name,
@@ -23,12 +27,17 @@ router.get("/", verifyToken, (req, res) => {
        LEFT JOIN type ty ON ty.id = t.type_id
        ORDER BY t.start_date DESC, f.surname ASC`,
       (err, results) => {
-        if (err) return res.status(500).json({ error: "Chyba serveru" });
+        if (err) {
+          console.error("SQL chyba admin:", err);
+          return res
+            .status(500)
+            .json({ error: "Chyba serveru: " + err.message });
+        }
         res.json(results);
       },
     );
   } else {
-    // User – nejdřív zjisti na které turnaje je přihlášen
+    // User větev
     db.query(
       `SELECT DISTINCT tr.tournament_id
        FROM tournament_registration tr
@@ -36,20 +45,20 @@ router.get("/", verifyToken, (req, res) => {
        WHERE u.id = ?`,
       [userId],
       (err, myTournaments) => {
-        if (err) return res.status(500).json({ error: "Chyba serveru" });
-
-        if (!myTournaments.length) {
-          // Není přihlášen na žádný turnaj – vrátí prázdné pole
-          return res.json([]);
+        if (err) {
+          console.error("SQL chyba user step1:", err);
+          return res
+            .status(500)
+            .json({ error: "Chyba serveru: " + err.message });
         }
 
-        // Vrátí všechny závodníky ze stejných turnajů (včetně sebe)
+        if (!myTournaments.length) return res.json([]);
+
         const tournamentIds = myTournaments.map((t) => t.tournament_id);
         const placeholders = tournamentIds.map(() => "?").join(",");
-        //console.log("req.user:", req.user);
 
         db.query(
-          `SELECT tr.id, tr.tournament_id, tr.fighter_id, tr.place, tr.status,
+          `SELECT tr.id, tr.tournament_id, tr.fighter_id, tr.place,
                   t.name AS tournament_name, t.location AS tournament_location,
                   t.start_date AS tournament_start_date, t.end_date AS tournament_end_date,
                   t.img_path AS tournament_img, ty.name AS type_name,
@@ -63,7 +72,12 @@ router.get("/", verifyToken, (req, res) => {
            ORDER BY t.start_date DESC, f.surname ASC`,
           tournamentIds,
           (err2, results) => {
-            if (err2) return res.status(500).json({ error: "Chyba serveru" });
+            if (err2) {
+              console.error("SQL chyba user step2:", err2);
+              return res
+                .status(500)
+                .json({ error: "Chyba serveru: " + err2.message });
+            }
             res.json(results);
           },
         );
