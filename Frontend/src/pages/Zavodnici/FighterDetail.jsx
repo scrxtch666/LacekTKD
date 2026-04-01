@@ -68,6 +68,16 @@ function FighterDetail() {
             <p className="text-gray-500">
               Váhová kategorie: {fighter.actual_weight_category} kg
             </p>
+            <p className="text-gray-500">
+              Věková skupina: {fighter.category_id}
+            </p>
+            <p className="text-gray-500">
+              Email: {fighter.email}
+            </p>
+              <p className="text-gray-500">
+              Telefonní číslo: {fighter.phone_number}
+            </p>
+            
           </div>
 
           {/* Pás */}

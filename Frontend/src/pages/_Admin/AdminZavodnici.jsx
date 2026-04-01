@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import {
   Trash2,
   UserPlus,
@@ -24,6 +26,8 @@ function AdminZavodnici() {
   const [deleting, setDeleting] = useState(null);
   const [belts, setBelts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const navigate = useNavigate();
+  
 
   // Filtry
   const [search, setSearch] = useState("");
@@ -523,6 +527,7 @@ function AdminZavodnici() {
           {filteredFighters.map((fighter) => (
             <div
               key={fighter.id}
+              onClick={() => navigate(`/zavodnik/${fighter.id}`)}
               className="bg-customWhite rounded-lg shadow-md hover:shadow-lg transition-shadow p-4"
             >
               {editingId === fighter.id ? (

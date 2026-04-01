@@ -170,4 +170,6 @@ Backend - cd  .\Backend\ - node server.js
 - porovnání s aktuální webovou stránkou
 - něco o registraci
 - něco o kalendáři akcí 
-- přidávání úspěchů závodníkům
+- přidávání úspěchů závodníkům - tohle musím spíš dopsat
+
+

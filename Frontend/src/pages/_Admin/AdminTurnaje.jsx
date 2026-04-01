@@ -578,7 +578,7 @@ function AdminTurnaje() {
       {/* Hlavička */}
       <div className="flex justify-between items-center">
         <div className="devider">Správa turnajů</div>
-        {!showAddForm && activeTab === "turnaje" && (
+        {!showAddForm && activeTab === "turnaje" && (userRole === "admin" || userRole === "trainer") && (
           <button
             onClick={() => setShowAddForm(true)}
             className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-200"
