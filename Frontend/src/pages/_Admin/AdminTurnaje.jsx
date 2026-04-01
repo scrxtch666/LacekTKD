@@ -257,16 +257,38 @@ function AdminTurnaje() {
 
   const fetchRegistrations = () => {
     setLoadingReg(true);
-    const token = localStorage.getItem("token");
+
+    const token = localStorage.getItem("token"); // ✅ správně
+
+    if (!token) {
+      console.warn("⚠️ Žádný token");
+      setLoadingReg(false);
+      return;
+    }
+
     fetch("http://localhost:3000/api/tournamentRegistration", {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
       .then((res) => res.json())
       .then((data) => {
-        setRegistrations(Array.isArray(data) ? data : []);
+        //  console.log("DATA:", data);
+
+        if (Array.isArray(data)) {
+          setRegistrations(data);
+        } else if (Array.isArray(data.data)) {
+          setRegistrations(data.data);
+        } else {
+          setRegistrations([]);
+        }
+
         setLoadingReg(false);
       })
-      .catch(() => setLoadingReg(false));
+      .catch((err) => {
+        console.error("ERROR:", err);
+        setLoadingReg(false);
+      });
   };
 
   const handleRegister = async (tournamentId) => {
@@ -551,6 +573,7 @@ function AdminTurnaje() {
     );
 
   return (
+    
     <div className="space-y-6">
       {/* Hlavička */}
       <div className="flex justify-between items-center">
@@ -769,12 +792,12 @@ function AdminTurnaje() {
                           </span>
                         )}
                         <>
-                        <span className="flex items-center gap-1 text-orange-700">
-                        <CalendarOff size={13} />
-                        <span>registrace do:</span>
-                         <span>{tournament.registrable_date_formatted}</span>
-                         </span>
-                         </>
+                          <span className="flex items-center gap-1 text-orange-700">
+                            <CalendarOff size={13} />
+                            <span>registrace do:</span>
+                            <span>{tournament.registrable_date_formatted}</span>
+                          </span>
+                        </>
                       </div>
                     </div>
                     <div className="flex gap-2 flex-shrink-0 flex-wrap">
@@ -783,10 +806,41 @@ function AdminTurnaje() {
                         {userRole === "user" &&
                           (() => {
                             const isRegistered = !!tournament.is_registered;
-                            const canRegister =
-                              new Date() <
-                              new Date(tournament.registrable_date);
 
+                            // 1. Dnešní datum (nastavené na začátek dne pro přesné porovnání)
+                            const dnes = new Date();
+                            dnes.setHours(0, 0, 0, 0);
+
+                            // 2. Datum uzávěrky z databáze (raw formát YYYY-MM-DD)
+                            // Nastavíme ho na konec dne (23:59:59), aby uživatel mohl kliknout i v den uzávěrky
+                            const uzaverka = new Date(
+                              tournament.registrable_date_raw,
+                            );
+                            uzaverka.setHours(23, 59, 59, 999);
+
+                            // 3. Hlavní podmínka: Je už po uzávěrce?
+                            const jePoUzaverce = dnes > uzaverka;
+
+                            // STAV A: Po uzávěrce (pouze šedé tlačítko, žádná akce)
+                            if (jePoUzaverce) {
+                              return (
+                                <div className="flex items-center gap-2">
+                                  {isRegistered && (
+                                    <span className="flex items-center gap-1.5 px-3 py-2 bg-green-50 text-green-700 border border-green-300 rounded-lg text-sm font-medium">
+                                      ✓ Přihlášen
+                                    </span>
+                                  )}
+                                  <button
+                                    disabled
+                                    className="bg-gray-50 text-gray-400 border border-gray-200 px-4 py-2 rounded-lg text-sm cursor-not-allowed font-medium"
+                                  >
+                                    Po uzávěrce
+                                  </button>
+                                </div>
+                              );
+                            }
+
+                            // STAV B: Před uzávěrkou + Přihlášen (může se odhlásit)
                             if (isRegistered) {
                               return (
                                 <div className="flex items-center gap-2">
@@ -794,48 +848,25 @@ function AdminTurnaje() {
                                     ✓ Přihlášen
                                   </span>
                                   <button
-                                    onClick={
-                                      canRegister
-                                        ? () => handleUnregister(tournament.id)
-                                        : undefined
+                                    onClick={() =>
+                                      handleUnregister(tournament.id)
                                     }
-                                    disabled={!canRegister}
-                                    className={`flex items-center gap-1.5 px-3 py-2 border rounded-lg text-sm transition-colors ${
-                                      canRegister
-                                        ? "bg-red-50 hover:bg-red-100 text-red-600 border-red-300"
-                                        : "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
-                                    }`}
+                                    className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-300 px-3 py-2 rounded-lg text-sm transition-colors font-medium"
                                   >
-                                    {canRegister
-                                      ? "Odhlásit se"
-                                      : "Po uzávěrce"}
+                                    Odhlásit se
                                   </button>
                                 </div>
                               );
                             }
 
+                            // STAV C: Před uzávěrkou + Nepřihlášen (může se přihlásit)
                             return (
                               <button
-                                onClick={
-                                  canRegister
-                                    ? () => handleRegister(tournament.id)
-                                    : undefined
-                                }
-                                disabled={!canRegister}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ${
-                                  canRegister
-                                    ? "bg-customGreen hover:bg-green-700 text-white"
-                                    : "bg-gray-50 text-gray-400 border border-gray-200 cursor-not-allowed"
-                                }`}
+                                onClick={() => handleRegister(tournament.id)}
+                                className="bg-customGreen hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors font-medium flex items-center gap-2"
                               >
-                                {canRegister ? (
-                                  <>
-                                    <Plus size={18} />
-                                    <span>Přihlásit se</span>
-                                  </>
-                                ) : (
-                                  "Po uzávěrce"
-                                )}
+                                <Plus size={18} />
+                                Přihlásit se
                               </button>
                             );
                           })()}

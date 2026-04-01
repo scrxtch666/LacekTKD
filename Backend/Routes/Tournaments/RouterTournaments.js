@@ -222,6 +222,7 @@ router.get("/", (req, res) => {
         tournament.info,
         tournament.img_path,
         DATE_FORMAT(tournament.registrable_date, '%d.%m.%Y') AS registrable_date_formatted,
+        tournament.registrable_date AS registrable_date_raw,
         tournament.status,
         tournament.type_id,
         type.name AS type_name,
@@ -242,14 +243,37 @@ router.get("/", (req, res) => {
 });
 
 router.delete("/:id/register", verifyToken, (req, res) => {
+  const tournamentId = req.params.id;
+
+  // Kontrola, zda už není po uzávěrce
   db.query(
-    `DELETE tr FROM tournament_registration tr
-     JOIN users u ON u.fighter_id = tr.fighter_id
-     WHERE tr.tournament_id = ? AND u.id = ?`,
-    [req.params.id, req.user.id],
-    (err) => {
-      if (err) return res.status(500).json({ error: "Chyba při odhlašování" });
-      res.json({ success: true });
+    "SELECT registrable_date FROM tournament WHERE id = ?",
+    [tournamentId],
+    (err, results) => {
+      if (err || results.length === 0)
+        return res.status(500).json({ error: "Chyba serveru" });
+
+      const deadline = new Date(results[0].registrable_date);
+      deadline.setHours(23, 59, 59, 999);
+
+      if (new Date() > deadline) {
+        return res
+          .status(403)
+          .json({ error: "Po uzávěrce se již nelze odhlásit!" });
+      }
+
+      // Pokud je OK, smažeme registraci
+      db.query(
+        `DELETE tr FROM tournament_registration tr
+         JOIN users u ON u.fighter_id = tr.fighter_id
+         WHERE tr.tournament_id = ? AND u.id = ?`,
+        [tournamentId, req.user.id],
+        (err2) => {
+          if (err2)
+            return res.status(500).json({ error: "Chyba při odhlašování" });
+          res.json({ success: true });
+        },
+      );
     },
   );
 });
@@ -265,7 +289,7 @@ router.put("/:id/status", verifyToken, (req, res) => {
     (err) => {
       if (err) return res.status(500).json({ error: "Chyba serveru" });
       res.json({ success: true });
-    }
+    },
   );
 });
 
@@ -315,10 +339,12 @@ router.get("/:id", (req, res) => {
      WHERE tournament.id = ?`,
     [id],
     (err, results) => {
-      if (err) return res.status(500).json({ error: "Chyba při načítání turnaje" });
-      if (!results.length) return res.status(404).json({ error: "Turnaj nenalezen" });
+      if (err)
+        return res.status(500).json({ error: "Chyba při načítání turnaje" });
+      if (!results.length)
+        return res.status(404).json({ error: "Turnaj nenalezen" });
       res.json(results[0]);
-    }
+    },
   );
 });
 

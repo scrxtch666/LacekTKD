@@ -46,6 +46,7 @@ router.get("/", verifyToken, (req, res) => {
         // Vrátí všechny závodníky ze stejných turnajů (včetně sebe)
         const tournamentIds = myTournaments.map((t) => t.tournament_id);
         const placeholders = tournamentIds.map(() => "?").join(",");
+        //console.log("req.user:", req.user);
 
         db.query(
           `SELECT tr.id, tr.tournament_id, tr.fighter_id, tr.place, tr.status,
