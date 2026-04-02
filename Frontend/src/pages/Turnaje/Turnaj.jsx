@@ -39,7 +39,7 @@ function Turnaj() {
       {events.map((event) => (
         <div
           key={event.id}
-          onClick={() => navigate(`/turnaje/${event.id}`)}
+          onClick={() => navigate(`/turnaj/${event.id}`)}
           className="bg-customWhite rounded-2xl shadow-md overflow-hidden flex flex-col sm:flex-row"
         >
           {/* Obrázek */}

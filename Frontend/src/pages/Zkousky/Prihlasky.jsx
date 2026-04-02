@@ -78,12 +78,7 @@ function Prihlasky() {
   if (!exams.length)
     return (
       <div className="text-center py-16 space-y-2">
-        <p className="text-xl font-semibold text-gray-600">
-          Momentálně nejsou vypsány žádné zkoušky
-        </p>
-        <p className="text-gray-400 text-sm">
-          Sledujte aktuality pro informace o připravovaných zkouškách
-        </p>
+       
       </div>
     );
 

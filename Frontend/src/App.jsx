@@ -172,7 +172,7 @@ function Layout() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/aktuality/:id" element={<AktualitaDetail />} />
-          <Route path="/turnaje/:id" element={<TurnajDetail />} />
+          <Route path="/turnaj/:id" element={<TurnajDetail />} />
           <Route path="/zavodnik/:id" element={<FighterDetail />} />
         </Routes>
       </Container>

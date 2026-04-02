@@ -531,17 +531,17 @@ function AdminZkousky() {
                       >
                         <div className="flex items-center gap-3">
                           {reg.fighter_pfp ? (
-                              <img
-                                src={reg.fighter_pfp}
-                                alt={reg.fighter_name}
-                                className="w-9 h-9 rounded-full object-cover border-2 border-gray-200"
-                              />
-                            ) : (
-                              <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-sm font-bold">
-                                {reg.fighter_name?.charAt(0)}
-                                {reg.fighter_surname?.charAt(0)}
-                              </div>
-                            )}
+                            <img
+                              src={reg.fighter_pfp}
+                              alt={reg.fighter_name}
+                              className="w-9 h-9 rounded-full object-cover border-2 border-gray-200"
+                            />
+                          ) : (
+                            <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-sm font-bold">
+                              {reg.fighter_name?.charAt(0)}
+                              {reg.fighter_surname?.charAt(0)}
+                            </div>
+                          )}
                           <div>
                             <p className="text-sm font-medium text-gray-800">
                               {reg.fighter_name} {reg.fighter_surname}

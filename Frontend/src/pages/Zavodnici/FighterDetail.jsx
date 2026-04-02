@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { ArrowLeft, Calendar, Users, Info } from "lucide-react";
+import { getUserRole } from "../../utils/auth";
 
 const API = "http://localhost:3000";
 
@@ -9,6 +10,7 @@ function FighterDetail() {
   const navigate = useNavigate();
   const [fighter, setFighter] = useState(null);
   const [loading, setLoading] = useState(true);
+  const userRole = getUserRole();
 
   useEffect(() => {
     fetch(`${API}/api/fighters/${id}`)
@@ -71,13 +73,16 @@ function FighterDetail() {
             <p className="text-gray-500">
               Věková skupina: {fighter.category_id}
             </p>
+             {(userRole === "admin" || userRole === "trainer") && (
+              <>
             <p className="text-gray-500">
               Email: {fighter.email}
             </p>
               <p className="text-gray-500">
               Telefonní číslo: {fighter.phone_number}
             </p>
-            
+            </>
+            )}
           </div>
 
           {/* Pás */}
@@ -100,7 +105,8 @@ function FighterDetail() {
             {fighter.tournament_results.map((r, i) => (
               <div
                 key={i}
-                className="flex justify-between border-b pb-2 text-sm"
+                onClick={() => navigate(`/turnaj/${r.tournament_id}`)}
+                className="flex justify-between border-b cursor-pointer pb-2 text-sm"
               >
                 <div>
                   <p className="font-medium">{r.tournament}</p>

@@ -11,6 +11,8 @@ import {
   ShieldAlert,
   LogOut,
   User,
+  BookCheckIcon,
+  Swords,
 } from "lucide-react";
 import { getUserRole, authService } from "../../utils/auth";
 
@@ -39,8 +41,8 @@ function SideBar() {
         { name: "Můj účet", path: "/admin/me", icon: User },
         { name: "Dashboard", path: "/admin", icon: LayoutDashboard },
         { name: "Aktuality", path: "/admin/aktuality", icon: LayoutDashboard },
-        { name: "Zkoušky", path: "/admin/zkousky", icon: LayoutDashboard },
-        { name: "Turnaje", path: "/admin/turnaje", icon: LayoutDashboard },
+        { name: "Zkoušky", path: "/admin/zkousky", icon: BookCheckIcon },
+        { name: "Turnaje", path: "/admin/turnaje", icon: Swords },
         { name: "Závodníci", path: "/admin/zavodnici", icon: Users },
       ],
     },

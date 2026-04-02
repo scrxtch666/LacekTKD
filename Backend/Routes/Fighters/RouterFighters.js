@@ -54,6 +54,7 @@ router.get("/", async (req, res) => {
       // Druhý dotaz – všechny výsledky najednou
       db.query(
         `SELECT 
+            tr.tournament_id,
             tr.fighter_id,
             tr.place,
             t.name AS tournament,
@@ -181,6 +182,7 @@ router.get("/:id", (req, res) => {
       // 2. výsledky jen pro něj
       db.query(
         `SELECT 
+            tr.tournament_id,
             tr.place,
             t.name AS tournament,
             DATE_FORMAT(t.start_date, '%d.%m.%Y') AS date

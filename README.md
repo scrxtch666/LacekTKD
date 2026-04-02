@@ -149,14 +149,9 @@ Backend - cd  .\Backend\ - node server.js
 - závodníci - předělat
 
 # CO MUSÍM UDĚLAT
-- detail akcí, závodníků...
-- intra doladit -> ty cesty 
-- pořešit zkoušky
-- vyřešit vytváření účtu
-- projít ty soubory a smazat komentáře
-- udělat formulář na registraci - když uživatel vyplní registrační formulář, tak to padne v administraci do položky žádosti o členství
 - udělat error stránku, že něco nebylo nalezeno
-
+- když admin nastaví v administraci něco jako shované, tak to user neuvidí
+- prostě udělat to, aby user neviděl neveřejné věci
 
 # DEBUGGING
 - klasickej scénář ... uživatel se přihlásí na profil a na turnaj, co se potom stane

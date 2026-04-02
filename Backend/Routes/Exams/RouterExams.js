@@ -85,6 +85,7 @@ router.get("/admin", verifyToken, (req, res) => {
       db.query(
         `SELECT er.exam_id, er.id AS reg_id, f.id AS fighter_id,
                 f.name AS fighter_name, f.surname AS fighter_surname,
+                f.img_path AS fighter_pfp,
                 f.actual_weight_category, b.cup
          FROM exam_registration er
          LEFT JOIN fighters f ON f.id = er.fighter_id
@@ -250,6 +251,22 @@ router.delete("/registration/:id", verifyToken, (req, res) => {
     [req.params.id],
     (err) => {
       if (err) return res.status(500).json({ error: "Chyba při mazání" });
+      res.json({ success: true });
+    },
+  );
+});
+
+// PUT /:id/status – toggle status
+router.put("/:id/status", verifyToken, (req, res) => {
+  const { status } = req.body;
+  if (!["active", "hidden"].includes(status))
+    return res.status(400).json({ error: "Neplatný status" });
+
+  db.query(
+    "UPDATE exam SET status=? WHERE id=?",
+    [status, req.params.id],
+    (err) => {
+      if (err) return res.status(500).json({ error: "Chyba serveru" });
       res.json({ success: true });
     },
   );
