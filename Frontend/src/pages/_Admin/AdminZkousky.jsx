@@ -417,7 +417,7 @@ function AdminZkousky() {
                     </button>
                     {userRole === "user" && (
                       <button
-                        onClick={() => handleRegister(tournament.id)}
+                        onClick={() => handleRegister(exam.id)}
                         className="bg-customGreen hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors font-medium flex items-center gap-2"
                       >
                         <Plus size={18} />

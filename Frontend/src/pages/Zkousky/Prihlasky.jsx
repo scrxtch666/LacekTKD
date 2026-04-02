@@ -1,6 +1,15 @@
 import { useState, useEffect } from "react";
-import { Calendar, MapPin, Coins, Users, CalendarOff, Plus, X } from "lucide-react";
+import {
+  Calendar,
+  MapPin,
+  Coins,
+  Users,
+  CalendarOff,
+  Plus,
+  X,
+} from "lucide-react";
 import { getUserRole } from "../../utils/auth";
+import { useNavigate } from "react-router-dom";
 
 const API = "http://localhost:3000";
 
@@ -10,6 +19,7 @@ function Prihlasky() {
   const [expanded, setExpanded] = useState(null);
   const [myFighterId, setMyFighterId] = useState(null);
   const userRole = getUserRole();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchExams();
@@ -20,7 +30,9 @@ function Prihlasky() {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => res.json())
-        .then((data) => { if (data.fighter_id) setMyFighterId(data.fighter_id); })
+        .then((data) => {
+          if (data.fighter_id) setMyFighterId(data.fighter_id);
+        })
         .catch(() => {});
     }
   }, []);
@@ -28,7 +40,10 @@ function Prihlasky() {
   const fetchExams = () => {
     fetch(`${API}/api/exams`)
       .then((res) => res.json())
-      .then((data) => { setExams(Array.isArray(data) ? data : []); setLoading(false); })
+      .then((data) => {
+        setExams(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
       .catch(() => setLoading(false));
   };
 
@@ -53,16 +68,24 @@ function Prihlasky() {
     if (res.ok) fetchExams();
   };
 
-  const formatDate = (d) => d ? new Date(d).toLocaleDateString("cs-CZ") : "—";
+  const formatDate = (d) => (d ? new Date(d).toLocaleDateString("cs-CZ") : "—");
 
-  if (loading) return <div className="text-center py-10 text-gray-400">Načítám zkoušky...</div>;
+  if (loading)
+    return (
+      <div className="text-center py-10 text-gray-400">Načítám zkoušky...</div>
+    );
 
-  if (!exams.length) return (
-    <div className="text-center py-16 space-y-2">
-      <p className="text-xl font-semibold text-gray-600">Momentálně nejsou vypsány žádné zkoušky</p>
-      <p className="text-gray-400 text-sm">Sledujte aktuality pro informace o připravovaných zkouškách</p>
-    </div>
-  );
+  if (!exams.length)
+    return (
+      <div className="text-center py-16 space-y-2">
+        <p className="text-xl font-semibold text-gray-600">
+          Momentálně nejsou vypsány žádné zkoušky
+        </p>
+        <p className="text-gray-400 text-sm">
+          Sledujte aktuality pro informace o připravovaných zkouškách
+        </p>
+      </div>
+    );
 
   return (
     <div className="space-y-6">
@@ -79,18 +102,40 @@ function Prihlasky() {
           : false;
 
         return (
-          <div key={exam.id} className="bg-customWhite rounded-2xl shadow-md overflow-hidden">
+          <div
+            key={exam.id}
+            className="bg-customWhite rounded-2xl shadow-md overflow-hidden"
+          >
             <div className="p-6 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div className="space-y-2 flex-1">
-                  <h2 className="text-xl font-bold text-gray-800">{exam.title}</h2>
+                  <h2 className="text-xl font-bold text-gray-800">
+                    {exam.title}
+                  </h2>
                   <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-500">
-                    {exam.date && <span className="flex items-center gap-1"><Calendar size={15} className="text-customGreen" /> {formatDate(exam.date)}</span>}
-                    {exam.location && <span className="flex items-center gap-1"><MapPin size={15} className="text-customGreen" /> {exam.location}</span>}
-                    {exam.price && <span className="flex items-center gap-1"><Coins size={15} className="text-customGreen" /> {exam.price} Kč</span>}
+                    {exam.date && (
+                      <span className="flex items-center gap-1">
+                        <Calendar size={15} className="text-customGreen" />{" "}
+                        {formatDate(exam.date)}
+                      </span>
+                    )}
+                    {exam.location && (
+                      <span className="flex items-center gap-1">
+                        <MapPin size={15} className="text-customGreen" />{" "}
+                        {exam.location}
+                      </span>
+                    )}
+                    {exam.price && (
+                      <span className="flex items-center gap-1">
+                        <Coins size={15} className="text-customGreen" />{" "}
+                        {exam.price} Kč
+                      </span>
+                    )}
                   </div>
                   {exam.registrable_date && (
-                    <p className={`text-sm flex items-center gap-1 ${canRegister ? "text-orange-600" : "text-gray-400"}`}>
+                    <p
+                      className={`text-sm flex items-center gap-1 ${canRegister ? "text-orange-600" : "text-gray-400"}`}
+                    >
                       <CalendarOff size={14} />
                       {canRegister
                         ? `Uzávěrka přihlášek: ${formatDate(exam.registrable_date)}`
@@ -98,7 +143,9 @@ function Prihlasky() {
                     </p>
                   )}
                   {exam.description && (
-                    <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">{exam.description}</p>
+                    <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">
+                      {exam.description}
+                    </p>
                   )}
                 </div>
 
@@ -136,7 +183,9 @@ function Prihlasky() {
               {/* Přihlášení závodníci */}
               <div className="border-t border-gray-100 pt-4">
                 <button
-                  onClick={() => setExpanded(expanded === exam.id ? null : exam.id)}
+                  onClick={() =>
+                    setExpanded(expanded === exam.id ? null : exam.id)
+                  }
                   className="flex items-center gap-2 text-sm text-gray-500 hover:text-customGreen transition-colors"
                 >
                   <Users size={15} />
@@ -147,15 +196,26 @@ function Prihlasky() {
                 {expanded === exam.id && (
                   <div className="mt-3 space-y-1">
                     {!exam.registrations?.length ? (
-                      <p className="text-sm text-gray-400 italic">Zatím nikdo není přihlášen</p>
+                      <p className="text-sm text-gray-400 italic">
+                        Zatím nikdo není přihlášen
+                      </p>
                     ) : (
                       exam.registrations.map((reg) => (
-                        <div key={reg.reg_id} className="flex items-center gap-3 py-2 border-b border-gray-50 last:border-0">
+                        <div
+                          key={reg.reg_id}
+                          onClick={() =>
+                            navigate(`/zavodnik/${reg.fighter_id}`)
+                          }
+                          className="flex items-center cursor-pointer gap-3 py-2 border-b border-gray-50 last:border-0"
+                        >
                           <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-xs font-bold">
-                            {reg.fighter_name?.charAt(0)}{reg.fighter_surname?.charAt(0)}
+                            {reg.fighter_name?.charAt(0)}
+                            {reg.fighter_surname?.charAt(0)}
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-gray-800">{reg.fighter_name} {reg.fighter_surname}</p>
+                            <p className="text-sm font-medium text-gray-800">
+                              {reg.fighter_name} {reg.fighter_surname}
+                            </p>
                             <p className="text-xs text-gray-400">{reg.cup}</p>
                           </div>
                         </div>
