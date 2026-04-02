@@ -12,6 +12,7 @@ import {
   CalendarOff,
 } from "lucide-react";
 import { getUserRole } from "../../utils/auth";
+import { useNavigate } from "react-router-dom";
 
 const TournamentForm = ({
   data,
@@ -187,6 +188,7 @@ const TournamentForm = ({
 function AdminTurnaje() {
   const [tournaments, setTournaments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   const [deleting, setDeleting] = useState(null);
   const [types, setTypes] = useState([]);
   const [userRole, setUserRole] = useState(getUserRole());
@@ -573,20 +575,21 @@ function AdminTurnaje() {
     );
 
   return (
-    
     <div className="space-y-6">
       {/* Hlavička */}
       <div className="flex justify-between items-center">
         <div className="devider">Správa turnajů</div>
-        {!showAddForm && activeTab === "turnaje" && (userRole === "admin" || userRole === "trainer") && (
-          <button
-            onClick={() => setShowAddForm(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-200"
-          >
-            <Plus size={20} />
-            <span>Přidat turnaj</span>
-          </button>
-        )}
+        {!showAddForm &&
+          activeTab === "turnaje" &&
+          (userRole === "admin" || userRole === "trainer") && (
+            <button
+              onClick={() => setShowAddForm(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-200"
+            >
+              <Plus size={20} />
+              <span>Přidat turnaj</span>
+            </button>
+          )}
       </div>
 
       {/* Formulář přidání */}
@@ -962,7 +965,7 @@ function AdminTurnaje() {
                       <div className="flex-shrink-0">
                         {group.tournament_img ? (
                           <img
-                            src={group.img_path}
+                            src={group.tournament_img}
                             alt={group.tournament_name}
                             className="w-16 h-16 rounded-lg object-cover border-2 border-gray-200"
                           />
@@ -1020,7 +1023,7 @@ function AdminTurnaje() {
                             isExpanded ? null : tournamentId,
                           )
                         }
-                        className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-sm transition-colors flex-shrink-0"
+                        className="flex items-center gap-2 px-4 py-2 bg-customWhite border border-customGreen text-customBlack rounded-lg text-sm transition-colors flex-shrink-0"
                       >
                         {isExpanded
                           ? "Skrýt závodníky ▲"
@@ -1035,13 +1038,24 @@ function AdminTurnaje() {
                       {group.fighters.map((reg) => (
                         <div
                           key={reg.id}
-                          className="flex items-center justify-between px-4 py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50"
+                          onClick={() =>
+                            navigate(`/zavodnik/${reg.fighter_id}`)
+                          }
+                          className="flex items-center cursor-pointer justify-between px-4 py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-sm font-bold">
-                              {reg.fighter_name?.charAt(0)}
-                              {reg.fighter_surname?.charAt(0)}
-                            </div>
+                            {reg.fighter_pfp ? (
+                              <img
+                                src={reg.fighter_pfp}
+                                alt={reg.fighter_name}
+                                className="w-9 h-9 rounded-full object-cover border-2 border-gray-200"
+                              />
+                            ) : (
+                              <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-sm font-bold">
+                                {reg.fighter_name?.charAt(0)}
+                                {reg.fighter_surname?.charAt(0)}
+                              </div>
+                            )}
                             <div>
                               <p className="text-sm font-medium text-gray-800">
                                 {reg.fighter_name} {reg.fighter_surname}

@@ -99,11 +99,8 @@ MUST HAVE
 - [ ] api mapa
 - [ ] víc se podívat na JWT - občas můžu na admin stránky i bez přihlášení
 
-
-
 Classy
 - jsou v index.css
-
 
 rounded-2xl
 
