@@ -89,7 +89,7 @@ function Prihlasky() {
 
   return (
     <div className="space-y-6">
-      <div className="devider">Zkoušky na technické stupně</div>
+      <div className="devider">Informace ke zkouškám</div>
 
       {exams.map((exam) => {
         const canRegister = exam.registrable_date
@@ -208,10 +208,18 @@ function Prihlasky() {
                           }
                           className="flex items-center cursor-pointer gap-3 py-2 border-b border-gray-50 last:border-0"
                         >
-                          <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-xs font-bold">
+                            {reg.fighter_pfp ? (
+                              <img
+                                src={reg.fighter_pfp}
+                                alt={reg.fighter_name}
+                                className="w-9 h-9 rounded-full object-cover border-2 border-gray-200"
+                              />
+                            ) : (
+                          <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-xs font-bold">
                             {reg.fighter_name?.charAt(0)}
                             {reg.fighter_surname?.charAt(0)}
                           </div>
+                           )}
                           <div>
                             <p className="text-sm font-medium text-gray-800">
                               {reg.fighter_name} {reg.fighter_surname}

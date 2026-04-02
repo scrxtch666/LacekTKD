@@ -2,11 +2,40 @@ const express = require("express");
 const router = express.Router();
 const db = require("../../Libs/db");
 const { verifyToken } = require("../../auth/auth");
+const jwt = require("jsonwebtoken");
+const SECRET_KEY = process.env.ACCESS_TOKEN_SECRET || "tajnyklic";
+
+// --- POMOCNÉ FUNKCE ---
+
+// Funkce pro získání isRegisteredSQL fragmentu
+const getIsRegisteredSQL = (userId) => {
+  return userId
+    ? `(SELECT COUNT(*) FROM exam_registration er 
+        WHERE er.exam_id = e.id 
+        AND er.fighter_id = (SELECT fighter_id FROM users WHERE id = ${db.escape(userId)})
+      ) AS is_registered`
+    : `0 AS is_registered`;
+};
+
+// --- ROUTES ---
 
 // GET / – veřejné zkoušky (pouze active)
 router.get("/", (req, res) => {
+  const token = req.headers["authorization"]?.split(" ")[1];
+  let userId = null;
+  if (token) {
+    try {
+      const payload = jwt.verify(token, SECRET_KEY);
+      userId = payload.id;
+    } catch (err) {
+      console.log("Token error:", err.message);
+    }
+  }
+
+  const isRegisteredSQL = getIsRegisteredSQL(userId);
+
   db.query(
-    `SELECT e.*, u.login AS created_by_name
+    `SELECT e.*, u.login AS created_by_name, ${isRegisteredSQL}
      FROM exam e
      LEFT JOIN users u ON u.id = e.created_by
      WHERE e.status = 'active'
@@ -15,10 +44,10 @@ router.get("/", (req, res) => {
       if (err) return res.status(500).json({ error: "Chyba serveru" });
       if (!exams.length) return res.json([]);
 
-      // Ke každé zkoušce načti přihlášené závodníky
       db.query(
         `SELECT er.exam_id, er.id AS reg_id, f.id AS fighter_id,
                 f.name AS fighter_name, f.surname AS fighter_surname,
+                f.img_path AS fighter_pfp,
                 f.actual_weight_category, b.cup
          FROM exam_registration er
          LEFT JOIN fighters f ON f.id = er.fighter_id
@@ -26,8 +55,10 @@ router.get("/", (req, res) => {
          ORDER BY f.surname ASC`,
         (err2, regs) => {
           if (err2) return res.status(500).json({ error: "Chyba serveru" });
+
           const result = exams.map((exam) => ({
             ...exam,
+            is_registered: !!exam.is_registered,
             registrations: regs.filter((r) => r.exam_id === exam.id),
           }));
           res.json(result);
@@ -39,8 +70,11 @@ router.get("/", (req, res) => {
 
 // GET /admin – všechny zkoušky pro admina (včetně hidden)
 router.get("/admin", verifyToken, (req, res) => {
+  const userId = req.user.id;
+  const isRegisteredSQL = getIsRegisteredSQL(userId);
+
   db.query(
-    `SELECT e.*, u.login AS created_by_name
+    `SELECT e.*, u.login AS created_by_name, ${isRegisteredSQL}
      FROM exam e
      LEFT JOIN users u ON u.id = e.created_by
      ORDER BY e.date DESC`,
@@ -58,8 +92,10 @@ router.get("/admin", verifyToken, (req, res) => {
          ORDER BY f.surname ASC`,
         (err2, regs) => {
           if (err2) return res.status(500).json({ error: "Chyba serveru" });
+
           const result = exams.map((exam) => ({
             ...exam,
+            is_registered: !!exam.is_registered,
             registrations: regs.filter((r) => r.exam_id === exam.id),
           }));
           res.json(result);
@@ -137,22 +173,6 @@ router.put("/:id", verifyToken, (req, res) => {
   );
 });
 
-// PUT /:id/status – toggle status
-router.put("/:id/status", verifyToken, (req, res) => {
-  const { status } = req.body;
-  if (!["active", "hidden"].includes(status))
-    return res.status(400).json({ error: "Neplatný status" });
-
-  db.query(
-    "UPDATE exam SET status=? WHERE id=?",
-    [status, req.params.id],
-    (err) => {
-      if (err) return res.status(500).json({ error: "Chyba serveru" });
-      res.json({ success: true });
-    },
-  );
-});
-
 // DELETE /:id – smazání zkoušky
 router.delete("/:id", verifyToken, (req, res) => {
   db.query("DELETE FROM exam WHERE id=?", [req.params.id], (err) => {
@@ -172,9 +192,7 @@ router.post("/:id/register", verifyToken, (req, res) => {
 
       const fighter_id = results[0].fighter_id;
       if (!fighter_id)
-        return res
-          .status(400)
-          .json({ error: "Nemáš přiřazeného závodníka. Kontaktuj trenéra." });
+        return res.status(400).json({ error: "Nemáš přiřazeného závodníka." });
 
       db.query(
         "INSERT INTO exam_registration (exam_id, fighter_id) VALUES (?, ?)",
@@ -189,21 +207,43 @@ router.post("/:id/register", verifyToken, (req, res) => {
   );
 });
 
-// DELETE /:id/register – odhlášení
+// DELETE /:id/register – odhlášení uživatele (s kontrolou uzávěrky)
 router.delete("/:id/register", verifyToken, (req, res) => {
+  const examId = req.params.id;
+
   db.query(
-    `DELETE er FROM exam_registration er
-     JOIN users u ON u.fighter_id = er.fighter_id
-     WHERE er.exam_id = ? AND u.id = ?`,
-    [req.params.id, req.user.id],
-    (err) => {
-      if (err) return res.status(500).json({ error: "Chyba při odhlašování" });
-      res.json({ success: true });
+    "SELECT registrable_date FROM exam WHERE id = ?",
+    [examId],
+    (err, results) => {
+      if (err || results.length === 0)
+        return res.status(500).json({ error: "Chyba serveru" });
+
+      if (results[0].registrable_date) {
+        const deadline = new Date(results[0].registrable_date);
+        deadline.setHours(23, 59, 59, 999);
+        if (new Date() > deadline) {
+          return res
+            .status(403)
+            .json({ error: "Po uzávěrce se již nelze odhlásit!" });
+        }
+      }
+
+      db.query(
+        `DELETE er FROM exam_registration er
+       JOIN users u ON u.fighter_id = er.fighter_id
+       WHERE er.exam_id = ? AND u.id = ?`,
+        [examId, req.user.id],
+        (err2) => {
+          if (err2)
+            return res.status(500).json({ error: "Chyba při odhlašování" });
+          res.json({ success: true });
+        },
+      );
     },
   );
 });
 
-// DELETE /registration/:id – admin odhlášení konkrétní registrace
+// DELETE /registration/:id – admin smazání konkrétní registrace
 router.delete("/registration/:id", verifyToken, (req, res) => {
   db.query(
     "DELETE FROM exam_registration WHERE id=?",

@@ -26,8 +26,6 @@ function Zkousky() {
         </div>
       </div>
 
-      <div className="devider">informace ke zkouškám</div>
-      <Info />
       <Prihlasky/>
     </>
   );

@@ -40,12 +40,25 @@ function AdminZkousky() {
   const [error, setError] = useState("");
   const [expanded, setExpanded] = useState(null);
   const [deleting, setDeleting] = useState(null);
+  const [myFighterId, setMyFighterId] = useState(null);
   const userRole = getUserRole();
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchExams();
+    const token = localStorage.getItem("token");
+
+    if (token && userRole === "user") {
+      fetch(`${API}/auth/me`, { headers: authHeader() })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.fighter_id) setMyFighterId(data.fighter_id);
+        });
+    }
   }, []);
+
+  useEffect(() => {
+    fetchExams();
+  }, [myFighterId]);
 
   const fetchExams = () => {
     fetch(`${API}/api/exams/admin`, { headers: authHeader() })
@@ -137,6 +150,17 @@ function AdminZkousky() {
     } catch {
       alert("Chyba při přihlašování na turnaj!");
     }
+  };
+
+  const handleUnregister = async (examId) => {
+    if (!confirm("Odhlásit se ze zkoušek?")) return;
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${API}/api/exams/${examId}/register`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (res.ok) fetchExams();
+    else alert("Nepodařilo se odhlásit");
   };
 
   const handleDelete = async (id) => {
@@ -415,15 +439,51 @@ function AdminZkousky() {
                       )}
                       Závodníci
                     </button>
-                    {userRole === "user" && (
-                      <button
-                        onClick={() => handleRegister(exam.id)}
-                        className="bg-customGreen hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors font-medium flex items-center gap-2"
-                      >
-                        <Plus size={18} />
-                        Přihlásit se
-                      </button>
-                    )}
+                    {userRole === "user" &&
+                      (() => {
+                        const canRegister = exam.registrable_date
+                          ? (() => {
+                              const deadline = new Date(exam.registrable_date);
+                              deadline.setHours(23, 59, 59, 999);
+                              return new Date() <= deadline;
+                            })()
+                          : true;
+
+                        const isRegistered = !!exam.is_registered;
+
+                        if (!canRegister) {
+                          return (
+                            <span className="text-sm text-gray-400 border border-gray-200 px-3 py-2 rounded-lg bg-gray-50">
+                              Po uzávěrce
+                            </span>
+                          );
+                        }
+
+                        if (isRegistered) {
+                          return (
+                            <div className="flex items-center gap-2">
+                              <span className="flex items-center gap-1.5 px-3 py-2 bg-green-50 text-green-700 border border-green-300 rounded-lg text-sm font-medium">
+                                ✓ Přihlášen
+                              </span>
+                              <button
+                                onClick={() => handleUnregister(exam.id)}
+                                className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-300 px-3 py-2 rounded-lg text-sm transition-colors font-medium"
+                              >
+                                Odhlásit se
+                              </button>
+                            </div>
+                          );
+                        }
+
+                        return (
+                          <button
+                            onClick={() => handleRegister(exam.id)}
+                            className="bg-customGreen hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors font-medium flex items-center gap-2"
+                          >
+                            <Plus size={18} /> Přihlásit se
+                          </button>
+                        );
+                      })()}
                     {(userRole === "admin" || userRole === "trainer") && (
                       <>
                         <button
@@ -470,10 +530,18 @@ function AdminZkousky() {
                         className="flex items-center justify-between cursor-pointer px-4 py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-sm font-bold">
-                            {reg.fighter_name?.charAt(0)}
-                            {reg.fighter_surname?.charAt(0)}
-                          </div>
+                          {reg.fighter_pfp ? (
+                              <img
+                                src={reg.fighter_pfp}
+                                alt={reg.fighter_name}
+                                className="w-9 h-9 rounded-full object-cover border-2 border-gray-200"
+                              />
+                            ) : (
+                              <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-sm font-bold">
+                                {reg.fighter_name?.charAt(0)}
+                                {reg.fighter_surname?.charAt(0)}
+                              </div>
+                            )}
                           <div>
                             <p className="text-sm font-medium text-gray-800">
                               {reg.fighter_name} {reg.fighter_surname}
