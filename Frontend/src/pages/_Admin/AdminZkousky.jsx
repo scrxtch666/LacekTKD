@@ -1,432 +1,325 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
-  Trash2,
-  UserPlus,
+  Plus,
   X,
-  Mail,
-  Shield,
   Pencil,
-  Check,
-  ShieldCheck,
+  Trash2,
+  Eye,
+  EyeOff,
+  Calendar,
+  MapPin,
+  Coins,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
+import { getUserRole } from "../../utils/auth";
+import { useNavigate } from "react-router-dom";
 
-function AdminUsers() {
-  const [users, setUsers] = useState([]);
+const API = "http://localhost:3000";
+const authHeader = () => ({
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+});
+
+const EMPTY_FORM = {
+  title: "",
+  description: "",
+  date: "",
+  location: "",
+  registrable_date: "",
+  price: "",
+  status: "hidden",
+};
+
+function AdminZkousky() {
+  const [exams, setExams] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [deleting, setDeleting] = useState(null);
-  const [roles, setRoles] = useState([]);
-  const [fighters, setFighters] = useState([]);
-
-  // Přidání uživatele
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [newUser, setNewUser] = useState({
-    login: "",
-    email: "",
-    password: "",
-    passwordConfirm: "",
-    role: "",
-    fighter_id: "",
-  });
-  const [formError, setFormError] = useState("");
-
-  // Editace uživatele
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState(EMPTY_FORM);
   const [editingId, setEditingId] = useState(null);
-  const [editUser, setEditUser] = useState({});
-  const [editError, setEditError] = useState("");
-  const [editSaving, setEditSaving] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [expanded, setExpanded] = useState(null);
+  const [deleting, setDeleting] = useState(null);
+  const userRole = getUserRole();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchUsers();
-    fetchRoles();
-    fetchFighters();
+    fetchExams();
   }, []);
 
-  const fetchUsers = () => {
-    fetch("http://localhost:3000/api/users")
+  const fetchExams = () => {
+    fetch(`${API}/api/exams/admin`, { headers: authHeader() })
       .then((res) => res.json())
       .then((data) => {
-        setUsers(Array.isArray(data) ? data : []);
+        setExams(Array.isArray(data) ? data : []);
         setLoading(false);
       })
-      .catch(() => {
-        setUsers([]);
-        setLoading(false);
-      });
+      .catch(() => setLoading(false));
   };
 
-  const fetchRoles = () => {
-    fetch("http://localhost:3000/api/roles")
-      .then((res) => res.json())
-      .then((data) => setRoles(Array.isArray(data) ? data : []))
-      .catch((err) => console.error("Chyba při načítání rolí:", err));
-  };
-
-  const fetchFighters = () => {
-    fetch("http://localhost:3000/api/fighters")
-      .then((res) => res.json())
-      .then((data) => setFighters(Array.isArray(data) ? data : []))
-      .catch((err) => console.error("Chyba při načítání závodníků:", err));
-  };
-
-  const handleDelete = async (id) => {
-    if (!confirm("Opravdu chcete smazat tohoto uživatele?")) return;
-    setDeleting(id);
-    try {
-      const response = await fetch(`http://localhost:3000/api/users/${id}`, {
-        method: "DELETE",
-      });
-      if (response.ok) setUsers(users.filter((u) => u.id !== id));
-      else alert("Nepodařilo se smazat uživatele");
-    } catch {
-      alert("Chyba při mazání uživatele");
-    } finally {
-      setDeleting(null);
-    }
-  };
-
-  // --- Editace ---
-  const startEdit = (user) => {
-    setEditingId(user.id);
-    setEditUser({
-      login: user.login || "",
-      email: user.email || "",
-      password: "",
-      passwordConfirm: "",
-      role: user.role_id || "",
-      fighter_id: user.fighter_id || "",
-    });
-    setEditError("");
-  };
-
-  const cancelEdit = () => {
-    setEditingId(null);
-    setEditUser({});
-    setEditError("");
-  };
-
-  const handleEditSubmit = async (id) => {
-    setEditError("");
-    if (!editUser.login) {
-      setEditError("Login nesmí být prázdný.");
-      return;
-    }
-    if (editUser.password && editUser.password.length < 6) {
-      setEditError("Heslo musí mít minimálně 6 znaků.");
-      return;
-    }
-    if (editUser.password && editUser.password !== editUser.passwordConfirm) {
-      setEditError("Hesla se neshodují.");
-      return;
-    }
-    if (!editUser.role) {
-      setEditError("Vyberte prosím roli.");
-      return;
-    }
-
-    setEditSaving(true);
-    const payload = {
-      login: editUser.login,
-      email: editUser.email,
-      role_id: editUser.role,
-      fighter_id: editUser.fighter_id || null,
-    };
-    if (editUser.password) payload.password = editUser.password;
-
-    try {
-      const response = await fetch(`http://localhost:3000/api/users/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (response.ok) {
-        cancelEdit();
-        fetchUsers();
-      } else {
-        const error = await response.json();
-        setEditError("Chyba: " + (error.error || "Nepodařilo se uložit změny"));
-      }
-    } catch {
-      setEditError("Chyba při ukládání uživatele.");
-    } finally {
-      setEditSaving(false);
-    }
-  };
-
-  // --- Přidání ---
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setFormError("");
-    if (!newUser.login || !newUser.password || !newUser.passwordConfirm) {
-      setFormError("Vyplňte prosím všechna povinná pole.");
+    setError("");
+    if (!formData.title || !formData.date) {
+      setError("Vyplňte název a datum.");
       return;
     }
-    if (newUser.password.length < 6) {
-      setFormError("Heslo musí mít minimálně 6 znaků.");
-      return;
-    }
-    if (newUser.password !== newUser.passwordConfirm) {
-      setFormError("Hesla se neshodují.");
-      return;
-    }
-    if (!newUser.role) {
-      setFormError("Vyberte prosím roli.");
-      return;
-    }
-
     setSaving(true);
+    const url = editingId
+      ? `${API}/api/exams/${editingId}`
+      : `${API}/api/exams`;
+    const method = editingId ? "PUT" : "POST";
     try {
-      const response = await fetch("http://localhost:3000/api/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          login: newUser.login,
-          password: newUser.password,
-          email: newUser.email,
-          role_id: newUser.role,
-          fighter_id: newUser.fighter_id || null,
-        }),
+      const res = await fetch(url, {
+        method,
+        headers: { ...authHeader(), "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
-      if (response.ok) {
-        alert("Uživatel byl úspěšně přidán!");
-        cancelAdd();
-        fetchUsers();
+      if (res.ok) {
+        cancelForm();
+        fetchExams();
       } else {
-        const error = await response.json();
-        setFormError(
-          "Chyba: " + (error.error || "Nepodařilo se přidat uživatele"),
-        );
+        const d = await res.json();
+        setError(d.error || "Chyba při ukládání");
       }
     } catch {
-      setFormError("Chyba při ukládání uživatele.");
+      setError("Chyba při ukládání");
     } finally {
       setSaving(false);
     }
   };
 
-  const cancelAdd = () => {
-    setShowAddForm(false);
-    setFormError("");
-    setNewUser({
-      login: "",
-      email: "",
-      password: "",
-      passwordConfirm: "",
-      role: "",
-      fighter_id: "",
+  const startEdit = (exam) => {
+    setEditingId(exam.id);
+    setFormData({
+      title: exam.title || "",
+      description: exam.description || "",
+      date: exam.date?.substring(0, 10) || "",
+      location: exam.location || "",
+      registrable_date: exam.registrable_date?.substring(0, 10) || "",
+      price: exam.price || "",
+      status: exam.status || "hidden",
     });
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const getRoleBadgeColor = (role) => {
-    switch (role) {
-      case "admin":
-        return "bg-purple-100 text-purple-800";
-      case "moderator":
-        return "bg-blue-100 text-blue-800";
-      default:
-        return "bg-gray-100 text-gray-800";
+  const cancelForm = () => {
+    setShowForm(false);
+    setEditingId(null);
+    setFormData(EMPTY_FORM);
+    setError("");
+  };
+
+  const handleToggleStatus = async (exam) => {
+    const newStatus = exam.status === "active" ? "hidden" : "active";
+    const res = await fetch(`${API}/api/exams/${exam.id}/status`, {
+      method: "PUT",
+      headers: { ...authHeader(), "Content-Type": "application/json" },
+      body: JSON.stringify({ status: newStatus }),
+    });
+    if (res.ok) fetchExams();
+  };
+
+  const handleRegister = async (examId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:3000/api/exams/${examId}/register`,
+        { method: "POST", headers: { Authorization: `Bearer ${token}` } },
+      );
+      const data = await response.json();
+      if (response.ok) {
+        fetchExams();
+      } else {
+        alert(data.error || "Nepodařilo se přihlásit na turnaj.");
+      }
+    } catch {
+      alert("Chyba při přihlašování na turnaj!");
     }
   };
 
-  // Pomocná funkce – najde fightera přiřazeného k userovi
-  const getFighterLabel = (fighter_id) => {
-    const f = fighters.find((f) => f.id === fighter_id);
-    return f ? `${f.name} ${f.surname}` : null;
+  const handleDelete = async (id) => {
+    if (!confirm("Smazat tuto zkoušku?")) return;
+    setDeleting(id);
+    await fetch(`${API}/api/exams/${id}`, {
+      method: "DELETE",
+      headers: authHeader(),
+    });
+    fetchExams();
+    setDeleting(null);
   };
 
-  if (loading) {
+  const handleAdminUnregister = async (regId) => {
+    if (!confirm("Odhlásit závodníka?")) return;
+    await fetch(`${API}/api/exams/registration/${regId}`, {
+      method: "DELETE",
+      headers: authHeader(),
+    });
+    fetchExams();
+  };
+
+  const formatDate = (d) => (d ? new Date(d).toLocaleDateString("cs-CZ") : "—");
+
+  if (loading)
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="text-gray-500">Načítám uživatele...</div>
+      <div className="flex justify-center items-center h-64 text-gray-500">
+        Načítám...
       </div>
     );
-  }
-
-  // Fighter select – sdílený pro add i edit
-  const FighterSelect = ({ value, onChange }) => (
-    <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">
-        Přiřazený závodník <span className="text-gray-400">(nepovinné)</span>
-      </label>
-      <select
-        value={value}
-        onChange={onChange}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
-      >
-        <option value="">-- Bez přiřazení --</option>
-        {fighters.map((f) => (
-          <option key={f.id} value={f.id}>
-            {f.name} {f.surname}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <div className="devider">Správa uživatelů</div>
-        {!showAddForm && (
+        <div className="devider">Správa zkoušek</div>
+        {!showForm && (userRole === "admin" || userRole === "trainer") && (
           <button
-            onClick={() => setShowAddForm(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-200"
+            onClick={() => setShowForm(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
           >
-            <UserPlus size={20} />
-            <span>Přidat uživatele</span>
+            <Plus size={20} />
+            <span>Přidat zkoušku</span>
           </button>
         )}
       </div>
 
-      {/* Formulář pro přidání */}
-      {showAddForm && (
+      {/* Formulář */}
+      {showForm && (
         <div className="bg-customWhite rounded-lg shadow-lg p-6 border-2 border-green-500">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-semibold text-gray-800">
-              Nový uživatel
+            <h3 className="text-xl font-semibold">
+              {editingId ? "Editace zkoušky" : "Nová zkouška"}
             </h3>
             <button
-              onClick={cancelAdd}
+              onClick={cancelForm}
               className="text-gray-400 hover:text-gray-600"
             >
               <X size={24} />
             </button>
           </div>
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Login *
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Název *
                 </label>
                 <input
                   type="text"
-                  value={newUser.login}
+                  value={formData.title}
                   onChange={(e) =>
-                    setNewUser({ ...newUser, login: e.target.value })
+                    setFormData({ ...formData, title: e.target.value })
                   }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  placeholder="novak30"
-                  required
+                  placeholder="Zkoušky na technické stupně"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Datum zkoušky *
                 </label>
                 <input
-                  type="email"
-                  value={newUser.email}
+                  type="date"
+                  value={formData.date}
                   onChange={(e) =>
-                    setNewUser({ ...newUser, email: e.target.value })
+                    setFormData({ ...formData, date: e.target.value })
                   }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  placeholder="novak@email.cz"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Heslo *
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Uzávěrka přihlášek
                 </label>
                 <input
-                  type="password"
-                  value={newUser.password}
+                  type="date"
+                  value={formData.registrable_date}
                   onChange={(e) =>
-                    setNewUser({ ...newUser, password: e.target.value })
+                    setFormData({
+                      ...formData,
+                      registrable_date: e.target.value,
+                    })
                   }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  placeholder="••••••••"
-                  required
-                  minLength={6}
                 />
-                <p className="text-xs text-gray-500 mt-1">Minimálně 6 znaků</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Potvrzení hesla *
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Místo
                 </label>
                 <input
-                  type="password"
-                  value={newUser.passwordConfirm}
+                  type="text"
+                  value={formData.location}
                   onChange={(e) =>
-                    setNewUser({ ...newUser, passwordConfirm: e.target.value })
+                    setFormData({ ...formData, location: e.target.value })
                   }
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${newUser.passwordConfirm && newUser.password !== newUser.passwordConfirm ? "border-red-400 bg-red-50" : "border-gray-300"}`}
-                  placeholder="••••••••"
-                  required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Tělocvična TKD Laček"
                 />
-                {newUser.passwordConfirm &&
-                  newUser.password !== newUser.passwordConfirm && (
-                    <p className="text-xs text-red-500 mt-1">
-                      Hesla se neshodují
-                    </p>
-                  )}
-                {newUser.passwordConfirm &&
-                  newUser.password === newUser.passwordConfirm && (
-                    <p className="text-xs text-green-600 mt-1">
-                      ✓ Hesla se shodují
-                    </p>
-                  )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Role *
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Cena (Kč)
+                </label>
+                <input
+                  type="number"
+                  value={formData.price}
+                  onChange={(e) =>
+                    setFormData({ ...formData, price: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Status
                 </label>
                 <select
-                  value={newUser.role}
+                  value={formData.status}
                   onChange={(e) =>
-                    setNewUser({ ...newUser, role: e.target.value })
-                  }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  required
-                >
-                  <option value="">-- Vyber roli --</option>
-                  {roles.map((role) => (
-                    <option key={role.id} value={role.id}>
-                      {role.role_name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Závodník{" "}
-                  <span className="text-gray-400 font-normal">(nepovinné)</span>
-                </label>
-                <select
-                  value={newUser.fighter_id}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, fighter_id: e.target.value })
+                    setFormData({ ...formData, status: e.target.value })
                   }
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 >
-                  <option value="">-- Bez přiřazení --</option>
-                  {fighters.map((f) => (
-                    <option key={f.id} value={f.id}>
-                      {f.name} {f.surname}
-                    </option>
-                  ))}
+                  <option value="hidden">Skrytá</option>
+                  <option value="active">Aktivní (zobrazena na webu)</option>
                 </select>
+              </div>
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Popis
+                </label>
+                <textarea
+                  value={formData.description}
+                  rows={4}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                  placeholder="Informace o zkouškách, co si přinést, co očekávat..."
+                />
               </div>
             </div>
-
-            {formError && (
+            {error && (
               <div className="px-4 py-3 bg-red-50 border border-red-300 rounded-lg text-sm text-red-700">
-                {formError}
+                {error}
               </div>
             )}
-
-            <div className="flex gap-3 pt-4">
+            <div className="flex gap-3">
               <button
                 type="submit"
                 disabled={saving}
-                className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-50"
               >
-                {saving ? "Ukládám..." : "Přidat uživatele"}
+                {saving
+                  ? "Ukládám..."
+                  : editingId
+                    ? "Uložit změny"
+                    : "Přidat zkoušku"}
               </button>
               <button
                 type="button"
-                onClick={cancelAdd}
+                onClick={cancelForm}
                 className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors"
               >
                 Zrušit
@@ -436,244 +329,169 @@ function AdminUsers() {
         </div>
       )}
 
-      {/* Seznam uživatelů */}
-      {!users.length ? (
+      {/* Seznam */}
+      {exams.length === 0 ? (
         <div className="bg-customWhite rounded-lg shadow p-8 text-center">
-          <UserPlus className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <p className="text-gray-500">Zatím nejsou žádní uživatelé</p>
+          <p className="text-gray-500">Zatím nejsou žádné zkoušky</p>
         </div>
       ) : (
         <div className="space-y-4">
-          {users.map((user) => (
+          {exams.map((exam) => (
             <div
-              key={user.id}
-              className="bg-customWhite rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+              key={exam.id}
+              className="bg-customWhite rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
             >
-              {editingId === user.id ? (
-                /* --- Editační formulář --- */
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="font-semibold text-gray-700">
-                      Editace uživatele #{user.id}
-                    </span>
-                    <button
-                      onClick={cancelEdit}
-                      className="text-gray-400 hover:text-gray-600"
-                    >
-                      <X size={20} />
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">
-                        Login *
-                      </label>
-                      <input
-                        type="text"
-                        value={editUser.login}
-                        onChange={(e) =>
-                          setEditUser({ ...editUser, login: e.target.value })
-                        }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
+              <div className="p-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <p className="text-lg font-semibold text-gray-800">
+                        {exam.title}
+                      </p>
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                          exam.status === "active"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-gray-100 text-gray-500"
+                        }`}
+                      >
+                        {exam.status === "active" ? (
+                          <>
+                            <Eye size={11} className="inline mr-1" />
+                            Aktivní
+                          </>
+                        ) : (
+                          <>
+                            <EyeOff size={11} className="inline mr-1" />
+                            Skrytá
+                          </>
+                        )}
+                      </span>
+                      <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">
+                        {exam.registrations?.length || 0} přihlášených
+                      </span>
                     </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        value={editUser.email}
-                        onChange={(e) =>
-                          setEditUser({ ...editUser, email: e.target.value })
-                        }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="novak@email.cz"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">
-                        Nové heslo{" "}
-                        <span className="text-gray-400">
-                          (nevyplňujte pro zachování)
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-500">
+                      {exam.date && (
+                        <span className="flex items-center gap-1">
+                          <Calendar size={13} /> {formatDate(exam.date)}
                         </span>
-                      </label>
-                      <input
-                        type="password"
-                        value={editUser.password}
-                        onChange={(e) =>
-                          setEditUser({ ...editUser, password: e.target.value })
-                        }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="••••••••"
-                        minLength={6}
-                      />
+                      )}
+                      {exam.location && (
+                        <span className="flex items-center gap-1">
+                          <MapPin size={13} /> {exam.location}
+                        </span>
+                      )}
+                      {exam.price && (
+                        <span className="flex items-center gap-1">
+                          <Coins size={13} /> {exam.price} Kč
+                        </span>
+                      )}
+                      {exam.registrable_date && (
+                        <span className="flex items-center gap-1 text-orange-600">
+                          <Calendar size={13} /> Uzávěrka:{" "}
+                          {formatDate(exam.registrable_date)}
+                        </span>
+                      )}
                     </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">
-                        Potvrzení hesla
-                      </label>
-                      <input
-                        type="password"
-                        value={editUser.passwordConfirm}
-                        onChange={(e) =>
-                          setEditUser({
-                            ...editUser,
-                            passwordConfirm: e.target.value,
-                          })
-                        }
-                        className={`w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ${editUser.passwordConfirm && editUser.password !== editUser.passwordConfirm ? "border-red-400 bg-red-50" : "border-gray-300"}`}
-                        placeholder="••••••••"
-                      />
-                      {editUser.passwordConfirm &&
-                        editUser.password !== editUser.passwordConfirm && (
-                          <p className="text-xs text-red-500 mt-1">
-                            Hesla se neshodují
-                          </p>
-                        )}
-                      {editUser.passwordConfirm &&
-                        editUser.password === editUser.passwordConfirm && (
-                          <p className="text-xs text-green-600 mt-1">
-                            ✓ Hesla se shodují
-                          </p>
-                        )}
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">
-                        Role *
-                      </label>
-                      <select
-                        value={editUser.role}
-                        onChange={(e) =>
-                          setEditUser({ ...editUser, role: e.target.value })
-                        }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      >
-                        <option value="">-- Vyber roli --</option>
-                        {roles.map((role) => (
-                          <option key={role.id} value={role.id}>
-                            {role.role_name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    {/* --- FIGHTER SELECT --- */}
-                    <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">
-                        Závodník{" "}
-                        <span className="text-gray-400">(nepovinné)</span>
-                      </label>
-                      <select
-                        value={editUser.fighter_id}
-                        onChange={(e) =>
-                          setEditUser({
-                            ...editUser,
-                            fighter_id: e.target.value,
-                          })
-                        }
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      >
-                        <option value="">-- Bez přiřazení --</option>
-                        {fighters.map((f) => (
-                          <option key={f.id} value={f.id}>
-                            {f.name} {f.surname}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  {editError && (
-                    <div className="px-3 py-2 bg-red-50 border border-red-300 rounded-lg text-sm text-red-700">
-                      {editError}
-                    </div>
-                  )}
-
-                  <div className="flex gap-2 pt-1">
-                    <button
-                      onClick={() => handleEditSubmit(user.id)}
-                      disabled={editSaving}
-                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <Check size={16} />
-                      {editSaving ? "Ukládám..." : "Uložit změny"}
-                    </button>
-                    <button
-                      onClick={cancelEdit}
-                      className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm transition-colors"
-                    >
-                      Zrušit
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                /* --- Normální zobrazení --- */
-                <div className="flex flex-col sm:flex-row items-center gap-4">
-                  <div className="flex-shrink-0">
-                    <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-green-100 text-green-800 font-semibold">
-                      {user.id}
-                    </span>
-                  </div>
-                  <div className="flex-shrink-0">
-                    {user.img_path ? (
-                      <img
-                        className="w-16 h-16 rounded-full object-cover"
-                        src={user.img_path}
-                        alt={user.login}
-                      />
-                    ) : (
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-br bg-customGreen flex items-center justify-center text-customWhite text-2xl font-bold">
-                        {user.login?.charAt(0).toUpperCase() || "U"}
-                      </div>
+                    {exam.description && (
+                      <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                        {exam.description}
+                      </p>
                     )}
                   </div>
-                  <div className="flex-1 text-center sm:text-left">
-                    <p className="text-lg font-semibold text-gray-800">
-                      {user.name} {user.surname}
-                    </p>
-                    <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 mt-1 justify-center sm:justify-start">
-                      <span>login: {user.login}</span>
-                      {user.email && (
-                        <>
-                          <Mail size={14} />
-                          <span>{user.email}</span>
-                        </>
+
+                  <div className="flex gap-2 flex-shrink-0 flex-wrap">
+                    <button
+                      onClick={() =>
+                        setExpanded(expanded === exam.id ? null : exam.id)
+                      }
+                      className="flex items-center gap-1 px-3 py-2 bg-customWhite border border-customGreen text-customBlack rounded-lg text-sm transition-colors"
+                    >
+                      {expanded === exam.id ? (
+                        <ChevronUp size={16} />
+                      ) : (
+                        <ChevronDown size={16} />
                       )}
-                    </div>
-                    <div className="mt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
-                      <span
-                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}
+                      Závodníci
+                    </button>
+                    {userRole === "user" && (
+                      <button
+                        onClick={() => handleRegister(tournament.id)}
+                        className="bg-customGreen hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors font-medium flex items-center gap-2"
                       >
-                        <Shield size={12} />
-                        {user.role_name}
-                      </span>
-                      {/* Badge závodníka */}
-                      {user.fighter_id && (
-                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          <ShieldCheck size={11} />
-                          Přiřazený účet
-                        </span>
-                      )}
-                    </div>
+                        <Plus size={18} />
+                        Přihlásit se
+                      </button>
+                    )}
+                    {(userRole === "admin" || userRole === "trainer") && (
+                      <>
+                        <button
+                          onClick={() => handleToggleStatus(exam)}
+                          className={`px-4 py-2 rounded-lg text-white text-sm transition-colors ${
+                            exam.status === "active"
+                              ? "bg-orange-500 hover:bg-orange-600"
+                              : "bg-green-500 hover:bg-green-600"
+                          }`}
+                        >
+                          {exam.status === "active" ? "Skrýt" : "Zveřejnit"}
+                        </button>
+                        <button
+                          onClick={() => startEdit(exam)}
+                          className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(exam.id)}
+                          disabled={deleting === exam.id}
+                          className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors disabled:opacity-50"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </>
+                    )}
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <button
-                      onClick={() => startEdit(user)}
-                      className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200"
-                    >
-                      <Pencil size={18} />
-                      <span>Editovat</span>
-                    </button>
-                    <button
-                      onClick={() => handleDelete(user.id)}
-                      disabled={deleting === user.id}
-                      className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <Trash2 size={18} />
-                      <span>{deleting === user.id ? "Mažu..." : "Smazat"}</span>
-                    </button>
-                  </div>
+                </div>
+              </div>
+
+              {/* Přihlášení závodníci */}
+              {expanded === exam.id && (
+                <div className="border-t border-gray-100">
+                  {!exam.registrations?.length ? (
+                    <p className="px-4 py-3 text-sm text-gray-400 italic">
+                      Žádní přihlášení závodníci
+                    </p>
+                  ) : (
+                    exam.registrations.map((reg) => (
+                      <div
+                        key={reg.reg_id}
+                        onClick={() => navigate(`/zavodnik/${reg.fighter_id}`)}
+                        className="flex items-center justify-between cursor-pointer px-4 py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-sm font-bold">
+                            {reg.fighter_name?.charAt(0)}
+                            {reg.fighter_surname?.charAt(0)}
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-gray-800">
+                              {reg.fighter_name} {reg.fighter_surname}
+                            </p>
+                            <p className="text-xs text-gray-400">{reg.cup}</p>
+                          </div>
+                        </div>
+                        {(userRole === "admin" || userRole === "trainer") && (
+                          <button
+                            onClick={() => handleAdminUnregister(reg.reg_id)}
+                            className="flex items-center gap-1 px-3 py-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-lg text-xs transition-colors"
+                          >
+                            <X size={12} /> Odhlásit
+                          </button>
+                        )}
+                      </div>
+                    ))
+                  )}
                 </div>
               )}
             </div>
@@ -684,4 +502,4 @@ function AdminUsers() {
   );
 }
 
-export default AdminUsers;
+export default AdminZkousky;

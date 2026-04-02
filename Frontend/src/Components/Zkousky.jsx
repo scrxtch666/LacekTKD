@@ -4,6 +4,8 @@ import Pasky from "../pages/Zkousky/Pasky";
 import Cenik from "../pages/Zkousky/Cenik";
 import Video from "../pages/Zkousky/Video";
 import SestavyInfo from "../pages/Zkousky/SestavyInfo";
+import Prihlasky from "../pages/Zkousky/Prihlasky";
+import { getUserRole } from "../utils/auth";
 
 function Zkousky() {
   return (
@@ -26,6 +28,7 @@ function Zkousky() {
 
       <div className="devider">informace ke zkouškám</div>
       <Info />
+      <Prihlasky/>
     </>
   );
 }

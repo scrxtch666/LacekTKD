@@ -60,7 +60,7 @@ function SideBar() {
       userOnly: true,
       items: [
         { name: "Můj účet", path: "/admin/me", icon: User },
-        { name: "Zkoušky", path: "/admin/test-reg", icon: Image },
+        { name: "Zkoušky", path: "/admin/zkousky", icon: Image },
         { name: "Turnaje", path: "/admin/turnaje", icon: Users },
       ],
     },
@@ -71,7 +71,7 @@ function SideBar() {
       trainerOnly: true,
       items: [
         { name: "Můj účet", path: "/admin/me", icon: User },
-        { name: "Zkoušky", path: "/admin/test-reg", icon: Image },
+        { name: "Zkoušky", path: "/admin/zkousky", icon: Image },
         { name: "Turnaje", path: "/admin/turnaje", icon: Users },
         { name: "Závodníci", path: "/admin/zavodnici", icon: Users },
         { name: "Aktuality", path: "/admin/aktuality", icon: LayoutDashboard },

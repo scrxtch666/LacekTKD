@@ -34,6 +34,7 @@ import AktualitaDetail from "./pages/Home/AktualitaDetail";
 import TurnajDetail from "./pages/Turnaje/TurnajDetail";
 import AdminRequests from "./pages/_Admin/AdminRequests";
 import FighterDetail from "./pages/Zavodnici/FighterDetail";
+import AdminZkousky from "./pages/_Admin/AdminZkousky";
 
 function Layout() {
   const location = useLocation();
@@ -72,6 +73,14 @@ function Layout() {
               element={
                 <ProtectedRoute allowedRoles={["admin", "trainer"]}>
                   <AdminZavodnici />
+                </ProtectedRoute>
+              }
+            />
+               <Route
+              path="/admin/zkousky"
+              element={
+                <ProtectedRoute allowedRoles={["admin", "trainer", "user"]}>
+                  <AdminZkousky />
                 </ProtectedRoute>
               }
             />

@@ -1,0 +1,218 @@
+const express = require("express");
+const router = express.Router();
+const db = require("../../Libs/db");
+const { verifyToken } = require("../../auth/auth");
+
+// GET / – veřejné zkoušky (pouze active)
+router.get("/", (req, res) => {
+  db.query(
+    `SELECT e.*, u.login AS created_by_name
+     FROM exam e
+     LEFT JOIN users u ON u.id = e.created_by
+     WHERE e.status = 'active'
+     ORDER BY e.date ASC`,
+    (err, exams) => {
+      if (err) return res.status(500).json({ error: "Chyba serveru" });
+      if (!exams.length) return res.json([]);
+
+      // Ke každé zkoušce načti přihlášené závodníky
+      db.query(
+        `SELECT er.exam_id, er.id AS reg_id, f.id AS fighter_id,
+                f.name AS fighter_name, f.surname AS fighter_surname,
+                f.actual_weight_category, b.cup
+         FROM exam_registration er
+         LEFT JOIN fighters f ON f.id = er.fighter_id
+         LEFT JOIN belts b ON b.id = f.belts_id
+         ORDER BY f.surname ASC`,
+        (err2, regs) => {
+          if (err2) return res.status(500).json({ error: "Chyba serveru" });
+          const result = exams.map((exam) => ({
+            ...exam,
+            registrations: regs.filter((r) => r.exam_id === exam.id),
+          }));
+          res.json(result);
+        },
+      );
+    },
+  );
+});
+
+// GET /admin – všechny zkoušky pro admina (včetně hidden)
+router.get("/admin", verifyToken, (req, res) => {
+  db.query(
+    `SELECT e.*, u.login AS created_by_name
+     FROM exam e
+     LEFT JOIN users u ON u.id = e.created_by
+     ORDER BY e.date DESC`,
+    (err, exams) => {
+      if (err) return res.status(500).json({ error: "Chyba serveru" });
+      if (!exams.length) return res.json([]);
+
+      db.query(
+        `SELECT er.exam_id, er.id AS reg_id, f.id AS fighter_id,
+                f.name AS fighter_name, f.surname AS fighter_surname,
+                f.actual_weight_category, b.cup
+         FROM exam_registration er
+         LEFT JOIN fighters f ON f.id = er.fighter_id
+         LEFT JOIN belts b ON b.id = f.belts_id
+         ORDER BY f.surname ASC`,
+        (err2, regs) => {
+          if (err2) return res.status(500).json({ error: "Chyba serveru" });
+          const result = exams.map((exam) => ({
+            ...exam,
+            registrations: regs.filter((r) => r.exam_id === exam.id),
+          }));
+          res.json(result);
+        },
+      );
+    },
+  );
+});
+
+// POST / – přidání zkoušky
+router.post("/", verifyToken, (req, res) => {
+  const {
+    title,
+    description,
+    date,
+    location,
+    registrable_date,
+    price,
+    status,
+  } = req.body;
+  if (!title || !date)
+    return res.status(400).json({ error: "Chybí název nebo datum" });
+
+  db.query(
+    `INSERT INTO exam (title, description, date, location, registrable_date, price, status, created_by)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      title,
+      description || null,
+      date,
+      location || null,
+      registrable_date || null,
+      price || null,
+      status || "hidden",
+      req.user.id,
+    ],
+    (err, result) => {
+      if (err) return res.status(500).json({ error: "Chyba při ukládání" });
+      res.status(201).json({ success: true, id: result.insertId });
+    },
+  );
+});
+
+// PUT /:id – editace
+router.put("/:id", verifyToken, (req, res) => {
+  const {
+    title,
+    description,
+    date,
+    location,
+    registrable_date,
+    price,
+    status,
+  } = req.body;
+  if (!title || !date)
+    return res.status(400).json({ error: "Chybí název nebo datum" });
+
+  db.query(
+    `UPDATE exam SET title=?, description=?, date=?, location=?, registrable_date=?, price=?, status=?
+     WHERE id=?`,
+    [
+      title,
+      description || null,
+      date,
+      location || null,
+      registrable_date || null,
+      price || null,
+      status || "hidden",
+      req.params.id,
+    ],
+    (err) => {
+      if (err) return res.status(500).json({ error: "Chyba při ukládání" });
+      res.json({ success: true });
+    },
+  );
+});
+
+// PUT /:id/status – toggle status
+router.put("/:id/status", verifyToken, (req, res) => {
+  const { status } = req.body;
+  if (!["active", "hidden"].includes(status))
+    return res.status(400).json({ error: "Neplatný status" });
+
+  db.query(
+    "UPDATE exam SET status=? WHERE id=?",
+    [status, req.params.id],
+    (err) => {
+      if (err) return res.status(500).json({ error: "Chyba serveru" });
+      res.json({ success: true });
+    },
+  );
+});
+
+// DELETE /:id – smazání zkoušky
+router.delete("/:id", verifyToken, (req, res) => {
+  db.query("DELETE FROM exam WHERE id=?", [req.params.id], (err) => {
+    if (err) return res.status(500).json({ error: "Chyba při mazání" });
+    res.json({ success: true });
+  });
+});
+
+// POST /:id/register – přihlášení uživatele na zkoušku
+router.post("/:id/register", verifyToken, (req, res) => {
+  db.query(
+    "SELECT fighter_id FROM users WHERE id=?",
+    [req.user.id],
+    (err, results) => {
+      if (err || !results.length)
+        return res.status(400).json({ error: "Uživatel nenalezen" });
+
+      const fighter_id = results[0].fighter_id;
+      if (!fighter_id)
+        return res
+          .status(400)
+          .json({ error: "Nemáš přiřazeného závodníka. Kontaktuj trenéra." });
+
+      db.query(
+        "INSERT INTO exam_registration (exam_id, fighter_id) VALUES (?, ?)",
+        [req.params.id, fighter_id],
+        (err2) => {
+          if (err2)
+            return res.status(500).json({ error: "Chyba při přihlašování" });
+          res.json({ success: true });
+        },
+      );
+    },
+  );
+});
+
+// DELETE /:id/register – odhlášení
+router.delete("/:id/register", verifyToken, (req, res) => {
+  db.query(
+    `DELETE er FROM exam_registration er
+     JOIN users u ON u.fighter_id = er.fighter_id
+     WHERE er.exam_id = ? AND u.id = ?`,
+    [req.params.id, req.user.id],
+    (err) => {
+      if (err) return res.status(500).json({ error: "Chyba při odhlašování" });
+      res.json({ success: true });
+    },
+  );
+});
+
+// DELETE /registration/:id – admin odhlášení konkrétní registrace
+router.delete("/registration/:id", verifyToken, (req, res) => {
+  db.query(
+    "DELETE FROM exam_registration WHERE id=?",
+    [req.params.id],
+    (err) => {
+      if (err) return res.status(500).json({ error: "Chyba při mazání" });
+      res.json({ success: true });
+    },
+  );
+});
+
+module.exports = router;
