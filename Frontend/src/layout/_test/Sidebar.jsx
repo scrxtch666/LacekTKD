@@ -13,6 +13,7 @@ import {
   User,
   BookCheckIcon,
   Swords,
+  Landmark,
 } from "lucide-react";
 import { getUserRole, authService } from "../../utils/auth";
 
@@ -51,7 +52,7 @@ function SideBar() {
       adminOnly: true,
       items: [
         { name: "Banner", path: "/admin/banner", icon: Image },
-        { name: "Sponzoři", path: "/admin/sponsors", icon: Image },
+        { name: "Sponzoři", path: "/admin/sponsors", icon: Landmark },
         { name: "Uživatelé", path: "/admin/users", icon: Users },
         { name: "Žádosti", path: "/admin/zadosti", icon: Users },
       ],
@@ -62,8 +63,8 @@ function SideBar() {
       userOnly: true,
       items: [
         { name: "Můj účet", path: "/admin/me", icon: User },
-        { name: "Zkoušky", path: "/admin/zkousky", icon: Image },
-        { name: "Turnaje", path: "/admin/turnaje", icon: Users },
+        { name: "Zkoušky", path: "/admin/zkousky", icon: BookCheckIcon },
+        { name: "Turnaje", path: "/admin/turnaje", icon: Swords },
       ],
     },
 
@@ -73,8 +74,8 @@ function SideBar() {
       trainerOnly: true,
       items: [
         { name: "Můj účet", path: "/admin/me", icon: User },
-        { name: "Zkoušky", path: "/admin/zkousky", icon: Image },
-        { name: "Turnaje", path: "/admin/turnaje", icon: Users },
+        { name: "Zkoušky", path: "/admin/zkousky", icon: BookCheckIcon },
+        { name: "Turnaje", path: "/admin/turnaje", icon: Swords },
         { name: "Závodníci", path: "/admin/zavodnici", icon: Users },
         { name: "Aktuality", path: "/admin/aktuality", icon: LayoutDashboard },
       ],

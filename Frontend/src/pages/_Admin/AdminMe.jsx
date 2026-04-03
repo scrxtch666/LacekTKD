@@ -12,6 +12,7 @@ import {
   Check,
   KeyRound,
 } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
 
 const API = "http://localhost:3000";
 
@@ -22,6 +23,7 @@ function AdminMe() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     name: "",
@@ -464,14 +466,19 @@ function AdminMe() {
               </p>
               <div className="space-y-2">
                 {user.tournament_results.map((result, i) => (
-                  <div key={i} className="flex items-center gap-3 text-sm">
-                    <span className="font-bold w-6 text-center">
-                      {result.place}
-                    </span>
-                    <span className="flex-1 text-gray-700">
-                      {result.tournament}
-                    </span>
-                    <span className="text-gray-400 text-xs">{result.date}</span>
+                  <div
+                    key={i}
+                    onClick={() => navigate(`/turnaj/${result.tournament_id}`)}
+                    className="flex justify-between border-b cursor-pointer pb-2 text-sm"
+                  >
+                    <div>
+                      <p className="font-medium">{result.tournament}</p>
+                      <p className="text-gray-400 flex items-center gap-1">
+                        <Calendar size={14} /> {result.date}
+                      </p>
+                    </div>
+
+                    <div className="font-semibold">{result.place}. místo</div>
                   </div>
                 ))}
               </div>

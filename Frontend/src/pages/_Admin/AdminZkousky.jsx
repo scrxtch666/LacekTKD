@@ -43,6 +43,8 @@ function AdminZkousky() {
   const [myFighterId, setMyFighterId] = useState(null);
   const userRole = getUserRole();
   const navigate = useNavigate();
+  const isAdminOrTrainer = userRole === "admin" || userRole === "trainer";
+  const headerText = isAdminOrTrainer ? "Správa zkoušek" : "Zkoušky";
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -195,7 +197,7 @@ function AdminZkousky() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <div className="devider">Správa zkoušek</div>
+        <div className="devider">{headerText}</div>
         {!showForm && (userRole === "admin" || userRole === "trainer") && (
           <button
             onClick={() => setShowForm(true)}

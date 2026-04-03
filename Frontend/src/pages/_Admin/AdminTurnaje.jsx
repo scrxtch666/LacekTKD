@@ -195,6 +195,7 @@ function AdminTurnaje() {
   const [activeTab, setActiveTab] = useState("turnaje");
   const [registrations, setRegistrations] = useState([]);
   const [loadingReg, setLoadingReg] = useState(false);
+  const [editingResult, setEditingResult] = useState(null);
   const [expandedTournament, setExpandedTournament] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -216,6 +217,8 @@ function AdminTurnaje() {
   const [editPreviewUrl, setEditPreviewUrl] = useState(null);
   const [editError, setEditError] = useState("");
   const [editSaving, setEditSaving] = useState(false);
+  const isAdminOrTrainer = userRole === "admin" || userRole === "trainer";
+  const headerText = isAdminOrTrainer ? "Správa turnajů" : "Turnaje";
 
   // Filtry
   const [search, setSearch] = useState("");
@@ -447,6 +450,27 @@ function AdminTurnaje() {
     }
   };
 
+  const handleSaveResult = async () => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+      `http://localhost:3000/api/tournamentRegistration/${editingResult.regId}/result`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ place: editingResult.place }),
+      },
+    );
+    if (response.ok) {
+      setEditingResult(null);
+      fetchRegistrations();
+    } else {
+      alert("Nepodařilo se uložit výsledek");
+    }
+  };
+
   const cancelAdd = () => {
     setShowAddForm(false);
     setFormError("");
@@ -578,7 +602,7 @@ function AdminTurnaje() {
     <div className="space-y-6">
       {/* Hlavička */}
       <div className="flex justify-between items-center">
-        <div className="devider">Správa turnajů</div>
+        <div className="devider">{headerText}</div>
         {!showAddForm &&
           activeTab === "turnaje" &&
           (userRole === "admin" || userRole === "trainer") && (
@@ -635,8 +659,8 @@ function AdminTurnaje() {
           className="bg-customWhite px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
         >
           <option value="">Všechny turnaje</option>
-          <option value="completed">✅ Vydané</option>
-          <option value="uncompleted">❌ Nevydané</option>
+          <option value="completed">✅ Zveřejněné</option>
+          <option value="uncompleted">❌ Nezveřejněné</option>
         </select>
 
         <button
@@ -1038,20 +1062,22 @@ function AdminTurnaje() {
                       {group.fighters.map((reg) => (
                         <div
                           key={reg.id}
-                          onClick={() =>
-                            navigate(`/zavodnik/${reg.fighter_id}`)
-                          }
-                          className="flex items-center cursor-pointer justify-between px-4 py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50"
+                          className="flex items-center justify-between px-4 py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50"
                         >
-                          <div className="flex items-center gap-3">
+                          <div
+                            className="flex items-center gap-3"
+                            onClick={() =>
+                              navigate(`/zavodnik/${reg.fighter_id}`)
+                            }
+                          >
                             {reg.fighter_pfp ? (
                               <img
                                 src={reg.fighter_pfp}
                                 alt={reg.fighter_name}
-                                className="w-9 h-9 rounded-full object-cover border-2 border-gray-200"
+                                className="w-9 h-9 rounded-full object-cover border-2 border-gray-200 cursor-pointer"
                               />
                             ) : (
-                              <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-sm font-bold">
+                              <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-sm font-bold cursor-pointer">
                                 {reg.fighter_name?.charAt(0)}
                                 {reg.fighter_surname?.charAt(0)}
                               </div>
@@ -1065,16 +1091,79 @@ function AdminTurnaje() {
                                   {reg.fighter_weight} kg
                                 </p>
                               )}
+                              {/* Zobraz výsledek pokud existuje */}
+                              {reg.place && (
+                                <p className="text-xs text-customBlack font-bold">
+                                   {reg.place}. místo{" "} 
+                                </p>
+                              )}
                             </div>
                           </div>
-                          {(userRole === "admin" || userRole === "trainer") && (
-                            <button
-                              onClick={() => handleAdminUnregister(reg.id)}
-                              className="flex items-center gap-1 px-3 py-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-lg text-xs transition-colors"
-                            >
-                              <X size={12} /> Odhlásit
-                            </button>
-                          )}
+
+                          <div className="flex items-center gap-2">
+                            {/* Inline editace výsledku */}
+                            {editingResult?.regId === reg.id ? (
+                              <div
+                                className="flex items-center gap-2"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <input
+                                  type="number"
+                                  min="1"
+                                  max="99"
+                                  placeholder="Místo"
+                                  value={editingResult.place}
+                                  onChange={(e) =>
+                                    setEditingResult({
+                                      ...editingResult,
+                                      place: e.target.value,
+                                    })
+                                  }
+                                  className="w-16 px-2 py-1 border border-gray-300 rounded text-sm"
+                                />
+                                <button
+                                  onClick={handleSaveResult}
+                                  className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded text-xs transition-colors"
+                                >
+                                  Uložit
+                                </button>
+                                <button
+                                  onClick={() => setEditingResult(null)}
+                                  className="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded text-xs transition-colors"
+                                >
+                                  Zrušit
+                                </button>
+                              </div>
+                            ) : (
+                              (userRole === "admin" ||
+                                userRole === "trainer") && (
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setEditingResult({
+                                        regId: reg.id,
+                                        place: reg.place || "",
+                                       
+                                      });
+                                    }}
+                                    className="flex items-center gap-1 px-3 py-1 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded-lg text-xs transition-colors"
+                                  >
+                                    <Pencil size={11} /> Výsledek
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleAdminUnregister(reg.id);
+                                    }}
+                                    className="flex items-center gap-1 px-3 py-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-lg text-xs transition-colors"
+                                  >
+                                    <X size={12} /> Odhlásit
+                                  </button>
+                                </div>
+                              )
+                            )}
+                          </div>
                         </div>
                       ))}
                     </div>

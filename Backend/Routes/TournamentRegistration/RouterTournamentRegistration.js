@@ -147,4 +147,17 @@ router.delete("/:id", verifyToken, (req, res) => {
   );
 });
 
+// PUT /:id/result – uložení výsledku závodníka
+router.put("/:id/result", verifyToken, (req, res) => {
+  const { place } = req.body;
+  db.query(
+    "UPDATE tournament_registration SET place = ? WHERE id = ?",
+    [place || null, req.params.id],
+    (err) => {
+      if (err) return res.status(500).json({ error: "Chyba při ukládání výsledku" });
+      res.json({ success: true });
+    }
+  );
+});
+
 module.exports = router;

@@ -183,6 +183,7 @@ router.get("/me", verifyToken, (req, res) => {
       db.query(
         `SELECT 
             tr.place,
+            tr.tournament_id,
             t.name AS tournament,
             DATE_FORMAT(t.start_date, '%d.%m.%Y') AS date
          FROM tournament_registration tr
