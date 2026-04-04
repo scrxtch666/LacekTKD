@@ -158,6 +158,20 @@ function TurnajDetail() {
                 {tournament.type_name}
               </span>
             )}
+
+            {(userRole === "admin" || userRole === "trainer") && (
+              <span
+                className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                  tournament.status === "completed"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-orange-100 text-orange-600"
+                }`}
+              >
+                {tournament.status === "completed"
+                  ? "✓ Zveřejněný"
+                  : "○ Nezveřejněný"}
+              </span>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">

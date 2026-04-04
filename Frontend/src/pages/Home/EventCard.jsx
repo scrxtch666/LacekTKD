@@ -119,7 +119,7 @@ function EventCard() {
             {events.map((event) => (
               <div
                 key={event.id}
-                onClick={() => navigate(`/aktuality/${event.id}`)}
+                onClick={() => navigate(`/aktualita/${event.id}`)}
                 className="max-w-sm overflow-hidden bg-pink-50 rounded-2xl shadow-xl"
               >
                 <div className="relative">

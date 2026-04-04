@@ -145,21 +145,33 @@ const upload = multer({
 
 // ─── ROUTES ───
 
-// GET /calendar?month=2026-02 – turnaje pro daný měsíc (pro kalendář na webu)
-// ⚠️ MUSÍ být před GET /:id aby Express nevyhodnotil "calendar" jako :id
 router.get("/calendar", (req, res) => {
-  const { month } = req.query; // formát: "2026-02"
+  const { month } = req.query;
+  const token = req.headers["authorization"]?.split(" ")[1];
 
-  let whereClause = "";
+  let userRole = "guest";
+  if (token) {
+    try {
+      const payload = jwt.verify(token, SECRET_KEY);
+      userRole = payload.role;
+    } catch {}
+  }
+
+  const isAdminOrTrainer = userRole === "admin" || userRole === "trainer";
+
+  // Admin/trainer vidí vše, ostatní pouze completed
+  let whereClause = isAdminOrTrainer ? "WHERE 1=1" : "WHERE tournament.status = 'completed'";
   let params = [];
 
   if (month) {
-    // Vrátí turnaje které se překrývají s daným měsícem
-    whereClause = `WHERE (
+    const monthFilter = `(
       DATE_FORMAT(tournament.start_date, '%Y-%m') = ? OR
       DATE_FORMAT(tournament.end_date, '%Y-%m') = ? OR
       (tournament.start_date <= LAST_DAY(?) AND tournament.end_date >= ?)
     )`;
+    whereClause = isAdminOrTrainer
+      ? `WHERE ${monthFilter}`
+      : `WHERE tournament.status = 'completed' AND ${monthFilter}`;
     const firstDay = month + "-01";
     params = [month, month, firstDay, firstDay];
   }
@@ -172,6 +184,7 @@ router.get("/calendar", (req, res) => {
         tournament.price,
         tournament.info,
         tournament.img_path,
+        tournament.status,
         tournament.type_id,
         type.name AS type_name,
         DATE_FORMAT(tournament.start_date, '%Y-%m-%d') AS start_date,
@@ -183,10 +196,9 @@ router.get("/calendar", (req, res) => {
      ORDER BY tournament.start_date ASC`,
     params,
     (err, results) => {
-      if (err)
-        return res.status(500).json({ error: "Chyba při načítání turnajů" });
+      if (err) return res.status(500).json({ error: "Chyba při načítání turnajů" });
       res.json(results);
-    },
+    }
   );
 });
 
@@ -506,36 +518,37 @@ router.put("/:id", upload.single("image"), async (req, res) => {
 });
 
 router.post("/:id/register", verifyToken, (req, res) => {
-  // Najdi fighter_id přihlášeného uživatele
   db.query(
-    "SELECT fighter_id FROM users WHERE id = ?",
+    `SELECT u.fighter_id, f.name, f.surname, f.birth, f.actual_weight_category
+     FROM users u
+     LEFT JOIN fighters f ON f.id = u.fighter_id
+     WHERE u.id = ?`,
     [req.user.id],
     (err, results) => {
       if (err || !results.length)
-        return res
-          .status(400)
-          .json({ error: "Uživatel nemá přiřazeného závodníka" });
+        return res.status(400).json({ error: "Uživatel nenalezen" });
 
-      const fighter_id = results[0].fighter_id;
+      const { fighter_id, name, surname, birth, actual_weight_category } = results[0];
 
-      if (!fighter_id) {
-        return res.status(400).json({
-          error: "Nemáš přiřazeného závodníka. Kontaktuj trenéra.",
-        });
-      }
+      if (!fighter_id)
+        return res.status(400).json({ error: "Nemáš přiřazeného závodníka. Kontaktuj trenéra." });
+      if (!name || !surname)
+        return res.status(400).json({ error: "Závodník nemá vyplněné jméno a příjmení. Kontaktuj trenéra." });
+      if (!birth || birth.toString().startsWith("0000"))
+        return res.status(400).json({ error: "Závodník nemá vyplněné datum narození. Kontaktuj trenéra." });
+      if (!actual_weight_category)
+        return res.status(400).json({ error: "Závodník nemá vyplněnou váhovou kategorii. Kontaktuj trenéra nebo ji doplň v profilu." });
 
       db.query(
         "INSERT INTO tournament_registration (tournament_id, fighter_id) VALUES (?, ?)",
         [req.params.id, fighter_id],
         (err2) => {
           if (err2)
-            return res
-              .status(500)
-              .json({ error: "Chyba při přihlašování na turnaj" });
+            return res.status(500).json({ error: "Chyba při přihlašování na turnaj" });
           res.json({ success: true });
-        },
+        }
       );
-    },
+    }
   );
 });
 

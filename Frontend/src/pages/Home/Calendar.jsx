@@ -1,13 +1,31 @@
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, MapPin, Calendar as CalendarIcon, Trophy, Info } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  MapPin,
+  Calendar as CalendarIcon,
+  Trophy,
+  Info,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { getUserRole } from "../../utils/auth";
 
 const API = "http://localhost:3000";
 
 // Názvy měsíců a dnů v češtině
 const MONTHS_CZ = [
-  "Leden", "Únor", "Březen", "Duben", "Květen", "Červen",
-  "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec",
+  "Leden",
+  "Únor",
+  "Březen",
+  "Duben",
+  "Květen",
+  "Červen",
+  "Červenec",
+  "Srpen",
+  "Září",
+  "Říjen",
+  "Listopad",
+  "Prosinec",
 ];
 const DAYS_CZ = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"];
 
@@ -36,6 +54,7 @@ function Calendar() {
   const [tournaments, setTournaments] = useState([]); // turnaje pro aktuální měsíc
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const userRole = getUserRole();
 
   // Načti turnaje při změně měsíce
   useEffect(() => {
@@ -45,8 +64,14 @@ function Calendar() {
   const fetchTournaments = async () => {
     setLoading(true);
     const monthStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}`;
+    const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`${API}/api/tournaments/calendar?month=${monthStr}`);
+      const res = await fetch(
+        `${API}/api/tournaments/calendar?month=${monthStr}`,
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        },
+      );
       const data = await res.json();
       setTournaments(Array.isArray(data) ? data : []);
     } catch {
@@ -115,17 +140,13 @@ function Calendar() {
       <div className="bg-customWhite rounded-2xl shadow-md p-5 w-full lg:w-80 flex-shrink-0">
         {/* Navigace měsíce */}
         <div className="flex items-center justify-between mb-4">
-          <button
-            onClick={prevMonth}
-          >
+          <button onClick={prevMonth}>
             <ChevronLeft size={20} className="text-gray-600" />
           </button>
           <h2 className="text-base font-semibold text-gray-800">
             {MONTHS_CZ[currentMonth]} {currentYear}
           </h2>
-          <button
-            onClick={nextMonth}
-          >
+          <button onClick={nextMonth}>
             <ChevronRight size={20} className="text-gray-600" />
           </button>
         </div>
@@ -158,19 +179,38 @@ function Calendar() {
                 onClick={() => setSelectedDate(dateStr)}
                 className={`
                   relative flex flex-col items-center justify-center w-9 h-9 mx-auto rounded-full text-sm font-medium transition-all duration-150
-                  ${isSelected
-                    ? "bg-green-600 text-white shadow-md"
-                    : isToday
-                    ? "bg-green-100 text-green-800 font-bold"
-                    : "text-gray-700 hover:border-customGreen border"
+                  ${
+                    isSelected
+                      ? "bg-green-600 text-white shadow-md"
+                      : isToday
+                        ? "bg-green-100 text-green-800 font-bold"
+                        : "text-gray-700 hover:border-customGreen border"
                   }
                 `}
               >
                 {day}
-                {/* Zelená tečka pokud je turnaj */}
-                {hasTournament && !isSelected && (
-                  <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-green-500" />
-                )}
+                {hasTournament &&
+                  !isSelected &&
+                  (() => {
+                    const dayTournaments = getTournamentsForDay(dateStr);
+                    const hasUncompleted = dayTournaments.some(
+                      (t) => t.status === "uncompleted",
+                    );
+                    const hasCompleted = dayTournaments.some(
+                      (t) => t.status === "completed",
+                    );
+                    return (
+                      <span
+                        className={`absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full ${
+                          hasUncompleted && !hasCompleted
+                            ? "bg-orange-400"
+                            : hasUncompleted && hasCompleted
+                              ? "bg-yellow-400"
+                              : "bg-green-500"
+                        }`}
+                      />
+                    );
+                  })()}
                 {hasTournament && isSelected && (
                   <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white" />
                 )}
@@ -216,8 +256,12 @@ function Calendar() {
             {selectedTournaments.map((tournament) => (
               <div
                 key={tournament.id}
-                onClick={() => navigate(`/turnaje/${tournament.id}`)}
-                className="flex gap-4 p-4 rounded-xl border border-gray-100 hover:border-customGreen hover:shadow-sm transition-all duration-200"
+                onClick={() => navigate(`/turnaj/${tournament.id}`)}
+                className={`flex gap-4 p-4 rounded-xl border transition-all duration-200 cursor-pointer ${
+                  tournament.status === "uncompleted"
+                    ? "border-orange-200 bg-orange-50 hover:border-orange-400"
+                    : "border-gray-100 hover:border-customGreen hover:shadow-sm"
+                }`}
               >
                 {/* Obrázek nebo ikona */}
                 <div className="flex-shrink-0">
@@ -228,8 +272,21 @@ function Calendar() {
                       className="w-16 h-16 rounded-lg object-cover"
                     />
                   ) : (
-                    <div className="w-16 h-16 rounded-lg bg-green-100 flex items-center justify-center">
-                      <Trophy size={24} className="text-green-600" />
+                    <div
+                      className={`w-16 h-16 rounded-lg flex items-center justify-center ${
+                        tournament.status === "uncompleted"
+                          ? "bg-orange-100"
+                          : "bg-green-100"
+                      }`}
+                    >
+                      <Trophy
+                        size={24}
+                        className={
+                          tournament.status === "uncompleted"
+                            ? "text-orange-500"
+                            : "text-green-600"
+                        }
+                      />
                     </div>
                   )}
                 </div>
@@ -245,6 +302,13 @@ function Calendar() {
                         {tournament.type_name}
                       </span>
                     )}
+                    {/* Badge pro nezveřejněné – pouze admin/trainer */}
+                    {tournament.status === "uncompleted" &&
+                      (userRole === "admin" || userRole === "trainer") && (
+                        <span className="px-2 py-0.5 rounded-full text-xs bg-orange-100 text-orange-600 font-medium">
+                          ○ Nezveřejněný
+                        </span>
+                      )}
                   </div>
 
                   <div className="space-y-1">
@@ -256,10 +320,19 @@ function Calendar() {
                     )}
                     <p className="text-xs text-gray-500 flex items-center gap-1">
                       <CalendarIcon size={12} className="text-gray-400" />
-                      {new Date(tournament.start_date + "T00:00:00").toLocaleDateString("cs-CZ")}
-                      {tournament.end_date && tournament.end_date !== tournament.start_date && (
-                        <> – {new Date(tournament.end_date + "T00:00:00").toLocaleDateString("cs-CZ")}</>
-                      )}
+                      {new Date(
+                        tournament.start_date + "T00:00:00",
+                      ).toLocaleDateString("cs-CZ")}
+                      {tournament.end_date &&
+                        tournament.end_date !== tournament.start_date && (
+                          <>
+                            {" "}
+                            –{" "}
+                            {new Date(
+                              tournament.end_date + "T00:00:00",
+                            ).toLocaleDateString("cs-CZ")}
+                          </>
+                        )}
                     </p>
                     {tournament.price && (
                       <p className="text-xs text-gray-500 flex items-center gap-1">
@@ -269,7 +342,10 @@ function Calendar() {
                     )}
                     {tournament.info && (
                       <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
-                        <Info size={12} className="text-gray-400 flex-shrink-0" />
+                        <Info
+                          size={12}
+                          className="text-gray-400 flex-shrink-0"
+                        />
                         <span className="line-clamp-2">{tournament.info}</span>
                       </p>
                     )}

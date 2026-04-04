@@ -31,6 +31,7 @@ function AdminMe() {
     phone: "",
     email: "",
     actual_weight_category: "",
+    birth: "",
     currentPassword: "",
     newPassword: "",
     newPasswordConfirm: "",
@@ -45,6 +46,7 @@ function AdminMe() {
         phone: data?.phone || "",
         email: data?.email || "",
         actual_weight_category: data?.actual_weight_category || "",
+        birth: data?.birth || "",
         currentPassword: "",
         newPassword: "",
         newPasswordConfirm: "",
@@ -86,8 +88,12 @@ function AdminMe() {
           name: form.name,
           surname: form.surname,
           phone: form.phone,
-          emial: form.email,
-          actual_weight_category: form.actual_weight_category,
+          email: form.email,
+          actual_weight_category:
+            form.actual_weight_category === ""
+              ? null
+              : form.actual_weight_category,
+          birth: form.birth === "" ? null : form.birth,
           currentPassword: form.currentPassword || undefined,
           newPassword: form.newPassword || undefined,
         }),
@@ -118,6 +124,7 @@ function AdminMe() {
       phone: user?.phone || "",
       email: user?.email || "",
       actual_weight_category: user?.actual_weight_category || "",
+      birth: user?.birth || "",
       currentPassword: "",
       newPassword: "",
       newPasswordConfirm: "",
@@ -328,6 +335,20 @@ function AdminMe() {
                     value={form.phone}
                     onChange={(e) =>
                       setForm({ ...form, phone: e.target.value })
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-customGreen focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs text-gray-500 mb-1 block">
+                    Datum narození
+                  </label>
+                  <input
+                    type="date"
+                    value={form.birth}
+                    onChange={(e) =>
+                      setForm({ ...form, birth: e.target.value })
                     }
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-customGreen focus:border-transparent"
                   />

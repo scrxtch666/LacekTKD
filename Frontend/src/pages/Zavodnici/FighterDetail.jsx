@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { ArrowLeft, Calendar, Users, Info } from "lucide-react";
+import { ArrowLeft, Calendar, Users, Info, Star, Trophy } from "lucide-react";
 import { getUserRole } from "../../utils/auth";
 
 const API = "http://localhost:3000";
@@ -50,7 +50,7 @@ function FighterDetail() {
       </button>
 
       {/* Hlavní karta */}
-      <div className="bg-customWhite rounded-2xl shadow-md overflow-hidden p-6 flex gap-6">
+      <div className="bg-customWhite rounded-2xl shadow-md overflow-hidden p-6 flex gap-6 relative">
         {/* Obrázek */}
         <img
           src={fighter.img_path}
@@ -65,30 +65,57 @@ function FighterDetail() {
               {fighter.name} {fighter.surname}
             </h1>
 
-            <p className="text-gray-500">Věk: {fighter.age} let</p>
+            <div className="flex flex-col gap-1">
+              {/* Pás */}
+              <div className="flex items-center gap-2 mt-1">
+                {fighter.belt_path && (
+                  <img
+                    src={fighter.belt_path}
+                    alt="belt"
+                    className="w-7 h-7 object-contain"
+                  />
+                )}
+                <span className="text-sm text-gray-500">{fighter.cup}</span>
+              </div>
+            </div>
 
+            <div className="absolute top-4 right-4 flex gap-2">
+              {!!fighter.best && (
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                  <Star size={11} />
+                  Nejlepší
+                </span>
+              )}
+              {!!fighter.legend && (
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                  <Trophy size={11} />
+                  Legenda
+                </span>
+              )}
+            </div>
+
+            {(userRole === "admin" || userRole === "trainer") &&
+              fighter.age && (
+                <p className="text-gray-500">Věk: {fighter.age} let</p>
+              )}
             <p className="text-gray-500">
               Váhová kategorie: {fighter.actual_weight_category} kg
             </p>
             <p className="text-gray-500">
-              Věková skupina: {fighter.category_id}
+              Věková kategorie: {fighter.category_name} <span className="text-xs">({fighter.min} - {fighter.max})</span>
             </p>
-             {(userRole === "admin" || userRole === "trainer") && (
+            {(userRole === "admin" || userRole === "trainer") && (
               <>
-            <p className="text-gray-500">
-              Email: {fighter.email}
-            </p>
-              <p className="text-gray-500">
-              Telefonní číslo: {fighter.phone_number}
-            </p>
-            </>
+                {fighter.user_email && (
+                  <p className="text-gray-500">Email: {fighter.user_email}</p>
+                )}
+                {fighter.user_phone && (
+                  <p className="text-gray-500">
+                    Telefonní číslo: {fighter.user_phone}
+                  </p>
+                )}
+              </>
             )}
-          </div>
-
-          {/* Pás */}
-          <div className="flex items-center gap-3 mt-3">
-            <img src={fighter.belt_path} alt="belt" className="w-10 h-10" />
-            <span>{fighter.cup}</span>
           </div>
         </div>
       </div>

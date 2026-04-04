@@ -152,14 +152,41 @@ Backend - cd  .\Backend\ - node server.js
 - udělat error stránku, že něco nebylo nalezeno
 - když admin nastaví v administraci něco jako shované, tak to user neuvidí
 - prostě udělat to, aby user neviděl neveřejné věci
+- GDPR!!!!
 
 # DEBUGGING
 - klasickej scénář ... uživatel se přihlásí na profil a na turnaj, co se potom stane
 - co se stane po proběhnutí turnaje
 - AdminTurnaje - po uzávěrce - nejde se přihlásit jako závodník, dát tam přidání výsledků pro ty závodníky, kteří se zúčastnili
+- upravit responzivitu v adminu
 
 # DO TEXTOVÉ ČÁSTI PŘIDAT
 - porovnání s aktuální webovou stránkou
 - něco o registraci
 - něco o kalendáři akcí 
 - přidávání úspěchů závodníkům - tohle musím spíš dopsat
+
+
+# GDPR
+Správce údajů: TKD Lacek
+
+Zpracováváme tyto údaje:
+- jméno a příjmení
+- email
+- telefon
+- sportovní údaje (váhová a věková kategorie)
+
+Účel:
+- registrace uživatele
+- správa členství
+- evidence závodníků a účast na turnajích
+
+Údaje nejsou poskytovány třetím stranám.
+
+Uživatel má právo:
+- požádat o přístup ke svým údajům
+- požádat o opravu nebo smazání
+
+Kontakt: [tvůj email]
+
+https://chatgpt.com/share/69d19642-07e8-8328-9c17-d4107efc1334

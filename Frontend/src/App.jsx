@@ -35,6 +35,7 @@ import TurnajDetail from "./pages/Turnaje/TurnajDetail";
 import AdminRequests from "./pages/_Admin/AdminRequests";
 import FighterDetail from "./pages/Zavodnici/FighterDetail";
 import AdminZkousky from "./pages/_Admin/AdminZkousky";
+import Gdpr from "./pages/Login/Gdpr";
 
 function Layout() {
   const location = useLocation();
@@ -171,9 +172,10 @@ function Layout() {
           <Route path="/detail" element={<Detail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/aktuality/:id" element={<AktualitaDetail />} />
+          <Route path="/aktualita/:id" element={<AktualitaDetail />} />
           <Route path="/turnaj/:id" element={<TurnajDetail />} />
           <Route path="/zavodnik/:id" element={<FighterDetail />} />
+          <Route path="/gdpr" element={<Gdpr />} />
         </Routes>
       </Container>
       <Footer />

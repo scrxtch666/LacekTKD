@@ -166,10 +166,14 @@ router.get("/:id", (req, res) => {
         TIMESTAMPDIFF(YEAR, f.birth, CURDATE()) AS age,
         b.cup, b.img_path AS belt_path,
         u.id AS user_id, u.login AS user_login,
-        u.email AS user_email, u.phone AS user_phone
+        u.email AS user_email, u.phone AS user_phone,
+        c.name AS category_name,
+        c.min,
+        c.max
      FROM fighters f
      JOIN belts b ON f.belts_id = b.id
      LEFT JOIN users u ON u.fighter_id = f.id
+     LEFT JOIN category c ON c.id = f.category_id
      WHERE f.id = ?`,
     [id],
     (err, fighterResults) => {

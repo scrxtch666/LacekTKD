@@ -147,7 +147,7 @@ router.get("/me", verifyToken, (req, res) => {
     `SELECT users.id, users.login, users.email, users.phone, role.role_name,
             fighters.id AS fighter_id,
             fighters.name, fighters.surname,
-            DATE_FORMAT(fighters.birth, '%d.%m.%Y') AS birth,
+            DATE_FORMAT(fighters.birth, '%Y-%m-%d') AS birth,
             fighters.img_path, fighters.actual_weight_category
      FROM users
      LEFT JOIN role ON users.role_id = role.id
@@ -217,8 +217,10 @@ router.put("/me", verifyToken, async (req, res) => {
   const {
     name,
     surname,
+    email,
     phone,
     actual_weight_category,
+    birth,
     currentPassword,
     newPassword,
   } = req.body;
@@ -249,14 +251,16 @@ router.put("/me", verifyToken, async (req, res) => {
           db.query(
             `UPDATE users 
            LEFT JOIN fighters ON fighters.id = users.fighter_id
-           SET fighters.name = ?, fighters.surname = ?, users.phone = ?,
-               fighters.actual_weight_category = ?, users.password = ?
+           SET fighters.name = ?, fighters.surname = ?, users.phone = ?, users.email = ?,
+               fighters.actual_weight_category = ?, fighters.birth = ?, users.password = ?
            WHERE users.id = ?`,
             [
               name,
               surname,
               formattedPhone,
+              email,
               actual_weight_category,
+              birth,
               hashedPassword,
               req.user.id,
             ],
@@ -273,10 +277,11 @@ router.put("/me", verifyToken, async (req, res) => {
       db.query(
         `UPDATE users 
          LEFT JOIN fighters ON fighters.id = users.fighter_id
-         SET fighters.name = ?, fighters.surname = ?, users.phone = ?,
-             fighters.actual_weight_category = ?
+         SET fighters.name = ?, fighters.surname = ?, users.phone = ?, users.email = ?, 
+             fighters.actual_weight_category = ?,
+             fighters.birth = ?
          WHERE users.id = ?`,
-        [name, surname, formattedPhone, actual_weight_category, req.user.id],
+        [name, surname, formattedPhone, email, actual_weight_category, birth, req.user.id],
         (err) => {
           if (err) return res.status(500).json({ error: "Chyba při ukládání" });
           res.json({ success: true, message: "Profil byl upraven" });

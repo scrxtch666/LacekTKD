@@ -4,11 +4,8 @@ function Zavodnici() {
   return (
     <>
       <Pasky />
-     
 
-     
-        <Fighter />
-     
+      <Fighter />
     </>
   );
 }

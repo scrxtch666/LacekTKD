@@ -185,15 +185,25 @@ router.delete("/:id", verifyToken, (req, res) => {
 // POST /:id/register – přihlášení uživatele na zkoušku
 router.post("/:id/register", verifyToken, (req, res) => {
   db.query(
-    "SELECT fighter_id FROM users WHERE id=?",
+    `SELECT u.fighter_id, f.name, f.surname, f.birth, f.actual_weight_category
+     FROM users u
+     LEFT JOIN fighters f ON f.id = u.fighter_id
+     WHERE u.id = ?`,
     [req.user.id],
     (err, results) => {
       if (err || !results.length)
         return res.status(400).json({ error: "Uživatel nenalezen" });
 
-      const fighter_id = results[0].fighter_id;
+      const { fighter_id, name, surname, birth, actual_weight_category } = results[0];
+
       if (!fighter_id)
-        return res.status(400).json({ error: "Nemáš přiřazeného závodníka." });
+        return res.status(400).json({ error: "Nemáš přiřazeného závodníka. Kontaktuj trenéra." });
+      if (!name || !surname)
+        return res.status(400).json({ error: "Závodník nemá vyplněné jméno a příjmení. Kontaktuj trenéra." });
+      if (!birth || birth.toString().startsWith("0000"))
+        return res.status(400).json({ error: "Závodník nemá vyplněné datum narození. Kontaktuj trenéra." });
+      if (!actual_weight_category)
+        return res.status(400).json({ error: "Závodník nemá vyplněnou váhovou kategorii. Kontaktuj trenéra nebo ji doplň v profilu." });
 
       db.query(
         "INSERT INTO exam_registration (exam_id, fighter_id) VALUES (?, ?)",
@@ -202,9 +212,9 @@ router.post("/:id/register", verifyToken, (req, res) => {
           if (err2)
             return res.status(500).json({ error: "Chyba při přihlašování" });
           res.json({ success: true });
-        },
+        }
       );
-    },
+    }
   );
 });
 
