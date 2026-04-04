@@ -45,6 +45,7 @@ function AdminZkousky() {
   const navigate = useNavigate();
   const isAdminOrTrainer = userRole === "admin" || userRole === "trainer";
   const headerText = isAdminOrTrainer ? "Správa zkoušek" : "Zkoušky";
+  
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -62,15 +63,20 @@ function AdminZkousky() {
     fetchExams();
   }, [myFighterId]);
 
-  const fetchExams = () => {
-    fetch(`${API}/api/exams/admin`, { headers: authHeader() })
-      .then((res) => res.json())
-      .then((data) => {
-        setExams(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  };
+const fetchExams = () => {
+  // User volá veřejný endpoint (pouze active), admin/trainer volá /admin (vše)
+  const url = (userRole === "admin" || userRole === "trainer")
+    ? `${API}/api/exams/admin`
+    : `${API}/api/exams`;
+
+  fetch(url, { headers: authHeader() })
+    .then((res) => res.json())
+    .then((data) => {
+      setExams(Array.isArray(data) ? data : []);
+      setLoading(false);
+    })
+    .catch(() => setLoading(false));
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -356,11 +362,22 @@ function AdminZkousky() {
       )}
 
       {/* Seznam */}
-      {exams.length === 0 ? (
-        <div className="bg-customWhite rounded-lg shadow p-8 text-center">
-          <p className="text-gray-500">Zatím nejsou žádné zkoušky</p>
-        </div>
-      ) : (
+    {exams.length === 0 ? (
+  userRole === "user" ? (
+    <div className="text-center py-16 space-y-2">
+      <p className="text-xl font-semibold text-gray-600">
+        Momentálně nejsou vypsány žádné zkoušky
+      </p>
+      <p className="text-gray-400 text-sm">
+        Sledujte aktuality pro informace o připravovaných zkouškách
+      </p>
+    </div>
+  ) : (
+    <div className="bg-customWhite rounded-lg shadow p-8 text-center">
+      <p className="text-gray-500">Zatím nejsou žádné zkoušky</p>
+    </div>
+  )
+) : (
         <div className="space-y-4">
           {exams.map((exam) => (
             <div
@@ -374,6 +391,7 @@ function AdminZkousky() {
                       <p className="text-lg font-semibold text-gray-800">
                         {exam.title}
                       </p>
+                      {(userRole === "admin" || userRole === "trainer") && (
                       <span
                         className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                           exam.status === "active"
@@ -393,6 +411,7 @@ function AdminZkousky() {
                           </>
                         )}
                       </span>
+                      )}
                       <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">
                         {exam.registrations?.length || 0} přihlášených
                       </span>

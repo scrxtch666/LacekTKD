@@ -18,7 +18,6 @@ const formatCzechPhoneNumber = (phone) => {
     return cleaned.replace(/(\d{3})(\d{3})(\d{3})/, "$1 $2 $3");
   }
 
-  // Pokud je tam i předvolba (např. 420721642937), můžeš ji nechat nebo upravit
   if (cleaned.length === 12) {
     return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{3})/, "+$1 $2 $3 $4");
   }

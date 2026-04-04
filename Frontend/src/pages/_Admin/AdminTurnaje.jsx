@@ -585,8 +585,10 @@ function AdminTurnaje() {
       (filterTournament === "completed" && t.status === "completed") ||
       (filterTournament === "uncompleted" && t.status !== "completed");
 
+    const matchesRole = userRole !== "user" || t.status === "completed";
+
     // Všechny podmínky musí platit najednou
-    return matchesSearch && matchesTime && matchesStatus;
+    return matchesSearch && matchesTime && matchesStatus && matchesRole;
   });
 
   const hasActiveFilter =
@@ -653,16 +655,17 @@ function AdminTurnaje() {
         />
 
         {/* Filtr účtu */}
-        <select
-          value={filterTournament}
-          onChange={(e) => setFilterTournament(e.target.value)}
-          className="bg-customWhite px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
-        >
-          <option value="">Všechny turnaje</option>
-          <option value="completed">✅ Zveřejněné</option>
-          <option value="uncompleted">❌ Nezveřejněné</option>
-        </select>
-
+        {(userRole === "admin" || userRole === "trainer") && (
+          <select
+            value={filterTournament}
+            onChange={(e) => setFilterTournament(e.target.value)}
+            className="bg-customWhite px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
+          >
+            <option value="">Všechny turnaje</option>
+            <option value="completed">✅ Zveřejněné</option>
+            <option value="uncompleted">❌ Nezveřejněné</option>
+          </select>
+        )}
         <button
           onClick={() => setFilterActual(!filterActual)}
           className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${filterActual ? "bg-customGreen text-white border-customGreen" : "bg-customWhite text-gray-600 border-gray-300"}`}
@@ -788,17 +791,19 @@ function AdminTurnaje() {
                             {tournament.type_name}
                           </span>
                         )}
-                        <span
-                          className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                            tournament.status === "completed"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-gray-100 text-gray-500"
-                          }`}
-                        >
-                          {tournament.status === "completed"
-                            ? "✓ Zveřejněný"
-                            : "○ Nezveřejněný"}
-                        </span>
+                        {(userRole === "admin" || userRole === "trainer") && (
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                              tournament.status === "completed"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-gray-100 text-gray-500"
+                            }`}
+                          >
+                            {tournament.status === "completed"
+                              ? "✓ Zveřejněný"
+                              : "○ Nezveřejněný"}
+                          </span>
+                        )}
                       </div>
 
                       <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-500">
@@ -1094,7 +1099,7 @@ function AdminTurnaje() {
                               {/* Zobraz výsledek pokud existuje */}
                               {reg.place && (
                                 <p className="text-xs text-customBlack font-bold">
-                                   {reg.place}. místo{" "} 
+                                  {reg.place}. místo{" "}
                                 </p>
                               )}
                             </div>
@@ -1144,7 +1149,6 @@ function AdminTurnaje() {
                                       setEditingResult({
                                         regId: reg.id,
                                         place: reg.place || "",
-                                       
                                       });
                                     }}
                                     className="flex items-center gap-1 px-3 py-1 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded-lg text-xs transition-colors"
