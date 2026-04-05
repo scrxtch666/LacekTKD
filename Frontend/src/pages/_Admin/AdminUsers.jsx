@@ -8,6 +8,8 @@ import {
   Pencil,
   Check,
   ShieldCheck,
+  User,
+  Users,
 } from "lucide-react";
 
 function AdminUsers() {
@@ -65,6 +67,29 @@ function AdminUsers() {
         return "uživatel";
       default:
         return role || "";
+    }
+  };
+
+  const getRoleBadge = (role) => {
+    switch (role) {
+      case "admin":
+        return {
+          label: "Administrátor",
+          icon: <Shield size={12} />,
+          className: "bg-red-50 text-red-600",
+        };
+      case "trainer":
+        return {
+          label: "Trenér",
+          icon: <Users size={12} />,
+          className: "bg-blue-50 text-blue-6000",
+        };
+      default:
+        return {
+          label: "Závodník",
+          icon: <User size={12} />,
+          className: "bg-green-50 text-customGreen",
+        };
     }
   };
 
@@ -230,16 +255,6 @@ function AdminUsers() {
     });
   };
 
-  const getRoleBadgeColor = (role) => {
-    switch (role) {
-      case "admin":
-        return "bg-purple-100 text-purple-800";
-      case "moderator":
-        return "bg-blue-100 text-blue-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
 
   // Pomocná funkce – najde fightera přiřazeného k userovi
   const getFighterLabel = (fighter_id) => {
@@ -655,12 +670,18 @@ function AdminUsers() {
                       )}
                     </div>
                     <div className="mt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
-                      <span
-                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}
-                      >
-                        <Shield size={12} />
-                        {getRoleLabel(user?.role_name)}
-                      </span>
+                      {(() => {
+                        const badge = getRoleBadge(user.role_name);
+                        return (
+                          <span
+                            className={`flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full ${badge.className}`}
+                          >
+                            {badge.icon}
+                            {badge.label}
+                          </span>
+                        );
+                      })()}
+
                       {/* Badge závodníka */}
                       {user.fighter_id && (
                         <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">

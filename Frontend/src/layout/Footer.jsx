@@ -23,7 +23,7 @@ function Footer() {
           <div class="sm:flex sm:items-center sm:justify-between">
             <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">
               © {currentYear}
-              <a href="/" class="hover:underline font-bold px-1">
+              <a href="https://github.com/scrxtch666" class="hover:underline font-bold px-1">
                 scrxtch
               </a>
               all rights reserved.
