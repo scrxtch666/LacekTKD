@@ -4,14 +4,8 @@ Použité technologie:
         - TailWindCSS
         - NodeJS
 
-> [!IMPORTANT]
-> Nejdříve udělat databázi
-
-> upravit READ.ME
-
 > [!TIP]
 >Ikonky: https://icons8.com/icons/set/facebook
-
 
 > [!TIP]
 >Dokumentace k formátování: https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax
@@ -22,27 +16,13 @@ Barvy:
         BLACK:  `#181918`
         WHITE:  `#F8F0E5`
 
-
 > [!IMPORTANT]
 > Samotné stránky jsou v _/components_ a komponenty pro samotné stránky jsou v _/pages/nazev-stranky_
-
-> [!CAUTION]
-> Víc se podívat na teorii ohledně Reactu - hooky, routing...
-
 
 Komentář:
 {/*  */}
 
 DB návrh: https://community.dbdiagram.io/t/upgrade-for-database-relationships-zero-to-one-many-relationships-colors-and-more/4184?utm_source=dbdiagram&utm_medium=ads
-
-
-Nechá se tam někde udělat dynamické routování, tak se na to podívat
-
-Rozdělení závodníků do kategorií -> junior, senior, veterán... podle věku
-
-Uživatelské účty bude moci vytvářet trenér + administrátor
-U těch závodníků potřebuju, aby se to zobrazovalo podle id - různě
-
 
 # FRONTEND
 - doladit responzivitu
@@ -107,7 +87,6 @@ rounded-2xl
 Na Linuxu
 - http://localhost:8000/phpmyadmin/index.php
 
-
 -- 1. Vytvoř tabulku event_photos pokud neexistuje
 CREATE TABLE IF NOT EXISTS `event_photos` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -130,12 +109,9 @@ Backend
 - API -> RestAPI pricipy (GET, POST, PUT, DELETE)
 - JWT, hashing (ByCript)
 
-
-
 # SPUŠTĚNÍ 
 Frontend - cd .\Frontend\ - npm run dev
 Backend - cd  .\Backend\ - node server.js
-
 
 # TASKS
 - udělat úspěchy pro závodníky
@@ -147,10 +123,11 @@ Backend - cd  .\Backend\ - node server.js
 - upravit zkoušky - rozložení, klíčové pojmy
 - karty pro turnaje
 - závodníci - předělat
+- vyřešit přihlášení na zkoušky ve veřejné části - píše mi to, že jsou přihlášky uzavřeny přitom je ještě čas na registraci
 
 # CO MUSÍM UDĚLAT
 - udělat error stránku, že něco nebylo nalezeno
-- když admin nastaví v administraci něco jako shované, tak to user neuvidí
+- když admin nastaví v administraci něco jako schované, tak to user neuvidí
 - prostě udělat to, aby user neviděl neveřejné věci
 - GDPR!!!!
 
@@ -165,28 +142,3 @@ Backend - cd  .\Backend\ - node server.js
 - něco o registraci
 - něco o kalendáři akcí 
 - přidávání úspěchů závodníkům - tohle musím spíš dopsat
-
-
-# GDPR
-Správce údajů: TKD Lacek
-
-Zpracováváme tyto údaje:
-- jméno a příjmení
-- email
-- telefon
-- sportovní údaje (váhová a věková kategorie)
-
-Účel:
-- registrace uživatele
-- správa členství
-- evidence závodníků a účast na turnajích
-
-Údaje nejsou poskytovány třetím stranám.
-
-Uživatel má právo:
-- požádat o přístup ke svým údajům
-- požádat o opravu nebo smazání
-
-Kontakt: [tvůj email]
-
-https://chatgpt.com/share/69d19642-07e8-8328-9c17-d4107efc1334

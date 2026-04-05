@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Phone, Mail } from "lucide-react";
 
+  const getRoleLabel = (role) => {
+  switch (role) {
+      case "trainer":
+      return "trenér";
+    default:
+      return role || "";
+  }
+};
+
 
 // Samostatná komponenta pro kartu trenéra pro lepší čitelnost
 const CoachCard = ({ ocoach }) => {
@@ -23,7 +32,9 @@ const CoachCard = ({ ocoach }) => {
         <p className="text-customGreen font-semibold text-sm uppercase tracking-wider">
           {ocoach.cup}
         </p>
-        <p className="text-xs text-gray-400 mt-1 italic">{ocoach.role_name}</p>
+        <p className="text-xs text-gray-400 mt-1 italic">
+           {getRoleLabel(ocoach?.role_name)}
+        </p>
       </div>
 
       {/* Kontaktní údaje jako interaktivní prvky */}

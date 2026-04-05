@@ -27,9 +27,9 @@ const Login = () => {
           const role = getUserRole();
 
           if (role === "admin") {
-            navigate("/admin", { replace: true });
+            navigate("/admin/me", { replace: true });
           } else if (role === "trainer") {
-            navigate("/admin/zavodnici", { replace: true });
+            navigate("/admin/me", { replace: true });
           } else {
             navigate("/admin/me", { replace: true });
           }

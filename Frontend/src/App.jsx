@@ -13,7 +13,6 @@ import Contact from "./Components/Contact";
 import Aktuality from "./Components/Aktuality";
 import Zkousky from "./Components/Zkousky";
 import Home from "./Components/Home";
-import Admin from "./Components/Admin";
 import Turnaje from "./Components/Turnaje";
 import AboutUs from "./Components/AboutUS";
 import Detail from "./pages/Turnaje/Detail";
@@ -51,14 +50,7 @@ function Layout() {
         <main className="flex-1 p-8 lg:ml-64 w-full">
           <Routes>
             {/* Veřejné admin routy – jen přihlášený */}
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute allowedRoles={["admin", "trainer", "user"]}>
-                  <Admin />
-                </ProtectedRoute>
-              }
-            />
+          
             <Route
               path="/admin/me"
               element={

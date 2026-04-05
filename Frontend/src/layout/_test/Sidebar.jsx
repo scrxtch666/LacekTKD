@@ -34,13 +34,25 @@ function SideBar() {
     navigate("/");
   };
 
+  const getRoleLabel = (role) => {
+  switch (role) {
+    case "admin":
+      return "správce";
+      case "trainer":
+      return "trenér";
+    case "user":
+      return "uživatel";
+    default:
+      return role || "";
+  }
+};
+
   const sections = [
     {
       title: "Obecné",
       adminOnly: true,
       items: [
         { name: "Můj účet", path: "/admin/me", icon: User },
-        { name: "Dashboard", path: "/admin", icon: LayoutDashboard },
         { name: "Aktuality", path: "/admin/aktuality", icon: LayoutDashboard },
         { name: "Zkoušky", path: "/admin/zkousky", icon: BookCheckIcon },
         { name: "Turnaje", path: "/admin/turnaje", icon: Swords },
@@ -180,7 +192,7 @@ function SideBar() {
                 : currentUser?.login || "..."}
             </p>
             <p className="text-xs text-green-200 opacity-80 truncate">
-              {currentUser?.role || ""}
+              {getRoleLabel(currentUser?.role)}
             </p>
           </div>
 

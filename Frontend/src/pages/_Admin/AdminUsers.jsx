@@ -55,6 +55,19 @@ function AdminUsers() {
       });
   };
 
+  const getRoleLabel = (role) => {
+    switch (role) {
+      case "admin":
+        return "správce";
+      case "trainer":
+        return "trenér";
+      case "user":
+        return "uživatel";
+      default:
+        return role || "";
+    }
+  };
+
   const fetchRoles = () => {
     fetch("http://localhost:3000/api/roles")
       .then((res) => res.json())
@@ -646,7 +659,7 @@ function AdminUsers() {
                         className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}
                       >
                         <Shield size={12} />
-                        {user.role_name}
+                        {getRoleLabel(user?.role_name)}
                       </span>
                       {/* Badge závodníka */}
                       {user.fighter_id && (
