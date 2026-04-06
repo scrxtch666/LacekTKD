@@ -1,18 +1,15 @@
 import React from "react";
-import Info from "../pages/Zkousky/Info";
 import Pasky from "../pages/Zkousky/Pasky";
 import Cenik from "../pages/Zkousky/Cenik";
 import Video from "../pages/Zkousky/Video";
 import SestavyInfo from "../pages/Zkousky/SestavyInfo";
 import Prihlasky from "../pages/Zkousky/Prihlasky";
-import { getUserRole } from "../utils/auth";
 
 function Zkousky() {
   return (
     <>
       <div class="devider">ZKOUŠKY</div>
 
-      {/* Sekce ve které je to obalené */}
       <div className="grid gap-5 lg:grid-cols-2 md:grid-cols-1">
         <Pasky />
         <Cenik />
@@ -26,7 +23,7 @@ function Zkousky() {
         </div>
       </div>
 
-      <Prihlasky/>
+      <Prihlasky />
     </>
   );
 }

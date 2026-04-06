@@ -17,7 +17,6 @@ function Prihlasky() {
   const [exams, setExams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(null);
-  const [myFighterId, setMyFighterId] = useState(null);
   const userRole = getUserRole();
   const navigate = useNavigate();
 
@@ -38,7 +37,12 @@ function Prihlasky() {
   }, []);
 
   const fetchExams = () => {
-    fetch(`${API}/api/exams`)
+    const token = localStorage.getItem("token");
+    fetch(`${API}/api/exams`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         setExams(Array.isArray(data) ? data : []);
@@ -75,13 +79,7 @@ function Prihlasky() {
       <div className="text-center py-10 text-gray-400">Načítám zkoušky...</div>
     );
 
- 
-  if (!exams.length)
-    return (
-      <div className="">
-       
-      </div>
-    );
+  if (!exams.length) return <div className=""></div>;
 
   return (
     <div className="space-y-6">
@@ -89,13 +87,14 @@ function Prihlasky() {
 
       {exams.map((exam) => {
         const canRegister = exam.registrable_date
-          ? new Date() <= new Date(exam.registrable_date + "T23:59:59")
+          ? (() => {
+              const deadline = new Date(exam.registrable_date);
+              deadline.setHours(23, 59, 59, 999);
+              return new Date() <= deadline;
+            })()
           : true;
 
-        // Zkontroluj zda je přihlášen – porovnej myFighterId se seznamem registrací
-        const isRegistered = myFighterId
-          ? exam.registrations?.some((r) => r.fighter_id === myFighterId)
-          : false;
+        const isRegistered = exam.is_registered;
 
         return (
           <div
@@ -148,29 +147,43 @@ function Prihlasky() {
                 {/* Tlačítko přihlášení – pouze pro role user */}
                 {userRole === "user" && (
                   <div className="flex-shrink-0">
-                    {!canRegister ? (
-                      <span className="text-sm text-gray-400 italic px-3 py-2 border border-gray-200 rounded-lg bg-gray-50">
-                        Přihlášky uzavřeny
-                      </span>
-                    ) : isRegistered ? (
-                      <div className="flex items-center gap-2">
-                        <span className="flex items-center gap-1.5 px-3 py-2 bg-green-50 text-green-700 border border-green-300 rounded-lg text-sm font-medium">
-                          ✓ Přihlášen
-                        </span>
-                        <button
-                          onClick={() => handleUnregister(exam.id)}
-                          className="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-300 rounded-lg text-sm transition-colors"
-                        >
-                          Odhlásit se
-                        </button>
+                    {userRole === "user" && (
+                      <div className="flex-shrink-0">
+                        {(() => {
+                          if (!canRegister) {
+                            return (
+                              <span className="text-sm text-gray-400 border px-3 py-2 rounded-lg bg-gray-50">
+                                Po uzávěrce
+                              </span>
+                            );
+                          }
+
+                          if (isRegistered) {
+                            return (
+                              <div className="flex items-center gap-2">
+                                <span className="px-3 py-2 bg-green-50 text-green-700 border rounded-lg text-sm">
+                                  ✓ Přihlášen
+                                </span>
+                                <button
+                                  onClick={() => handleUnregister(exam.id)}
+                                  className="bg-red-50 hover:bg-red-100 text-red-600 border px-3 py-2 rounded-lg text-sm"
+                                >
+                                  Odhlásit se
+                                </button>
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <button
+                              onClick={() => handleRegister(exam.id)}
+                              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm"
+                            >
+                              Přihlásit se
+                            </button>
+                          );
+                        })()}
                       </div>
-                    ) : (
-                      <button
-                        onClick={() => handleRegister(exam.id)}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-customGreen hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors"
-                      >
-                        <Plus size={16} /> Přihlásit se
-                      </button>
                     )}
                   </div>
                 )}
@@ -204,18 +217,18 @@ function Prihlasky() {
                           }
                           className="flex items-center cursor-pointer gap-3 py-2 border-b border-gray-50 last:border-0"
                         >
-                            {reg.fighter_pfp ? (
-                              <img
-                                src={reg.fighter_pfp}
-                                alt={reg.fighter_name}
-                                className="w-9 h-9 rounded-full object-cover border-2 border-gray-200"
-                              />
-                            ) : (
-                          <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-xs font-bold">
-                            {reg.fighter_name?.charAt(0)}
-                            {reg.fighter_surname?.charAt(0)}
-                          </div>
-                           )}
+                          {reg.fighter_pfp ? (
+                            <img
+                              src={reg.fighter_pfp}
+                              alt={reg.fighter_name}
+                              className="w-9 h-9 rounded-full object-cover border-2 border-gray-200"
+                            />
+                          ) : (
+                            <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-xs font-bold">
+                              {reg.fighter_name?.charAt(0)}
+                              {reg.fighter_surname?.charAt(0)}
+                            </div>
+                          )}
                           <div>
                             <p className="text-sm font-medium text-gray-800">
                               {reg.fighter_name} {reg.fighter_surname}
