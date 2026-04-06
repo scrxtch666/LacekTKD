@@ -87,22 +87,6 @@ rounded-2xl
 Na Linuxu
 - http://localhost:8000/phpmyadmin/index.php
 
--- 1. Vytvoř tabulku event_photos pokud neexistuje
-CREATE TABLE IF NOT EXISTS `event_photos` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `event_id` int(11) NOT NULL,
-  `img_path` varchar(255) NOT NULL,
-  `sort_order` int(11) DEFAULT 0,
-  PRIMARY KEY (`id`),
-  KEY `event_id` (`event_id`),
-  CONSTRAINT `event_photos_ibfk_1` 
-    FOREIGN KEY (`event_id`) REFERENCES `event` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- 2. Zkontroluj zda tabulka existuje
-SHOW TABLES LIKE 'event_photos';
-
-Udělat to aby se aktualita nechala vytvořit z proběhlé akce, přenesou se závodníci, vyřešit fotografie, první - úvodní fotografie
 
 Backend
 - Routy
@@ -113,23 +97,15 @@ Backend
 Frontend - cd .\Frontend\ - npm run dev
 Backend - cd  .\Backend\ - node server.js
 
-# TASKS
-- udělat úspěchy pro závodníky
-- udělat detaily akcí, turnajů...
-- zprovoznit newsletter
-- v adminu to rozdělit na to co uživatel vidí a co ne
-- přihlášení na zkoušky a turnaje
-- upravit aktuality - search bar, řazení podle data
-- upravit zkoušky - rozložení, klíčové pojmy
-- karty pro turnaje
-- závodníci - předělat
-- vyřešit přihlášení na zkoušky ve veřejné části - píše mi to, že jsou přihlášky uzavřeny přitom je ještě čas na registraci
-
 # CO MUSÍM UDĚLAT
-- udělat error stránku, že něco nebylo nalezeno
-- když admin nastaví v administraci něco jako schované, tak to user neuvidí
-- prostě udělat to, aby user neviděl neveřejné věci
-- GDPR!!!!
+- správa aktualit - trenér nemůže
+- můj účet - když smažu narození, tak se tam dá aktuální datum - špatně
+- pořešit zkoušky
+- možná ještě turnaje - upravit tu kartu
+- když budu na detailu, tak chci, aby nahoře v headru bude hover active jakoby
+- upravit kartu závodníka a ty data někde jsem viděl
+- upravit ten detail, teď když kliknu na upravit, tak se mi otevře detail
+
 
 # DEBUGGING
 - klasickej scénář ... uživatel se přihlásí na profil a na turnaj, co se potom stane
@@ -142,3 +118,13 @@ Backend - cd  .\Backend\ - node server.js
 - něco o registraci
 - něco o kalendáři akcí 
 - přidávání úspěchů závodníkům - tohle musím spíš dopsat
+- upravit ty tabulky - mám jiné a tabulka subscriber_email nebude
+
+Možná vyjebat body u Definice webových stránek a u současných trendů
+
+Upravit obrázek u Tailwindu
+
+
+
+
+Upravit název TailWindCSS na správné

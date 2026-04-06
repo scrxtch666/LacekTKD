@@ -60,7 +60,7 @@ function AdminUsers() {
   const getRoleLabel = (role) => {
     switch (role) {
       case "admin":
-        return "správce";
+        return "administrátor";
       case "trainer":
         return "trenér";
       case "user":
@@ -82,7 +82,7 @@ function AdminUsers() {
         return {
           label: "Trenér",
           icon: <Users size={12} />,
-          className: "bg-blue-50 text-blue-6000",
+          className: "bg-blue-50 text-blue-600",
         };
       default:
         return {
@@ -255,7 +255,6 @@ function AdminUsers() {
     });
   };
 
-
   // Pomocná funkce – najde fightera přiřazeného k userovi
   const getFighterLabel = (fighter_id) => {
     const f = fighters.find((f) => f.id === fighter_id);
@@ -409,11 +408,17 @@ function AdminUsers() {
                   required
                 >
                   <option value="">-- Vyber roli --</option>
-                  {roles.map((role) => (
-                    <option key={role.id} value={role.id}>
-                      {role.role_name}
-                    </option>
-                  ))}
+                  {roles.map((role) => {
+                    let label = role.role_name;
+                    if (role.role_name === "user") label = "závodník";
+                    if (role.role_name === "trainer") label = "trenér";
+                    if (role.role_name === "admin") label = "administrátor";
+                    return (
+                      <option key={role.id} value={role.id}>
+                        {label}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
               <div>
@@ -579,11 +584,18 @@ function AdminUsers() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         <option value="">-- Vyber roli --</option>
-                        {roles.map((role) => (
-                          <option key={role.id} value={role.id}>
-                            {role.role_name}
-                          </option>
-                        ))}
+                        {roles.map((role) => {
+                          let label = role.role_name;
+                          if (role.role_name === "user") label = "závodník";
+                          if (role.role_name === "trainer") label = "trenér";
+                          if (role.role_name === "admin")
+                            label = "administrátor";
+                          return (
+                            <option key={role.id} value={role.id}>
+                              {label}
+                            </option>
+                          );
+                        })}
                       </select>
                     </div>
                     {/* --- FIGHTER SELECT --- */}

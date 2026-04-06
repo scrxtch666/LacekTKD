@@ -1,13 +1,5 @@
-import { useState, useEffect } from "react";
 function Info() {
-    const [count, setCount] = useState(null);
-  
-    useEffect(() => {
-      fetch("http://localhost:3000/api/fighters/countAll")
-          .then((res) => res.json())
-          .then((data) => setCount(data.count))
-          .catch((error) => console.error("Chyba při načítání:", error));
-  }, []);
+
   return (
     <>
       <div className="flex gap-5">
@@ -27,7 +19,6 @@ function Info() {
           </p>
           <p>
             Klub je otevřen všem zájemcům bez ohledu na věk, pohlaví či
-            
             národnost a nabízí tréninky v Pelhřimově a Humpolci.
           </p>
           <p>
@@ -50,36 +41,6 @@ function Info() {
             209 910 či e-mailu{" "}
             <a href="mailto:tkdlacek@gmail.com">tkdlacek@gmail.com</a>.
           </p>
-        </div>
-
-        <div className=" card w-1/3 flex flex-col justify-between">
-          <div className="flex flex-col justify-center items-center">
-            <img
-              className="bg-customGreen rounded-full p-2 border-2 border-customWhite"
-              src="../src/assets/Icons/world.png"
-              alt="Logo"
-            />
-            <p className="text-customGreen font-medium">36 navštívených zemí</p>
-          </div>
-
-          <div className="flex flex-col justify-center items-center">
-            <img
-              className="bg-customGreen rounded-full p-2 border-2 border-customWhite max-h-20 h-full"
-              src="../src/assets/Icons/trophy_w.png"
-              alt="Logo"
-            />
-            <p className="text-customGreen font-medium">
-              účast na 72 akcích ročně
-            </p>
-          </div>
-          <div className="flex flex-col justify-center items-center">
-            <img
-              className="bg-customGreen rounded-full p-2 border-2 border-customWhite"
-              src="../src/assets/Icons/fighters_w.png"
-              alt="Logo"
-            />
-            <p className="text-customGreen font-medium">{count !== null ? count : "Načítám..."} členů oddílu</p>
-          </div>
         </div>
       </div>
     </>

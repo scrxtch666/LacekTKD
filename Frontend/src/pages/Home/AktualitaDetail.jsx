@@ -1,6 +1,14 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { X, Images, Calendar, User, ArrowLeft, ZoomIn } from "lucide-react";
+import {
+  X,
+  Images,
+  Calendar,
+  User,
+  ArrowLeft,
+  ZoomIn,
+  Pencil,
+} from "lucide-react";
 
 const PhotoGallery = ({ photos }) => {
   const [lightbox, setLightbox] = useState(null);
@@ -42,7 +50,10 @@ const PhotoGallery = ({ photos }) => {
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center">
-              <ZoomIn size={24} className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <ZoomIn
+                size={24}
+                className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              />
             </div>
           </div>
         ))}
@@ -109,21 +120,22 @@ function AktualitaDetail() {
       .catch(() => setLoading(false));
   }, [id]);
 
-  if (loading) return (
-    <div className="flex items-center justify-center h-64 text-gray-400">
-      Načítám...
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="flex items-center justify-center h-64 text-gray-400">
+        Načítám...
+      </div>
+    );
 
-  if (!event) return (
-    <div className="flex items-center justify-center h-64 text-gray-400">
-      Aktualita nenalezena
-    </div>
-  );
+  if (!event)
+    return (
+      <div className="flex items-center justify-center h-64 text-gray-400">
+        Aktualita nenalezena
+      </div>
+    );
 
   return (
     <div className="max-w-4xl space-y-6">
-
       {/* Zpět */}
       <button
         onClick={() => navigate(-1)}
@@ -158,9 +170,14 @@ function AktualitaDetail() {
             {event.author && (
               <div className="flex items-center gap-1.5">
                 <User size={15} className="text-customGreen" />
-                <span>{event.author}</span>
+                <span>{event.author}</span> •
                 {event.created_at_formatted && (
-                  <span className="text-gray-400">· {event.created_at_formatted}</span>
+                  <div className="flex items-center gap-1.5">
+                    <Pencil size={10} className="text-gray-400" />
+                    <span className="text-gray-400 text-xs">
+                       {event.created_at_formatted}
+                    </span>
+                  </div>
                 )}
               </div>
             )}
@@ -182,14 +199,19 @@ function AktualitaDetail() {
             <h2 className="font-semibold text-gray-700">
               Fotogalerie
               <span className="text-gray-400 font-normal text-sm ml-2">
-                ({event.photos.length} {event.photos.length === 1 ? "fotka" : event.photos.length <= 4 ? "fotky" : "fotek"})
+                ({event.photos.length}{" "}
+                {event.photos.length === 1
+                  ? "fotka"
+                  : event.photos.length <= 4
+                    ? "fotky"
+                    : "fotek"}
+                )
               </span>
             </h2>
           </div>
           <PhotoGallery photos={event.photos} />
         </div>
       )}
-
     </div>
   );
 }

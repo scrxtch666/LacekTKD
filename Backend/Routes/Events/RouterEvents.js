@@ -64,6 +64,47 @@ router.get("/", (req, res) => {
         e.created_at
      FROM event e
      LEFT JOIN users u ON e.user_id = u.id
+     WHERE e.status = 'Availible'
+     ORDER BY e.id DESC`,
+    (err, events) => {
+      if (err)
+        return res.status(500).json({ error: "Chyba při načítání aktualit" });
+      if (!events.length) return res.json([]);
+
+      db.query(
+        "SELECT * FROM event_photos ORDER BY event_id, sort_order ASC",
+        (err2, photos) => {
+          if (err2)
+            return res.status(500).json({ error: "Chyba při načítání fotek" });
+
+          const result = events.map((event) => ({
+            ...event,
+            photos: photos.filter((p) => p.event_id === event.id),
+          }));
+
+          res.json(result);
+        },
+      );
+    },
+  );
+});
+
+// GET / - všechny aktuality včetně fotek
+router.get("/admin", verifyToken, (req, res) => {
+  db.query(
+    `SELECT 
+        e.id,
+        e.title,
+        e.body,
+        e.status,
+        e.photo AS cover_photo,
+        e.user_id,
+        u.login AS author,
+        DATE_FORMAT(e.date_start, '%d.%m.%Y') AS date_start,
+        e.date_start AS date_start_raw,
+        e.created_at
+     FROM event e
+     LEFT JOIN users u ON e.user_id = u.id
      ORDER BY e.id DESC`,
     (err, events) => {
       if (err)

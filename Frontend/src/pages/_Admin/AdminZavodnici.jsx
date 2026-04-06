@@ -27,7 +27,6 @@ function AdminZavodnici() {
   const [belts, setBelts] = useState([]);
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
-  
 
   // Filtry
   const [search, setSearch] = useState("");
@@ -527,7 +526,6 @@ function AdminZavodnici() {
           {filteredFighters.map((fighter) => (
             <div
               key={fighter.id}
-              onClick={() => navigate(`/zavodnik/${fighter.id}`)}
               className="bg-customWhite rounded-lg shadow-md hover:shadow-lg transition-shadow p-4"
             >
               {editingId === fighter.id ? (
@@ -543,6 +541,7 @@ function AdminZavodnici() {
                       <X size={20} />
                     </button>
                   </div>
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {[
                       ["Jméno *", "text", "name"],
@@ -721,7 +720,10 @@ function AdminZavodnici() {
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col sm:flex-row items-center gap-4">
+                <div
+                  onClick={() => navigate(`/zavodnik/${fighter.id}`)}
+                  className="flex flex-col sm:flex-row items-center gap-4"
+                >
                   <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-green-100 text-green-800 font-semibold flex-shrink-0">
                     {fighter.id}
                   </span>
@@ -790,14 +792,14 @@ function AdminZavodnici() {
                         <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 mt-1 justify-center sm:justify-start">
                           {fighter.user_email && (
                             <>
-                            <Mail size={14} />
-                            <span>{fighter.user_email}</span>
+                              <Mail size={14} />
+                              <span>{fighter.user_email}</span>
                             </>
                           )}
                           {fighter.user_phone && (
                             <>
-                            <Phone size={14} />
-                            <span>{fighter.user_phone}</span>
+                              <Phone size={14} />
+                              <span>{fighter.user_phone}</span>
                             </>
                           )}
                         </div>
@@ -805,14 +807,20 @@ function AdminZavodnici() {
                   </div>
                   <div className="flex gap-2">
                     <button
-                      onClick={() => startEdit(fighter)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        startEdit(fighter);
+                      }}
                       className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
                     >
                       <Pencil size={18} />
                       <span>Editovat</span>
                     </button>
                     <button
-                      onClick={() => handleDelete(fighter.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(fighter.id);
+                      }}
                       disabled={deleting === fighter.id}
                       className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors disabled:opacity-50"
                     >

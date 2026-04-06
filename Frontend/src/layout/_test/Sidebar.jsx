@@ -37,7 +37,7 @@ function SideBar() {
   const getRoleLabel = (role) => {
   switch (role) {
     case "admin":
-      return "správce";
+      return "administrátor";
       case "trainer":
       return "trenér";
     case "user":

@@ -318,47 +318,46 @@ router.put("/:id", upload.single("image"), (req, res) => {
 // DELETE /:id - smazani zavodnika
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
+  console.log("Požadavek na smazání ID:", id);
 
-  db.query(
-    "SELECT img_path FROM fighters WHERE id = ?",
-    [id],
-    (err, results) => {
-      if (err)
-        return res.status(500).json({ error: "Chyba pri hledani zavodnika" });
-      if (results.length === 0)
-        return res.status(404).json({ error: "Zavodnik nenalezen" });
+  db.query("SELECT img_path FROM fighters WHERE id = ?", [id], (err, results) => {
+    if (err) return res.status(500).json({ error: "Chyba v DB při hledání" });
+    if (results.length === 0) return res.status(404).json({ error: "Závodník v DB neexistuje" });
 
-      const imgPath = results[0].img_path;
+    const imgPath = results[0].img_path;
 
-      db.query(
-        "UPDATE users SET fighter_id = NULL WHERE fighter_id = ?",
-        [id],
-        (err2) => {
-          if (err2) console.error("Chyba pri odpojovani useru:", err2);
+    // 1. Odpojení uživatelů
+    db.query("UPDATE users SET fighter_id = NULL WHERE fighter_id = ?", [id], (err2) => {
+      if (err2) console.error("Chyba při odpojování uživatelů:", err2);
 
-          db.query("DELETE FROM fighters WHERE id = ?", [id], (err3) => {
-            if (err3)
-              return res
-                .status(500)
-                .json({ error: "Chyba pri mazani zavodnika" });
+      // 2. Samotné mazání
+      db.query("DELETE FROM fighters WHERE id = ?", [id], (err3) => {
+        if (err3) {
+          console.error("SQL CHYBA PŘI MAZÁNÍ:", err3); // TADY uvidíte chybu cizího klíče
+          return res.status(500).json({ error: "Nelze smazat závodníka (pravděpodobně je ještě někde připojen)", details: err3.message });
+        }
 
-            if (imgPath) {
-              const fullPath = path.join(
-                "C:\\LacekTKD\\Frontend\\public",
-                imgPath,
-              );
-              if (fs.existsSync(fullPath)) {
-                fs.unlinkSync(fullPath);
-                console.log("Soubor smazan:", fullPath);
-              }
+        // 3. Mazání souboru
+        if (imgPath) {
+          try {
+            const cleanPath = imgPath.replace(/^\//, ""); // odstraní / na začátku
+            const fullPath = path.join("C:\\LacekTKD\\Frontend\\public", cleanPath);
+            
+            if (fs.existsSync(fullPath)) {
+              fs.unlinkSync(fullPath);
+              console.log("Soubor úspěšně smazán:", fullPath);
+            } else {
+              console.warn("Soubor na disku neexistuje:", fullPath);
             }
+          } catch (fileErr) {
+            console.error("Chyba při mazání souboru z disku:", fileErr);
+          }
+        }
 
-            res.json({ success: true, message: "Zavodnik byl uspesne smazan" });
-          });
-        },
-      );
-    },
-  );
+        res.json({ success: true, message: "Závodník smazán" });
+      });
+    });
+  });
 });
 
 module.exports = router;

@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { ArrowLeft, Calendar, Users, Info, Star, Trophy } from "lucide-react";
 import { getUserRole } from "../../utils/auth";
+import NotFound from "../Login/NotFound";
 
 const API = "http://localhost:3000";
 
@@ -32,12 +33,7 @@ function FighterDetail() {
       </div>
     );
 
-  if (!fighter)
-    return (
-      <div className="flex items-center justify-center h-64 text-gray-400">
-        Závodník nebyl nalezen!
-      </div>
-    );
+ if (!fighter) return <NotFound />;
 
   return (
     <div className="max-w-4xl space-y-6">

@@ -14,7 +14,9 @@ router.get("/", async (req, res) => {
         role.role_name    AS role_name
      FROM users
      LEFT JOIN role     ON users.role_id   = role.id
-     LEFT JOIN fighters ON fighters.id     = users.fighter_id`,
+     LEFT JOIN fighters ON fighters.id     = users.fighter_id
+     WHERE status = 'approved'
+     `,
     (err, results) => {
       if (err)
         return res.status(500).json({ error: "Chyba při načítání uživatelů" });
@@ -46,7 +48,7 @@ router.get("/trainer", (req, res) => {
 
 // POST / - přidání uživatele (s volitelným fighter_id)
 router.post("/", async (req, res) => {
-  const { login, password, email, role_id, fighter_id } = req.body;
+  const { login, password, email, role_id, fighter_id, status } = req.body;
 
   if (!login || !password || !role_id) {
     return res
@@ -58,8 +60,8 @@ router.post("/", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     db.query(
-      `INSERT INTO users (login, password, email, role_id, fighter_id) VALUES (?, ?, ?, ?, ?)`,
-      [login, hashedPassword, email || null, role_id, fighter_id || null],
+      `INSERT INTO users (login, password, email, role_id, fighter_id, status) VALUES (?, ?, ?, ?, ?, ?)`,
+      [login, hashedPassword, email || null, role_id, fighter_id || null, 'approved'],
       (err, result) => {
         if (err) {
           console.error("Chyba při ukládání uživatele:", err);

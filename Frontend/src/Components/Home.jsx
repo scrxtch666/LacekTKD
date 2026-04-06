@@ -1,5 +1,4 @@
 import ShowcaseCarousel from "../pages/Home/ShowcaseCarousel";
-import Newsletter from "../pages/Home/Newsletter";
 import EventCardLatest from "../pages/Home/EventCardLatest";
 import Calendar from "../pages/Home/Calendar";
 
@@ -17,9 +16,6 @@ const Home = () => {
 
       <Calendar />
 
-      {/*
-      <Newsletter />
-       */}
     </>
   );
 };

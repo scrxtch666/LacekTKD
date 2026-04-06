@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Star, Trophy } from "lucide-react";
 
 const API = "http://localhost:3000";
 
@@ -106,25 +107,27 @@ function Fighter() {
         {/* Filtr Best */}
         <button
           onClick={() => setFilterBest(!filterBest)}
-          className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
+          className={`inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
             filterBest
               ? "bg-customGreen text-white border-customGreen"
-              : "bg-customWhite text-gray-600 border-gray-300"
+              : "bg-customWhite border-gray-300"
           }`}
         >
-          🏅 BEST
+          <Star size={11} />
+          Nejlepší
         </button>
 
         {/* Filtr Legend */}
         <button
           onClick={() => setFilterLegend(!filterLegend)}
-          className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
+          className={`inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
             filterLegend
               ? "bg-customGreen text-white border-customGreen"
-              : "bg-customWhite text-gray-600 border-gray-300"
+              : "bg-customWhite border-gray-300"
           }`}
         >
-          🏆 LEGEND
+          <Trophy size={11} />
+          Legenda
         </button>
 
         {/* Reset – zobrazí se jen když je něco aktivní */}

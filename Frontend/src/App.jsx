@@ -35,6 +35,8 @@ import AdminRequests from "./pages/_Admin/AdminRequests";
 import FighterDetail from "./pages/Zavodnici/FighterDetail";
 import AdminZkousky from "./pages/_Admin/AdminZkousky";
 import Gdpr from "./pages/Login/Gdpr";
+import NotFound from "./pages/Login/NotFound";
+import ScrollToTop from "./Components/ScrollToTop";
 
 function Layout() {
   const location = useLocation();
@@ -49,8 +51,9 @@ function Layout() {
 
         <main className="flex-1 p-8 lg:ml-64 w-full">
           <Routes>
+            <Route path="*" element={<NotFound />} />
             {/* Veřejné admin routy – jen přihlášený */}
-          
+
             <Route
               path="/admin/me"
               element={
@@ -69,7 +72,7 @@ function Layout() {
                 </ProtectedRoute>
               }
             />
-               <Route
+            <Route
               path="/admin/zkousky"
               element={
                 <ProtectedRoute allowedRoles={["admin", "trainer", "user"]}>
@@ -153,6 +156,7 @@ function Layout() {
     <>
       <Header />
       <Container>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/turnaje" element={<Turnaje />} />
@@ -168,6 +172,7 @@ function Layout() {
           <Route path="/turnaj/:id" element={<TurnajDetail />} />
           <Route path="/zavodnik/:id" element={<FighterDetail />} />
           <Route path="/gdpr" element={<Gdpr />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Container>
       <Footer />

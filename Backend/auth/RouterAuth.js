@@ -228,67 +228,71 @@ router.put("/me", verifyToken, async (req, res) => {
   const formattedPhone = formatCzechPhoneNumber(phone);
 
   try {
-    // Pokud chce měnit heslo
-    if (newPassword) {
-      // Načti aktuální hash hesla
-      db.query(
-        "SELECT password FROM users WHERE id = ?",
-        [req.user.id],
-        async (err, results) => {
-          if (err) return res.status(500).json({ error: "Chyba serveru" });
-
-          const isMatch = await bcrypt.compare(
-            currentPassword,
-            results[0].password,
-          );
-          if (!isMatch)
-            return res
-              .status(401)
-              .json({ error: "Stávající heslo je nesprávné" });
-
-          const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-          db.query(
-            `UPDATE users 
-           LEFT JOIN fighters ON fighters.id = users.fighter_id
-           SET fighters.name = ?, fighters.surname = ?, users.phone = ?, users.email = ?,
-               fighters.actual_weight_category = ?, fighters.birth = ?, users.password = ?
-           WHERE users.id = ?`,
-            [
-              name,
-              surname,
-              formattedPhone,
-              email,
-              actual_weight_category,
-              birth,
-              hashedPassword,
-              req.user.id,
-            ],
-            (err2) => {
-              if (err2)
-                return res.status(500).json({ error: "Chyba při ukládání" });
-              res.json({ success: true, message: "Profil byl upraven" });
-            },
-          );
-        },
-      );
+    // Validace dat narození
+    let birthDate = birth ? new Date(birth) : null;
+    const now = new Date();
+    const minAge = 3;
+    if (birthDate) {
+      const age = now.getFullYear() - birthDate.getFullYear();
+      const monthDiff = now.getMonth() - birthDate.getMonth();
+      const dayDiff = now.getDate() - birthDate.getDate();
+      const isTooYoung =
+        age < minAge || (age === minAge && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)));
+      if (birthDate > now) return res.status(400).json({ error: "Datum narození nemůže být v budoucnu." });
+      if (isTooYoung) return res.status(400).json({ error: `Uživatel musí být alespoň ${minAge} let starý.` });
     } else {
-      // Bez změny hesla
-      db.query(
-        `UPDATE users 
-         LEFT JOIN fighters ON fighters.id = users.fighter_id
-         SET fighters.name = ?, fighters.surname = ?, users.phone = ?, users.email = ?, 
-             fighters.actual_weight_category = ?,
-             fighters.birth = ?
-         WHERE users.id = ?`,
-        [name, surname, formattedPhone, email, actual_weight_category, birth, req.user.id],
-        (err) => {
-          if (err) return res.status(500).json({ error: "Chyba při ukládání" });
-          res.json({ success: true, message: "Profil byl upraven" });
-        },
-      );
+      birthDate = null; // pokud uživatel vymaže datum
     }
-  } catch {
+
+    // Načti aktuálního uživatele z DB
+    db.query(
+      "SELECT id, fighter_id, password FROM users WHERE id = ?",
+      [req.user.id],
+      async (err, results) => {
+        if (err) return res.status(500).json({ error: "Chyba serveru" });
+        if (!results.length) return res.status(404).json({ error: "Uživatel nenalezen" });
+
+        const user = results[0];
+        let hashedPassword = null;
+
+        // Pokud chce měnit heslo
+        if (newPassword) {
+          if (!currentPassword) return res.status(400).json({ error: "Zadejte stávající heslo." });
+
+          const isMatch = await bcrypt.compare(currentPassword, user.password);
+          if (!isMatch) return res.status(401).json({ error: "Stávající heslo je nesprávné" });
+
+          hashedPassword = await bcrypt.hash(newPassword, 10);
+        }
+
+        // Update tabulky users
+        db.query(
+          "UPDATE users SET phone = ?, email = ?" + (hashedPassword ? ", password = ?" : "") + " WHERE id = ?",
+          hashedPassword
+            ? [formattedPhone, email, hashedPassword, req.user.id]
+            : [formattedPhone, email, req.user.id],
+          (err2) => {
+            if (err2) return res.status(500).json({ error: "Chyba při ukládání uživatele" });
+
+            // Update tabulky fighters pokud existuje fighter_id
+            if (user.fighter_id) {
+              db.query(
+                "UPDATE fighters SET name = ?, surname = ?, actual_weight_category = ?, birth = ? WHERE id = ?",
+                [name, surname, actual_weight_category || null, birthDate, user.fighter_id],
+                (err3) => {
+                  if (err3) return res.status(500).json({ error: "Chyba při ukládání závodníka" });
+                  res.json({ success: true, message: "Profil byl upraven" });
+                }
+              );
+            } else {
+              // Uživateli neupdatujeme fighters
+              res.json({ success: true, message: "Profil byl upraven" });
+            }
+          }
+        );
+      }
+    );
+  } catch (error) {
     res.status(500).json({ error: "Interní chyba serveru" });
   }
 });

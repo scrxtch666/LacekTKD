@@ -22,7 +22,6 @@ function EventCard() {
 
   if (loading) return <div>Načítám data...</div>;
 
-  
   const periods = [
     ...new Set(
       news.map((event) => {
@@ -123,23 +122,32 @@ function EventCard() {
                 className="max-w-sm overflow-hidden bg-pink-50 rounded-2xl shadow-xl"
               >
                 <div className="relative">
-                  <img
-                    src={event.cover_photo}
-                    alt={event.title}
-                    className="w-full h-52 object-cover"
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent">
-                    <div className="px-4 py-3">
-                      <h2 className="text-xl font-bold text-white tracking-wide">
-                        {event.title}
-                      </h2>
+                  {event.cover_photo ? (
+                    <img
+                      src={event.cover_photo}
+                      alt={event.title}
+                      className="w-full h-52 object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-52 bg-customGreen flex items-center justify-center text-white text-2xl font-bold">
+                      {event.title}
                     </div>
+                  )}
+
+                  {/* Event Title Overlay */}
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent">
+                    <div className="px-4 py-3"></div>
                   </div>
                 </div>
+
+                {/* Date Container */}
                 <div className="px-4 py-2 bg-customWhite">
-                  <span className="text-customGreen text-sm font-medium">
-                    {event.date_start}
-                  </span>
+                  <div className="">
+                    <span className="text-customGreen text-sm font-medium flex justify-between gap-5">
+                      <p className="text-customBlack">{event.title}</p>
+                      <p>{event.date_start}</p>
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}
