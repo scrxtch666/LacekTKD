@@ -4,12 +4,14 @@ import LogInButton from "../Components/LogInButton";
 import LogoutButton from "../Components/LogoutButton";
 import { useState, useEffect } from "react";
 import { authService } from "../utils/auth";
+import { useLocation } from "react-router-dom";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -140,23 +142,30 @@ function Header() {
             {[
               { to: "/", text: "Domu" },
               { to: "/nas-oddil", text: "Náš oddíl" },
-              { to: "/aktuality", text: "Aktuality" },
+              { to: "/aktuality", text: "Aktuality", match: ["/aktualita"] },
               { to: "/zkousky", text: "Zkoušky" },
-              { to: "/turnaje", text: "Turnaje" },
-              { to: "/zavodnici", text: "Závodníci" },
+              { to: "/turnaje", text: "Turnaje", match: ["/turnaj"] },
+              { to: "/zavodnici", text: "Závodníci", match: ["/zavodnik"] },
               { to: "/kontakt", text: "Kontakt" },
             ].map((item) => (
               <li key={item.to} className="p-1">
                 <NavLink
                   to={item.to}
                   onClick={toggleMenu}
-                  className={({ isActive }) =>
-                    `block py-2 px-3 rounded lg:p-0 transition-all duration-200 ${
+                  className={() => {
+                    const isActive = item.match
+                      ? item.match.some((path) =>
+                          location.pathname.startsWith(path),
+                        )
+                      : location.pathname === item.to ||
+                        location.pathname.startsWith(item.to + "/");
+
+                    return `block py-2 px-3 rounded lg:p-0 transition-all duration-200 ${
                       isActive
                         ? "underline underline-offset-8 decoration-2 decoration-customBlack font-bold"
                         : "hover:underline underline-offset-4 decoration-2"
-                    }`
-                  }
+                    }`;
+                  }}
                 >
                   {item.text}
                 </NavLink>

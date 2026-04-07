@@ -344,6 +344,7 @@ router.get("/:id", (req, res) => {
 
   db.query(
     `SELECT tournament.*, type.name AS type_name,
+    DATE_FORMAT(tournament.registrable_date, '%d.%m.%Y') AS registrable_date_formatted,
         tournament.start_date AS start_date_raw,
         tournament.end_date AS end_date_raw
      FROM tournament

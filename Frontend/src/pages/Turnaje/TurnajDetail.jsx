@@ -11,6 +11,7 @@ import {
   Info,
   ArrowLeft,
   Users,
+  CalendarOff,
 } from "lucide-react";
 
 const API = "http://localhost:3000";
@@ -83,6 +84,17 @@ function TurnajDetail() {
     }
   };
 
+  const getColorClass = (date) => {
+    const today = new Date();
+    const target = new Date(date);
+
+    const diffTime = target - today;
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+    if (diffDays < 0) return "text-red-600"; // po uzávěrce
+    if (diffDays <= 3) return "text-orange-500"; // 3 dny před
+    return "text-green-600"; // více než 3 dny
+  };
   const fetchRegistrations = () => {
     const token = localStorage.getItem("token");
 
@@ -203,10 +215,15 @@ function TurnajDetail() {
               </div>
             )}
             {tournament.registrable_date && (
-              <div className="flex items-center gap-2 text-orange-600">
-                <Calendar size={16} className="flex-shrink-0" />
-                <span>Uzávěrka: {formatDate(tournament.registrable_date)}</span>
-              </div>
+              <span
+                className={`flex items-center gap-1 ${getColorClass(
+                  tournament.registrable_date,
+                )}`}
+              >
+                <CalendarOff size={16} />
+                <span>Registrace do:</span>
+                <span>{tournament.registrable_date_formatted}</span>
+              </span>
             )}
           </div>
 

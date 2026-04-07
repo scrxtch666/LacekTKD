@@ -75,9 +75,6 @@ Backend - cd  .\Backend\ - node server.js
 ---------------------------------------------------------------------------
 # CO MUSÍM UDĚLAT
 - upravit responzivitu v adminu - hlavně sidebar
-- možná ještě turnaje - upravit tu kartu
-- když budu na detailu, tak chci, aby nahoře v headru bude hover active jakoby
-- upravit kartu závodníka a ty data někde jsem viděl
 - u turnajů mít ty proběhlé
 - podívat se na filtry turnajů - kolik jich to vypisuje a tak
 - když jsem v responzivním designu, tak mi tam chybí možnost přejít do mého účtu

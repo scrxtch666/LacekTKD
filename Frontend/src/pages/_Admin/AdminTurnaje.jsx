@@ -550,6 +550,18 @@ function AdminTurnaje() {
     }
   };
 
+  const getColorClass = (date) => {
+    const today = new Date();
+    const target = new Date(date);
+
+    const diffTime = target - today;
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+    if (diffDays < 0) return "text-red-600"; // po uzávěrce
+    if (diffDays <= 3) return "text-orange-500"; // 3 dny před
+    return "text-green-600"; // více než 3 dny
+  };
+
   const formatDate = (dateStr) =>
     dateStr ? new Date(dateStr).toLocaleDateString("cs-CZ") : "—";
 
@@ -824,7 +836,11 @@ function AdminTurnaje() {
                           </span>
                         )}
                         <>
-                          <span className="flex items-center gap-1 text-orange-700">
+                          <span
+                            className={`flex items-center gap-1 ${getColorClass(
+                              tournament.registrable_date_raw,
+                            )}`}
+                          >
                             <CalendarOff size={13} />
                             <span>registrace do:</span>
                             <span>{tournament.registrable_date_formatted}</span>
