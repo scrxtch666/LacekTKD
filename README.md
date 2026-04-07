@@ -75,9 +75,7 @@ Backend - cd  .\Backend\ - node server.js
 ---------------------------------------------------------------------------
 # CO MUSÍM UDĚLAT
 - upravit responzivitu v adminu - hlavně sidebar
-- u turnajů mít ty proběhlé
 - podívat se na filtry turnajů - kolik jich to vypisuje a tak
-- když jsem v responzivním designu, tak mi tam chybí možnost přejít do mého účtu
 
 # TEXTOVÁ ČÁST POZNÁMKY
 ---------------------------------------------------------------------------

@@ -81,37 +81,45 @@ function Header() {
           <Nabor />
         </div>
 
-        <div className="flex lg:order-2 space-x-3 lg:space-x-0 rtl:space-x-reverse items-center gap-3">
+        <div className="flex lg:order-2 space-x-3 lg:space-x-0 rtl:space-x-reverse items-center gap-2">
           {!loading && (
             <>
               {user ? (
-                <>
+                <div className="flex items-center gap-3">
+                  {/* Uživatelské jméno - viditelné VŽDY (na mobilu i desktopu) */}
                   <Link
                     to="/admin/me"
-                    className="text-sm font-medium hidden lg:block hover:underline transition-colors"
+                    className="flex items-center gap-2 text-sm font-medium hover:underline decoration-customGreen lg:rounded-none"
                   >
-                    {user.login}
+                    {/* Na mobilu můžeš přidat ikonku uživatele z lucide-react pro lepší vzhled */}
+                    <span className="max-w-[100px] truncate bg-green-50 text-customGreen border border-green-200 gap-1.5 px-3 py-1 rounded-2xl">
+                      {user.login}
+                    </span>
                   </Link>
-                  <LogoutButton onLogout={() => setUser(null)} />
-                </>
+
+                  {/* Logout button - na mobilu ho můžeš nechat, nebo ho schovat do menu */}
+                  <div className="hidden sm:block">
+                    <LogoutButton onLogout={() => setUser(null)} />
+                  </div>
+                </div>
               ) : (
                 <LogInButton onLogin={() => window.location.reload()} />
               )}
             </>
           )}
 
+          {/* Hamburger menu tlačítko */}
           <button
             onClick={toggleMenu}
             type="button"
-            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-customBlack rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customGreen ml-2"
+            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-customBlack rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-customGreen ml-1"
             aria-controls="navbar-sticky"
             aria-expanded={isMenuOpen}
           >
-            <span className="sr-only">Otevřít menu</span>
+            {/* ... tvoje SVG ... */}
             <svg
               className="w-5 h-5"
               aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 17 14"
             >
@@ -142,10 +150,22 @@ function Header() {
             {[
               { to: "/", text: "Domu" },
               { to: "/nas-oddil", text: "Náš oddíl" },
-              { to: "/aktuality", text: "Aktuality", match: ["/aktualita", "/aktuality"] },
+              {
+                to: "/aktuality",
+                text: "Aktuality",
+                match: ["/aktualita", "/aktuality"],
+              },
               { to: "/zkousky", text: "Zkoušky" },
-              { to: "/turnaje", text: "Turnaje", match: ["/turnaj", "/turnaje"] },
-              { to: "/zavodnici", text: "Závodníci", match: ["/zavodnik", "/zavodnici"] },
+              {
+                to: "/turnaje",
+                text: "Turnaje",
+                match: ["/turnaj", "/turnaje"],
+              },
+              {
+                to: "/zavodnici",
+                text: "Závodníci",
+                match: ["/zavodnik", "/zavodnici"],
+              },
               { to: "/kontakt", text: "Kontakt" },
             ].map((item) => (
               <li key={item.to} className="p-1">
