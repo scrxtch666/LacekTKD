@@ -41,7 +41,7 @@ function SideBar() {
       case "trainer":
       return "trenér";
     case "user":
-      return "uživatel";
+      return "závodník";
     default:
       return role || "";
   }

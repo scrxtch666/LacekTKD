@@ -29,18 +29,18 @@ function Fighter() {
   const [filterLegend, setFilterLegend] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetch(`${API}/api/fighters`)
-      .then((response) => response.json())
-      .then((data) => {
-        setFighters(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Chyba při načítání dat:", error);
-        setLoading(false);
-      });
-  }, []);
+useEffect(() => {
+  fetch(`${API}/api/fighters`) // ✅ PUBLIC endpoint
+    .then((response) => response.json())
+    .then((data) => {
+      setFighters(Array.isArray(data) ? data : []);
+      setLoading(false);
+    })
+    .catch((error) => {
+      console.error("Chyba při načítání dat:", error);
+      setLoading(false);
+    });
+}, []);
 
   if (loading) return <div>Načítám data...</div>;
 

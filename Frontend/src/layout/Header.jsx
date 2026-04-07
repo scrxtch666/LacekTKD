@@ -142,10 +142,10 @@ function Header() {
             {[
               { to: "/", text: "Domu" },
               { to: "/nas-oddil", text: "Náš oddíl" },
-              { to: "/aktuality", text: "Aktuality", match: ["/aktualita"] },
+              { to: "/aktuality", text: "Aktuality", match: ["/aktualita", "/aktuality"] },
               { to: "/zkousky", text: "Zkoušky" },
-              { to: "/turnaje", text: "Turnaje", match: ["/turnaj"] },
-              { to: "/zavodnici", text: "Závodníci", match: ["/zavodnik"] },
+              { to: "/turnaje", text: "Turnaje", match: ["/turnaj", "/turnaje"] },
+              { to: "/zavodnici", text: "Závodníci", match: ["/zavodnik", "/zavodnici"] },
               { to: "/kontakt", text: "Kontakt" },
             ].map((item) => (
               <li key={item.to} className="p-1">

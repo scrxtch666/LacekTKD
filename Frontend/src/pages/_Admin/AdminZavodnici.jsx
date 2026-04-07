@@ -17,8 +17,13 @@ import {
   Mail,
   Phone,
 } from "lucide-react";
+import { getUserRole } from "../../utils/auth";
 
 const API = "http://localhost:3000";
+const authHeader = () => ({
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+});
+
 
 function AdminZavodnici() {
   const [fighters, setFighters] = useState([]);
@@ -32,7 +37,7 @@ function AdminZavodnici() {
   const [search, setSearch] = useState("");
   const [filterBest, setFilterBest] = useState(false);
   const [filterLegend, setFilterLegend] = useState(false);
-  const [filterAccount, setFilterAccount] = useState(""); // "assigned" | "unassigned" | ""
+  const [filterAccount, setFilterAccount] = useState("");
 
   // Přidání
   const [showAddForm, setShowAddForm] = useState(false);
@@ -65,18 +70,25 @@ function AdminZavodnici() {
     fetchCategories();
   }, []);
 
-  const fetchFighters = () => {
-    fetch(`${API}/api/fighters`)
-      .then((res) => res.json())
-      .then((data) => {
-        setFighters(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch(() => {
-        setFighters([]);
-        setLoading(false);
-      });
-  };
+const fetchFighters = () => {
+  const role = getUserRole();
+
+  const url =
+    role === "admin" || role === "trainer"
+      ? `${API}/api/fighters/admin`
+      : `${API}/api/fighters`;
+
+  fetch(url)
+    .then((res) => res.json())
+    .then((data) => {
+      setFighters(Array.isArray(data) ? data : []);
+      setLoading(false);
+    })
+    .catch(() => {
+      setFighters([]);
+      setLoading(false);
+    });
+};
 
   const fetchBelts = () => {
     fetch(`${API}/api/belts`)

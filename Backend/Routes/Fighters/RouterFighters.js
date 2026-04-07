@@ -1,3 +1,4 @@
+const { verifyToken, isAdmin, isAdminOrTrainer } = require("../../auth/auth");
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
@@ -47,7 +48,9 @@ router.get("/", async (req, res) => {
         users.email AS user_email, users.phone AS user_phone
      FROM fighters
      JOIN belts ON fighters.belts_id = belts.id
-     LEFT JOIN users ON users.fighter_id = fighters.id`,
+     LEFT JOIN users ON users.fighter_id = fighters.id
+     WHERE fighters.active = 1
+     `,
     (err, fighters) => {
       if (err) return res.status(500).json({ error: "Chyba" });
 
@@ -67,6 +70,52 @@ router.get("/", async (req, res) => {
           if (err2) return res.status(500).json({ error: "Chyba" });
 
           // Spoj v JavaScriptu
+          const parsed = fighters.map((fighter) => ({
+            ...fighter,
+            tournament_results: results
+              .filter((r) => r.fighter_id === fighter.id)
+              .slice(0, 3),
+          }));
+
+          res.json(parsed);
+        },
+      );
+    },
+  );
+});
+
+// GET /admin - výpis závodníků pro admin/trenéra
+router.get("/admin", (req, res) => {
+  console.log("Middleware prošly, jsem v routě!");
+  db.query(
+    `SELECT 
+        fighters.id, fighters.img_path, fighters.name, fighters.surname,
+        fighters.birth, fighters.best, fighters.legend, fighters.active,
+        fighters.actual_weight_category, fighters.belts_id, fighters.category_id,
+        TIMESTAMPDIFF(YEAR, fighters.birth, CURDATE()) AS age,
+        belts.cup, belts.img_path AS belt_path,
+        users.id AS user_id, users.login AS user_login,
+        users.email AS user_email, users.phone AS user_phone
+     FROM fighters
+     JOIN belts ON fighters.belts_id = belts.id
+     LEFT JOIN users ON users.fighter_id = fighters.id`,
+    (err, fighters) => {
+      if (err) return res.status(500).json({ error: "Chyba" });
+
+      db.query(
+        `SELECT 
+            tr.tournament_id,
+            tr.fighter_id,
+            tr.place,
+            t.name AS tournament,
+            DATE_FORMAT(t.start_date, '%d.%m.%Y') AS date
+         FROM tournament_registration tr
+         JOIN tournament t ON t.id = tr.tournament_id
+         WHERE tr.place IS NOT NULL
+         ORDER BY t.start_date DESC`,
+        (err2, results) => {
+          if (err2) return res.status(500).json({ error: "Chyba" });
+
           const parsed = fighters.map((fighter) => ({
             ...fighter,
             tournament_results: results
@@ -315,49 +364,57 @@ router.put("/:id", upload.single("image"), (req, res) => {
   }
 });
 
-// DELETE /:id - smazani zavodnika
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
-  console.log("Požadavek na smazání ID:", id);
 
-  db.query("SELECT img_path FROM fighters WHERE id = ?", [id], (err, results) => {
-    if (err) return res.status(500).json({ error: "Chyba v DB při hledání" });
-    if (results.length === 0) return res.status(404).json({ error: "Závodník v DB neexistuje" });
+  db.query(
+    "DELETE FROM tournament_registration WHERE fighter_id = ?",
+    [id],
+    (err) => {
+      if (err)
+        return res.status(500).json({ error: "Chyba při mazání registrací" });
 
-    const imgPath = results[0].img_path;
+      // 2. Odpojit uživatele
+      db.query(
+        "UPDATE users SET fighter_id = NULL WHERE fighter_id = ?",
+        [id],
+        (err2) => {
+          // 3. Získat cestu k obrázku, abychom ho mohli smazat z disku
+          db.query(
+            "SELECT img_path FROM fighters WHERE id = ?",
+            [id],
+            (err3, results) => {
+              if (results.length > 0) {
+                const imgPath = results[0].img_path;
 
-    // 1. Odpojení uživatelů
-    db.query("UPDATE users SET fighter_id = NULL WHERE fighter_id = ?", [id], (err2) => {
-      if (err2) console.error("Chyba při odpojování uživatelů:", err2);
+                // 4. Smazat samotného závodníka
+                db.query("DELETE FROM fighters WHERE id = ?", [id], (err4) => {
+                  if (err4)
+                    return res
+                      .status(500)
+                      .json({ error: "Chyba při mazání závodníka" });
 
-      // 2. Samotné mazání
-      db.query("DELETE FROM fighters WHERE id = ?", [id], (err3) => {
-        if (err3) {
-          console.error("SQL CHYBA PŘI MAZÁNÍ:", err3); // TADY uvidíte chybu cizího klíče
-          return res.status(500).json({ error: "Nelze smazat závodníka (pravděpodobně je ještě někde připojen)", details: err3.message });
-        }
-
-        // 3. Mazání souboru
-        if (imgPath) {
-          try {
-            const cleanPath = imgPath.replace(/^\//, ""); // odstraní / na začátku
-            const fullPath = path.join("C:\\LacekTKD\\Frontend\\public", cleanPath);
-            
-            if (fs.existsSync(fullPath)) {
-              fs.unlinkSync(fullPath);
-              console.log("Soubor úspěšně smazán:", fullPath);
-            } else {
-              console.warn("Soubor na disku neexistuje:", fullPath);
-            }
-          } catch (fileErr) {
-            console.error("Chyba při mazání souboru z disku:", fileErr);
-          }
-        }
-
-        res.json({ success: true, message: "Závodník smazán" });
-      });
-    });
-  });
+                  // 5. Smazat soubor
+                  if (imgPath) {
+                    const fullPath = path.join(
+                      __dirname,
+                      "../../public",
+                      imgPath,
+                    ); // Opravená cesta
+                    if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
+                  }
+                  res.json({
+                    success: true,
+                    message: "Smazáno vše včetně vazeb",
+                  });
+                });
+              }
+            },
+          );
+        },
+      );
+    },
+  );
 });
 
 module.exports = router;

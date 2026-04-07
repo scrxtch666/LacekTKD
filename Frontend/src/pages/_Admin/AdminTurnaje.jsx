@@ -680,14 +680,14 @@ function AdminTurnaje() {
         )}
         <button
           onClick={() => setFilterActual(!filterActual)}
-          className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${filterActual ? "bg-customGreen text-white border-customGreen" : "bg-customWhite text-gray-600 border-gray-300"}`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${filterActual ? "bg-customGreen text-white border-customGreen" : "bg-customWhite border-gray-300"}`}
         >
           Aktuální
         </button>
 
         <button
           onClick={() => setFilterOld(!filterOld)}
-          className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${filterOld ? "bg-customGreen text-white border-customGreen" : "bg-customWhite text-gray-600 border-gray-300"}`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${filterOld ? "bg-customGreen text-white border-customGreen" : "bg-customWhite border-gray-300"}`}
         >
           Staré
         </button>

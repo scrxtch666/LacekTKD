@@ -33,7 +33,7 @@ function FighterDetail() {
       </div>
     );
 
- if (!fighter) return <NotFound />;
+  if (!fighter) return <NotFound />;
 
   return (
     <div className="max-w-4xl space-y-6">
@@ -48,11 +48,18 @@ function FighterDetail() {
       {/* Hlavní karta */}
       <div className="bg-customWhite rounded-2xl shadow-md overflow-hidden p-6 flex gap-6 relative">
         {/* Obrázek */}
-        <img
-          src={fighter.img_path}
-          alt={fighter.name}
-          className="w-40 h-40 object-cover rounded-xl"
-        />
+
+        {fighter.img_path ? (
+          <img
+            src={fighter.img_path}
+            alt={fighter.name}
+            className="w-40 h-40 object-cover rounded-xl"
+          />
+        ) : (
+          <div className="w-40 h-40 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white text-2xl font-bold">
+            {fighter.name?.charAt(0).toUpperCase() || "Z"}
+          </div>
+        )}
 
         {/* Info */}
         <div className="flex flex-col justify-between">
@@ -94,15 +101,18 @@ function FighterDetail() {
               fighter.age && (
                 <p className="text-gray-500">Věk: {fighter.age} let</p>
               )}
-              {fighter.actual_weight_category && (
-            <p className="text-gray-500">
-              Váhová kategorie: {fighter.actual_weight_category} kg
-            </p>
+            {fighter.actual_weight_category && (
+              <p className="text-gray-500">
+                Váhová kategorie: {fighter.actual_weight_category} kg
+              </p>
             )}
             {fighter.category_name && (
-            <p className="text-gray-500">
-              Věková kategorie: {fighter.category_name} <span className="text-xs">({fighter.min} - {fighter.max})</span>
-            </p>
+              <p className="text-gray-500">
+                Věková kategorie: {fighter.category_name}{" "}
+                <span className="text-xs">
+                  ({fighter.min} - {fighter.max})
+                </span>
+              </p>
             )}
             {(userRole === "admin" || userRole === "trainer") && (
               <>

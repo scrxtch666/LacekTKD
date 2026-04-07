@@ -13,8 +13,6 @@ function Zkousky() {
 
       <Cenik onSelectBelt={setSelectedBelt} />
 
-      <div className="devider">Sestavy</div>
-
       {selectedBelt && (
         <div className="flex flex-col lg:flex-row gap-5">
           <Video belt={selectedBelt} />
