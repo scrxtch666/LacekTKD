@@ -99,7 +99,7 @@ function Turnaj() {
           {event.price !== undefined && event.price !== null && (
             <div className="flex items-center gap-2 min-w-0">
               <Euro size={15} className="text-customGreen flex-shrink-0" />
-              <span className="truncate">Startovné: {event.price} €</span>
+              <span className="truncate">Startovné: {event.price} Kč</span>
             </div>
           )}
           {(event.start_date_formatted || event.end_date_formatted) && (

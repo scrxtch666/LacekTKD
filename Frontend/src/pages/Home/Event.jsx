@@ -48,7 +48,7 @@ function Event() {
                 <p className="flex gap-1 items-center">
                   <img src="../src/assets/Icons/Price.png" alt="" className="h-5" />
                   <span className="text-customGreen font-bold">Startovné: </span>
-                  {event.price}€
+                  {event.price}Kč
                 </p>
                 <p className="flex gap-1 items-center">
                   <img src="../src/assets/Icons/Type.png" alt="" className="h-5" />

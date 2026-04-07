@@ -63,7 +63,7 @@ function ActualEvent() {
                   <span className="text-customGreen font-bold">
                     Startovné:{" "}
                   </span>
-                  {tournament.price}€
+                  {tournament.price}Kč
                 </p>
                 <p className="flex gap-1 items-center">
                   <img

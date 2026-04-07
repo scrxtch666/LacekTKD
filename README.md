@@ -74,8 +74,11 @@ Backend - cd  .\Backend\ - node server.js
 # PRAKTICKÁ ČÁST
 ---------------------------------------------------------------------------
 # CO MUSÍM UDĚLAT
-- upravit responzivitu v adminu - hlavně sidebar
+- prohlížení fotek u aktualit - je tam nějaký ten padding
+- přihlášení uživatele na zkoušku a turnaj
+- zase mi nefunugje filtr na skrytí - uživatel vidí i skryté
 - podívat se na filtry turnajů - kolik jich to vypisuje a tak
+- když přidávám turnaj, tak je defaultní stav skrytý
 
 # TEXTOVÁ ČÁST POZNÁMKY
 ---------------------------------------------------------------------------

@@ -41,7 +41,7 @@ function CalendarTournament({ tournaments }) {
                 <p className="flex gap-2 items-center">
                   <img src="../src/assets/Icons/Price.png" alt="" className="h-5" />
                   <span className="text-customGreen font-bold">Startovné:</span>
-                  {tournament.price}€
+                  {tournament.price}Kč
                 </p>
                 <p className="flex gap-2 items-center">
                   <img src="../src/assets/Icons/Type.png" alt="" className="h-5" />

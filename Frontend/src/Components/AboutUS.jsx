@@ -8,9 +8,6 @@ function AboutUs() {
       <Info />
       
         <History />
-       
-     
-      <Review />
     </>
   );
 }

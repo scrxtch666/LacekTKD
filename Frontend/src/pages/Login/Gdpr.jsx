@@ -12,7 +12,7 @@ import {
 
 function Gdpr() {
   return (
-    <div className="max-w-4xl mx-auto space-y-6 pb-10">
+    <div className="mx-auto space-y-6 pb-10">
       <div className="devider">Ochrana osobních údajů (GDPR)</div>
 
       <div className="bg-customWhite rounded-2xl shadow-md p-6 space-y-4">

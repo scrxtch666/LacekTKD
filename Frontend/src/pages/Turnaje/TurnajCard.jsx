@@ -40,7 +40,7 @@ function TurnajCard({ tournament }) {
           {price !== undefined && price !== null && (
             <div className="flex items-center gap-2 min-w-0">
               <Euro size={15} className="text-customGreen flex-shrink-0" />
-              <span className="truncate">Startovné: {price} €</span>
+              <span className="truncate">Startovné: {price} Kč</span>
             </div>
           )}
           {(start_date_formatted || end_date_formatted) && (
