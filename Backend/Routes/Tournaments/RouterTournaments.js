@@ -160,7 +160,9 @@ router.get("/calendar", (req, res) => {
   const isAdminOrTrainer = userRole === "admin" || userRole === "trainer";
 
   // Admin/trainer vidí vše, ostatní pouze completed
-  let whereClause = isAdminOrTrainer ? "WHERE 1=1" : "WHERE tournament.status = 'completed'";
+  let whereClause = isAdminOrTrainer
+    ? "WHERE 1=1"
+    : "WHERE tournament.status = 'completed'";
   let params = [];
 
   if (month) {
@@ -196,9 +198,10 @@ router.get("/calendar", (req, res) => {
      ORDER BY tournament.start_date ASC`,
     params,
     (err, results) => {
-      if (err) return res.status(500).json({ error: "Chyba při načítání turnajů" });
+      if (err)
+        return res.status(500).json({ error: "Chyba při načítání turnajů" });
       res.json(results);
-    }
+    },
   );
 });
 
@@ -206,24 +209,33 @@ router.get("/calendar", (req, res) => {
 router.get("/", (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   let userId = null;
+  let userRole = "guest";
+
   if (token) {
     try {
       const payload = jwt.verify(token, SECRET_KEY);
       userId = payload.id;
-      console.log("✅ Token OK, userId:", userId); // ← přidej
+      userRole = payload.role || "guest";
+      console.log("✅ Token OK, userId:", userId, "role:", userRole);
     } catch (err) {
-      console.log("❌ Token error:", err.message); // ← přidej
+      console.log("❌ Token error:", err.message);
     }
   } else {
-    console.log("⚠️ Žádný token"); // ← přidej
+    console.log("⚠️ Žádný token");
   }
+
+  const isAdminOrTrainer = userRole === "admin" || userRole === "trainer";
 
   const isRegisteredSQL = userId
     ? `(SELECT COUNT(*) FROM tournament_registration tr 
-     WHERE tr.tournament_id = tournament.id 
-     AND tr.fighter_id = (SELECT fighter_id FROM users WHERE id = ${db.escape(userId)})
-    ) AS is_registered`
+        WHERE tr.tournament_id = tournament.id 
+        AND tr.fighter_id = (SELECT fighter_id FROM users WHERE id = ${db.escape(userId)})) AS is_registered`
     : `0 AS is_registered`;
+
+  // Přidej status filtr pro běžné uživatele
+  const whereClause = isAdminOrTrainer
+    ? ""
+    : "WHERE tournament.status = 'completed'";
 
   db.query(
     `SELECT
@@ -245,6 +257,7 @@ router.get("/", (req, res) => {
         ${isRegisteredSQL}
      FROM tournament
      LEFT JOIN type ON tournament.type_id = type.id
+     ${whereClause}
      ORDER BY tournament.start_date DESC`,
     (err, results) => {
       if (err)
@@ -307,6 +320,26 @@ router.put("/:id/status", verifyToken, (req, res) => {
 
 // GET /latest – poslední turnaj
 router.get("/latest", (req, res) => {
+  const token = req.headers["authorization"]?.split(" ")[1];
+  let userRole = "guest";
+
+  if (token) {
+    try {
+      const payload = jwt.verify(token, SECRET_KEY);
+      userRole = payload.role || "guest";
+      console.log("✅ Token OK, role:", userRole);
+    } catch (err) {
+      console.log("❌ Token error:", err.message);
+    }
+  }
+
+  const isAdminOrTrainer = userRole === "admin" || userRole === "trainer";
+
+  // Filtrujeme podle statusu pro veřejnou část
+  const whereClause = isAdminOrTrainer
+    ? ""
+    : "WHERE tournament.status = 'completed'";
+
   db.query(
     `SELECT
         tournament.id,
@@ -320,7 +353,8 @@ router.get("/latest", (req, res) => {
         DATE_FORMAT(tournament.end_date, '%d.%m.%Y') AS end_date
      FROM tournament
      LEFT JOIN type ON tournament.type_id = type.id
-     ORDER BY tournament.id DESC
+     ${whereClause}
+     ORDER BY tournament.start_date DESC
      LIMIT 1`,
     (err, results) => {
       if (err)
@@ -529,27 +563,46 @@ router.post("/:id/register", verifyToken, (req, res) => {
       if (err || !results.length)
         return res.status(400).json({ error: "Uživatel nenalezen" });
 
-      const { fighter_id, name, surname, birth, actual_weight_category } = results[0];
+      const { fighter_id, name, surname, birth, actual_weight_category } =
+        results[0];
 
       if (!fighter_id)
-        return res.status(400).json({ error: "Nemáš přiřazeného závodníka. Kontaktuj trenéra." });
+        return res
+          .status(400)
+          .json({ error: "Nemáš přiřazeného závodníka. Kontaktuj trenéra." });
       if (!name || !surname)
-        return res.status(400).json({ error: "Závodník nemá vyplněné jméno a příjmení. Kontaktuj trenéra." });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Závodník nemá vyplněné jméno a příjmení. Kontaktuj trenéra.",
+          });
       if (!birth || birth.toString().startsWith("0000"))
-        return res.status(400).json({ error: "Závodník nemá vyplněné datum narození. Kontaktuj trenéra." });
+        return res
+          .status(400)
+          .json({
+            error: "Závodník nemá vyplněné datum narození. Kontaktuj trenéra.",
+          });
       if (!actual_weight_category)
-        return res.status(400).json({ error: "Závodník nemá vyplněnou váhovou kategorii. Kontaktuj trenéra nebo ji doplň v profilu." });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Závodník nemá vyplněnou váhovou kategorii. Kontaktuj trenéra nebo ji doplň v profilu.",
+          });
 
       db.query(
         "INSERT INTO tournament_registration (tournament_id, fighter_id) VALUES (?, ?)",
         [req.params.id, fighter_id],
         (err2) => {
           if (err2)
-            return res.status(500).json({ error: "Chyba při přihlašování na turnaj" });
+            return res
+              .status(500)
+              .json({ error: "Chyba při přihlašování na turnaj" });
           res.json({ success: true });
-        }
+        },
       );
-    }
+    },
   );
 });
 
