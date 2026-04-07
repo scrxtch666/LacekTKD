@@ -25,4 +25,10 @@ const isAdmin = (req, res, next) => {
   next();
 };
 
-module.exports = { verifyToken, isAdmin };
+const isAdminOrTrainer = (req, res, next) => {
+  const role = req.user?.role?.toLowerCase();
+  if (role === "admin" || role === "trainer") return next();
+  return res.status(403).json({ error: "Nedostatečná oprávnění" });
+};
+
+module.exports = { verifyToken, isAdmin, isAdminOrTrainer };

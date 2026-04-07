@@ -307,20 +307,20 @@ function AdminAktuality() {
     fetchEvents();
   }, []);
 
-const fetchEvents = () => {
-  fetch(`${API}/api/events/admin`, {
-    headers: authHeader(), // Musíte poslat token, aby vás backend pustil
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      setEvents(Array.isArray(data) ? data : []);
-      setLoading(false);
+  const fetchEvents = () => {
+    fetch(`${API}/api/events/admin`, {
+      headers: authHeader(), // Musíte poslat token, aby vás backend pustil
     })
-    .catch(() => {
-      setEvents([]);
-      setLoading(false);
-    });
-};
+      .then((res) => res.json())
+      .then((data) => {
+        setEvents(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch(() => {
+        setEvents([]);
+        setLoading(false);
+      });
+  };
 
   const validateForm = (data, setError) => {
     if (!data.title) {

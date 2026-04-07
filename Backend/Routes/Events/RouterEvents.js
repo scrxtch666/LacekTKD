@@ -3,7 +3,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const db = require("../../Libs/db");
-const { verifyToken, isAdmin } = require("../../auth/auth");
+const { verifyToken, isAdmin, isAdminOrTrainer } = require("../../auth/auth");
 
 const router = express.Router();
 
@@ -90,7 +90,7 @@ router.get("/", (req, res) => {
 });
 
 // GET / - všechny aktuality včetně fotek
-router.get("/admin", verifyToken, (req, res) => {
+router.get("/admin", verifyToken, isAdminOrTrainer, (req, res) => {
   db.query(
     `SELECT 
         e.id,
@@ -203,7 +203,7 @@ router.get("/:id", (req, res) => {
 // ─── CHRÁNĚNÉ ROUTY (zápis) – pouze přihlášený admin ───
 
 // POST / - přidání aktuality
-router.post("/", verifyToken, isAdmin, uploadFields, (req, res) => {
+router.post("/", verifyToken, isAdminOrTrainer, uploadFields, (req, res) => {
   const { title, body, status, date_start, user_id } = req.body;
 
   if (!title) return res.status(400).json({ error: "Chybí název aktuality" });
@@ -257,7 +257,7 @@ router.post("/", verifyToken, isAdmin, uploadFields, (req, res) => {
 });
 
 // PUT /:id - editace aktuality
-router.put("/:id", verifyToken, isAdmin, uploadFields, (req, res) => {
+router.put("/:id", verifyToken, isAdminOrTrainer, uploadFields, (req, res) => {
   const { id } = req.params;
   const { title, body, status, date_start } = req.body;
 
@@ -313,7 +313,7 @@ router.put("/:id", verifyToken, isAdmin, uploadFields, (req, res) => {
 
 // DELETE /photo/:photoId - smazání jednotlivé fotky
 // ⚠️ MUSÍ být PŘED DELETE /:id
-router.delete("/photo/:photoId", verifyToken, isAdmin, (req, res) => {
+router.delete("/photo/:photoId", verifyToken, isAdminOrTrainer, (req, res) => {
   const { photoId } = req.params;
 
   db.query(
@@ -341,7 +341,7 @@ router.delete("/photo/:photoId", verifyToken, isAdmin, (req, res) => {
 });
 
 // DELETE /:id - smazání celé aktuality
-router.delete("/:id", verifyToken, isAdmin, (req, res) => {
+router.delete("/:id", verifyToken, isAdminOrTrainer, (req, res) => {
   const { id } = req.params;
 
   db.query("SELECT photo FROM event WHERE id = ?", [id], (err, eventRows) => {

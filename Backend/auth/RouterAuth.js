@@ -229,19 +229,44 @@ router.put("/me", verifyToken, async (req, res) => {
 
   try {
     // Validace dat narození
-    let birthDate = birth ? new Date(birth) : null;
+    // let birthDate = birth ? new Date(birth) : null;
     const now = new Date();
     const minAge = 3;
-    if (birthDate) {
-      const age = now.getFullYear() - birthDate.getFullYear();
-      const monthDiff = now.getMonth() - birthDate.getMonth();
-      const dayDiff = now.getDate() - birthDate.getDate();
-      const isTooYoung =
-        age < minAge || (age === minAge && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)));
-      if (birthDate > now) return res.status(400).json({ error: "Datum narození nemůže být v budoucnu." });
-      if (isTooYoung) return res.status(400).json({ error: `Uživatel musí být alespoň ${minAge} let starý.` });
-    } else {
-      birthDate = null; // pokud uživatel vymaže datum
+    let birthDate = null;
+
+    if (birth && birth !== "") {
+      const parsed = new Date(birth);
+
+      // ❗ KLÍČOVÉ – kontrola validního data
+      if (!isNaN(parsed.getTime())) {
+        birthDate = parsed;
+
+        const now = new Date();
+        const minAge = 3;
+
+        const age = now.getFullYear() - parsed.getFullYear();
+        const monthDiff = now.getMonth() - parsed.getMonth();
+        const dayDiff = now.getDate() - parsed.getDate();
+
+        const isTooYoung =
+          age < minAge ||
+          (age === minAge &&
+            (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)));
+
+        if (parsed > now) {
+          return res
+            .status(400)
+            .json({ error: "Datum narození nemůže být v budoucnu." });
+        }
+
+        if (isTooYoung) {
+          return res.status(400).json({
+            error: `Uživatel musí být alespoň ${minAge} let starý.`,
+          });
+        }
+      } else {
+        birthDate = null; // fallback
+      }
     }
 
     // Načti aktuálního uživatele z DB
@@ -250,47 +275,66 @@ router.put("/me", verifyToken, async (req, res) => {
       [req.user.id],
       async (err, results) => {
         if (err) return res.status(500).json({ error: "Chyba serveru" });
-        if (!results.length) return res.status(404).json({ error: "Uživatel nenalezen" });
+        if (!results.length)
+          return res.status(404).json({ error: "Uživatel nenalezen" });
 
         const user = results[0];
         let hashedPassword = null;
 
         // Pokud chce měnit heslo
         if (newPassword) {
-          if (!currentPassword) return res.status(400).json({ error: "Zadejte stávající heslo." });
+          if (!currentPassword)
+            return res.status(400).json({ error: "Zadejte stávající heslo." });
 
           const isMatch = await bcrypt.compare(currentPassword, user.password);
-          if (!isMatch) return res.status(401).json({ error: "Stávající heslo je nesprávné" });
+          if (!isMatch)
+            return res
+              .status(401)
+              .json({ error: "Stávající heslo je nesprávné" });
 
           hashedPassword = await bcrypt.hash(newPassword, 10);
         }
 
         // Update tabulky users
         db.query(
-          "UPDATE users SET phone = ?, email = ?" + (hashedPassword ? ", password = ?" : "") + " WHERE id = ?",
+          "UPDATE users SET phone = ?, email = ?" +
+            (hashedPassword ? ", password = ?" : "") +
+            " WHERE id = ?",
           hashedPassword
             ? [formattedPhone, email, hashedPassword, req.user.id]
             : [formattedPhone, email, req.user.id],
           (err2) => {
-            if (err2) return res.status(500).json({ error: "Chyba při ukládání uživatele" });
+            if (err2)
+              return res
+                .status(500)
+                .json({ error: "Chyba při ukládání uživatele" });
 
             // Update tabulky fighters pokud existuje fighter_id
             if (user.fighter_id) {
               db.query(
                 "UPDATE fighters SET name = ?, surname = ?, actual_weight_category = ?, birth = ? WHERE id = ?",
-                [name, surname, actual_weight_category || null, birthDate, user.fighter_id],
+                [
+                  name,
+                  surname,
+                  actual_weight_category || null,
+                  birthDate,
+                  user.fighter_id,
+                ],
                 (err3) => {
-                  if (err3) return res.status(500).json({ error: "Chyba při ukládání závodníka" });
+                  if (err3)
+                    return res
+                      .status(500)
+                      .json({ error: "Chyba při ukládání závodníka" });
                   res.json({ success: true, message: "Profil byl upraven" });
-                }
+                },
               );
             } else {
               // Uživateli neupdatujeme fighters
               res.json({ success: true, message: "Profil byl upraven" });
             }
-          }
+          },
         );
-      }
+      },
     );
   } catch (error) {
     res.status(500).json({ error: "Interní chyba serveru" });

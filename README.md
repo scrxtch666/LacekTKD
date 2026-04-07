@@ -74,8 +74,7 @@ Backend - cd  .\Backend\ - node server.js
 # PRAKTICKÁ ČÁST
 ---------------------------------------------------------------------------
 # CO MUSÍM UDĚLAT
-- správa aktualit - trenér nemůže
-- můj účet - když smažu narození, tak se tam dá aktuální datum - špatně
+- upravit responzivitu v adminu - hlavně sidebar
 - pořešit zkoušky
 - možná ještě turnaje - upravit tu kartu
 - když budu na detailu, tak chci, aby nahoře v headru bude hover active jakoby
@@ -96,4 +95,8 @@ Backend - cd  .\Backend\ - node server.js
 - upravit obrázek u Tailwindu, aby tam bylo něco více vidět
 - zkontrolovat si, že nikde nepíšu nic o newsletteru
 - prostě připsat ty tabulky a zkontrolovat si diagram (obrázek)
+
+
+ALTER TABLE fighters 
+MODIFY birth DATE NULL DEFAULT NULL;
 
