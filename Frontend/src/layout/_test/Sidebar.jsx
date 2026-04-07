@@ -6,14 +6,13 @@ import {
   LayoutDashboard,
   Users,
   Image,
-  Phone,
-  Mailbox,
   ShieldAlert,
   LogOut,
   User,
   BookCheckIcon,
   Swords,
   Landmark,
+  ChevronRight,
 } from "lucide-react";
 import { getUserRole, authService } from "../../utils/auth";
 
@@ -28,6 +27,11 @@ function SideBar() {
     authService.getCurrentUser().then((data) => setCurrentUser(data));
   }, []);
 
+  // Zavři sidebar při změně stránky
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     window.dispatchEvent(new Event("authChange"));
@@ -35,17 +39,17 @@ function SideBar() {
   };
 
   const getRoleLabel = (role) => {
-  switch (role) {
-    case "admin":
-      return "administrátor";
+    switch (role) {
+      case "admin":
+        return "Administrátor";
       case "trainer":
-      return "trenér";
-    case "user":
-      return "závodník";
-    default:
-      return role || "";
-  }
-};
+        return "Trenér";
+      case "user":
+        return "Uživatel";
+      default:
+        return role || "";
+    }
+  };
 
   const sections = [
     {
@@ -71,7 +75,6 @@ function SideBar() {
     },
     {
       title: "Uživatelské možnosti",
-      adminOnly: false,
       userOnly: true,
       items: [
         { name: "Můj účet", path: "/admin/me", icon: User },
@@ -79,10 +82,8 @@ function SideBar() {
         { name: "Turnaje", path: "/admin/turnaje", icon: Swords },
       ],
     },
-
     {
       title: "Trenérské možnosti",
-      adminOnly: false,
       trainerOnly: true,
       items: [
         { name: "Můj účet", path: "/admin/me", icon: User },
@@ -107,59 +108,63 @@ function SideBar() {
       : currentUser?.login?.charAt(0).toUpperCase() || "?";
 
   const SidebarContent = () => (
-    <aside
-      className="h-screen w-64 fixed top-0 left-0 text-white z-50 flex flex-col"
+    <div
+      className="w-64 h-full flex flex-col text-white"
       style={{
         background:
           "linear-gradient(180deg, #15803d 0%, #166534 60%, #14532d 100%)",
       }}
     >
       {/* Logo */}
-      <div className="flex items-center justify-between px-6 py-5 border-b border-green-600 flex-shrink-0">
-        <Link to="/" className="text-xl font-bold tracking-wide">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-green-600 flex-shrink-0">
+        <Link
+          to="/"
+          className="text-lg font-bold tracking-wide hover:text-green-200 transition-colors"
+        >
           LacekTKD
         </Link>
         <button
-          className="lg:hidden text-green-200 hover:text-white"
+          className="lg:hidden p-1 text-green-200 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
           onClick={() => setOpen(false)}
         >
-          <X size={22} />
+          <X size={20} />
         </button>
       </div>
 
       {/* Nav */}
-      <nav className="p-4 overflow-y-auto flex-1 space-y-5">
+      <nav className="flex-1 overflow-y-auto p-3 space-y-4">
         {visibleSections.map((section) => (
           <div key={section.title}>
-            <div className="flex items-center gap-2 px-2 mb-2">
+            <div className="flex items-center gap-1.5 px-2 mb-1.5">
               {section.adminOnly && (
-                <ShieldAlert size={12} className="text-green-200 opacity-70" />
+                <ShieldAlert size={11} className="text-green-300 opacity-60" />
               )}
-              <span className="text-xs font-semibold uppercase tracking-widest text-green-200 opacity-70">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-green-300 opacity-60">
                 {section.title}
               </span>
             </div>
-
             <div className="space-y-0.5">
               {section.items.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path;
                 return (
                   <Link
-                    key={item.name}
+                    key={item.path}
                     to={item.path}
-                    onClick={() => setOpen(false)}
                     className={`
-                      flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 text-sm
+                      flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 text-sm font-medium
                       ${
                         isActive
-                          ? "bg-white/20 text-white font-semibold shadow-inner"
+                          ? "bg-white/20 text-white shadow-inner"
                           : "text-green-100 hover:bg-white/10 hover:text-white"
                       }
                     `}
                   >
-                    <Icon size={17} />
-                    <span>{item.name}</span>
+                    <Icon size={16} className="flex-shrink-0" />
+                    <span className="flex-1">{item.name}</span>
+                    {isActive && (
+                      <ChevronRight size={14} className="opacity-60" />
+                    )}
                   </Link>
                 );
               })}
@@ -169,75 +174,82 @@ function SideBar() {
       </nav>
 
       {/* Uživatel dole */}
-      <div className="border-t border-green-600 p-4 flex-shrink-0">
-        <div className="flex items-center gap-3">
-          {/* Avatar */}
+      <div className="border-t border-green-600 p-3 flex-shrink-0">
+        <div className="flex items-center gap-3 px-1">
           {currentUser?.img_path ? (
             <img
               src={currentUser.img_path}
               alt={currentUser.login}
-              className="w-9 h-9 rounded-xl object-cover flex-shrink-0"
+              className="w-8 h-8 rounded-lg object-cover flex-shrink-0"
             />
           ) : (
-            <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
               {initials}
             </div>
           )}
-
-          {/* Jméno + role */}
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-white truncate">
+            <p className="text-sm font-semibold text-white truncate leading-tight">
               {currentUser?.name && currentUser?.surname
                 ? `${currentUser.name} ${currentUser.surname}`
                 : currentUser?.login || "..."}
             </p>
-            <p className="text-xs text-green-200 opacity-80 truncate">
+            <p className="text-xs text-green-300 opacity-80 truncate">
               {getRoleLabel(currentUser?.role)}
             </p>
           </div>
-
-          {/* Odhlášení */}
           <button
             onClick={handleLogout}
             className="flex-shrink-0 p-1.5 rounded-lg text-green-200 hover:bg-white/10 hover:text-white transition-colors"
             title="Odhlásit se"
           >
-            <LogOut size={17} />
+            <LogOut size={16} />
           </button>
         </div>
       </div>
-    </aside>
+    </div>
   );
 
   return (
     <>
-      {/* Mobile header */}
+      {/* ── MOBILE TOPBAR ── */}
       <div
-        className="lg:hidden flex items-center justify-between p-4 text-white sticky top-0 z-50"
+        className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 shadow-md"
         style={{ background: "#15803d" }}
       >
-        <button onClick={() => setOpen(true)}>
-          <Menu size={24} />
+        <button
+          onClick={() => setOpen(true)}
+          className="p-1.5 text-white hover:bg-white/10 rounded-lg transition-colors"
+        >
+          <Menu size={22} />
         </button>
-        <span className="font-semibold">LacekTKD Admin</span>
+        <span className="text-white font-semibold text-sm">LacekTKD</span>
+        {/* Avatar vpravo nahoře na mobilu */}
+        <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-white font-bold text-xs">
+          {initials}
+        </div>
       </div>
 
-      {/* Mobile overlay */}
+      {/* ── MOBILE OVERLAY ── */}
       {open && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="lg:hidden fixed inset-0 bg-black/60 z-50"
           onClick={() => setOpen(false)}
         />
       )}
 
-      {/* Sidebar – desktop vždy viditelný, mobile slide-in */}
+      {/* ── MOBILE DRAWER ── */}
       <div
         className={`
-        fixed top-0 left-0 z-50 transform transition-transform duration-300
-        ${open ? "translate-x-0" : "-translate-x-full"}
-        lg:translate-x-0
-      `}
+          lg:hidden fixed top-0 left-0 h-full w-64 z-50
+          transform transition-transform duration-300 ease-in-out
+          ${open ? "translate-x-0" : "-translate-x-full"}
+        `}
       >
+        <SidebarContent />
+      </div>
+
+      {/* ── DESKTOP SIDEBAR (vždy viditelný) ── */}
+      <div className="hidden lg:flex lg:flex-col lg:fixed lg:top-0 lg:left-0 lg:h-screen lg:w-64 lg:z-30">
         <SidebarContent />
       </div>
     </>

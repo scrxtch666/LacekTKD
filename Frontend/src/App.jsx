@@ -49,104 +49,106 @@ function Layout() {
       <div className="flex min-h-screen bg-slate-100">
         <SideBar />
 
-        <main className="flex-1 p-8 lg:ml-64 w-full">
-          <Routes>
-            <Route path="*" element={<NotFound />} />
-            {/* Veřejné admin routy – jen přihlášený */}
+        <main className="pt-14 lg:pt-0 lg:ml-64 min-h-screen w-full">
+          <div className="p-4 sm:p-6 lg:p-8">
+            <Routes>
+              <Route path="*" element={<NotFound />} />
+              {/* Veřejné admin routy – jen přihlášený */}
 
-            <Route
-              path="/admin/me"
-              element={
-                <ProtectedRoute allowedRoles={["admin", "trainer", "user"]}>
-                  <AdminMe />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="/admin/me"
+                element={
+                  <ProtectedRoute allowedRoles={["admin", "trainer", "user"]}>
+                    <AdminMe />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Admin + trenér */}
-            <Route
-              path="/admin/zavodnici"
-              element={
-                <ProtectedRoute allowedRoles={["admin", "trainer"]}>
-                  <AdminZavodnici />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/zkousky"
-              element={
-                <ProtectedRoute allowedRoles={["admin", "trainer", "user"]}>
-                  <AdminZkousky />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/turnaje"
-              element={
-                <ProtectedRoute allowedRoles={["admin", "trainer", "user"]}>
-                  <AdminTurnaje />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/pridani-zavodnika"
-              element={
-                <ProtectedRoute allowedRoles={["admin", "trainer"]}>
-                  <AddFighter />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/vsichni-zavodnici"
-              element={
-                <ProtectedRoute allowedRoles={["admin", "trainer"]}>
-                  <FightersAdmin />
-                </ProtectedRoute>
-              }
-            />
+              {/* Admin + trenér */}
+              <Route
+                path="/admin/zavodnici"
+                element={
+                  <ProtectedRoute allowedRoles={["admin", "trainer"]}>
+                    <AdminZavodnici />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/zkousky"
+                element={
+                  <ProtectedRoute allowedRoles={["admin", "trainer", "user"]}>
+                    <AdminZkousky />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/turnaje"
+                element={
+                  <ProtectedRoute allowedRoles={["admin", "trainer", "user"]}>
+                    <AdminTurnaje />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/pridani-zavodnika"
+                element={
+                  <ProtectedRoute allowedRoles={["admin", "trainer"]}>
+                    <AddFighter />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/vsichni-zavodnici"
+                element={
+                  <ProtectedRoute allowedRoles={["admin", "trainer"]}>
+                    <FightersAdmin />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Pouze admin */}
-            <Route
-              path="/admin/aktuality"
-              element={
-                <ProtectedRoute allowedRoles={["admin", "trainer"]}>
-                  <AdminAktuality />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/banner"
-              element={
-                <ProtectedRoute allowedRoles={["admin"]}>
-                  <AdminBanner />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/users"
-              element={
-                <ProtectedRoute allowedRoles={["admin"]}>
-                  <AdminUsers />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/zadosti"
-              element={
-                <ProtectedRoute allowedRoles={["admin"]}>
-                  <AdminRequests />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/sponsors"
-              element={
-                <ProtectedRoute allowedRoles={["admin"]}>
-                  <AdminSponsors />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
+              {/* Pouze admin */}
+              <Route
+                path="/admin/aktuality"
+                element={
+                  <ProtectedRoute allowedRoles={["admin", "trainer"]}>
+                    <AdminAktuality />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/banner"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <AdminBanner />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/users"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <AdminUsers />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/zadosti"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <AdminRequests />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/sponsors"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <AdminSponsors />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </div>
         </main>
       </div>
     );
