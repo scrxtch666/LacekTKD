@@ -94,12 +94,16 @@ function FighterDetail() {
               fighter.age && (
                 <p className="text-gray-500">Věk: {fighter.age} let</p>
               )}
+              {fighter.actual_weight_category && (
             <p className="text-gray-500">
               Váhová kategorie: {fighter.actual_weight_category} kg
             </p>
+            )}
+            {fighter.category_name && (
             <p className="text-gray-500">
               Věková kategorie: {fighter.category_name} <span className="text-xs">({fighter.min} - {fighter.max})</span>
             </p>
+            )}
             {(userRole === "admin" || userRole === "trainer") && (
               <>
                 {fighter.user_email && (

@@ -1,21 +1,19 @@
-import { Link } from "react-router-dom";
 import React from "react";
-function Video() {
+
+function Video({ belt }) {
+  if (!belt?.video_path) return null;
+
   return (
-    <>
-  <div className="bg-customWhite w-full rounded-lg">
-            <iframe
-              width="560"
-              height="315"
-              src="https://www.youtube.com/embed/OIjMWGM5wkQ?list=PL_IlyM5-dT-kCGRfq3EItDJSmbg6S7dtX"
-              title="YouTube video player"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="mx-auto max-h-64 w-full rounded-lg"
-            ></iframe>
-          </div>
-    </>
+    <div className="bg-customWhite w-full rounded-lg p-2">
+      <iframe
+        src={belt.video_path}
+        title={belt.belt_name}
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        className="w-full aspect-video rounded-lg"
+      ></iframe>
+    </div>
   );
 }
 

@@ -1,5 +1,6 @@
-function Info() {
+import { Link, NavLink } from "react-router-dom";
 
+function Info() {
   return (
     <>
       <div className="flex gap-5">
@@ -40,6 +41,12 @@ function Info() {
             nebo kontaktovat trenéra Petra Lacka na telefonním čísle +420 724
             209 910 či e-mailu{" "}
             <a href="mailto:tkdlacek@gmail.com">tkdlacek@gmail.com</a>.
+          </p>
+          <p>
+            Pro zájemce do řad našeho oddílu, zde pro vás máme
+            <Link to="/register" className="px-1 text-customGreen font-medium hover:underline">
+              registrační formulář.
+            </Link>
           </p>
         </div>
       </div>

@@ -1,16 +1,18 @@
-import { Link } from "react-router-dom";
 import React from "react";
-function SestavyInfo() {
+
+function SestavyInfo({ belt }) {
+  if (!belt) return null;
+
   return (
-    <>
- <div className="card w-full">
-       <span class="font-extrabold text-lg">Důležité pojmy</span>
-       <p>Ap Seogi (앞 서기) – Krátký krok</p>
-       <p>Ap Kubi (앞 굽이) – Dlouhý bojový postoj</p>
-       <p>Arae Makki (아래 막기) – Dolní blok</p>
-       <p>Olgul Makki (얼굴 막기) – Vysoký blok</p>
-      </div>
-    </>
+    <div className="card w-full p-4">
+      <h2 className="font-extrabold text-lg mb-3">
+        {belt.belt_name}
+      </h2>
+
+      <p className="whitespace-pre-line">
+        {belt.info}
+      </p>
+    </div>
   );
 }
 

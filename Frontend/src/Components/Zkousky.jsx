@@ -1,27 +1,26 @@
-import React from "react";
-import Pasky from "../pages/Zkousky/Pasky";
+import React, { useState } from "react";
 import Cenik from "../pages/Zkousky/Cenik";
 import Video from "../pages/Zkousky/Video";
 import SestavyInfo from "../pages/Zkousky/SestavyInfo";
 import Prihlasky from "../pages/Zkousky/Prihlasky";
 
 function Zkousky() {
+  const [selectedBelt, setSelectedBelt] = useState(null);
+
   return (
     <>
-      <div class="devider">ZKOUŠKY</div>
+      <div className="devider">ZKOUŠKY</div>
 
-      <div className="grid gap-5 lg:grid-cols-2 md:grid-cols-1">
-        <Pasky />
-        <Cenik />
-      </div>
+      <Cenik onSelectBelt={setSelectedBelt} />
 
-      <div className="devider">sestavy</div>
-      <div className=" flex flex-col gap-5">
-        <div className="flex justify-between max-h-64 gap-6">
-          <Video />
-          <SestavyInfo />
+      <div className="devider">Sestavy</div>
+
+      {selectedBelt && (
+        <div className="flex flex-col lg:flex-row gap-5">
+          <Video belt={selectedBelt} />
+          <SestavyInfo belt={selectedBelt} />
         </div>
-      </div>
+      )}
 
       <Prihlasky />
     </>
