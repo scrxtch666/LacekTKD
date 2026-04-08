@@ -24,7 +24,6 @@ const authHeader = () => ({
   Authorization: `Bearer ${localStorage.getItem("token")}`,
 });
 
-
 function AdminZavodnici() {
   const [fighters, setFighters] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -70,25 +69,25 @@ function AdminZavodnici() {
     fetchCategories();
   }, []);
 
-const fetchFighters = () => {
-  const role = getUserRole();
+  const fetchFighters = () => {
+    const role = getUserRole();
 
-  const url =
-    role === "admin" || role === "trainer"
-      ? `${API}/api/fighters/admin`
-      : `${API}/api/fighters`;
+    const url =
+      role === "admin" || role === "trainer"
+        ? `${API}/api/fighters/admin`
+        : `${API}/api/fighters`;
 
-  fetch(url)
-    .then((res) => res.json())
-    .then((data) => {
-      setFighters(Array.isArray(data) ? data : []);
-      setLoading(false);
-    })
-    .catch(() => {
-      setFighters([]);
-      setLoading(false);
-    });
-};
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
+        setFighters(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch(() => {
+        setFighters([]);
+        setLoading(false);
+      });
+  };
 
   const fetchBelts = () => {
     fetch(`${API}/api/belts`)
@@ -133,8 +132,8 @@ const fetchFighters = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError("");
-    if (!newFighter.name || !newFighter.surname) {
-      setFormError("Vyplňte prosím jméno a příjmení.");
+    if (!newFighter.name || !newFighter.surname || !newFighter.belts_id) {
+      setFormError("Vyplňte všechna povinná pole.");
       return;
     }
     setSaving(true);
@@ -404,7 +403,7 @@ const fetchFighters = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Pásek
+                  Pásek *
                 </label>
                 <select
                   value={newFighter.belts_id}
@@ -612,7 +611,7 @@ const fetchFighters = () => {
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-gray-600 mb-1">
-                        Pásek
+                        Pásek *
                       </label>
                       <select
                         value={editFighter.belts_id}

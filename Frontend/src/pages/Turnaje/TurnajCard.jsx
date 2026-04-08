@@ -4,8 +4,15 @@ import { useNavigate } from "react-router-dom";
 function TurnajCard({ tournament }) {
   const navigate = useNavigate();
   const {
-    id, name, location, price, type_name,
-    start_date_formatted, end_date_formatted, img_path, info
+    id,
+    name,
+    location,
+    price,
+    type_name,
+    start_date_formatted,
+    end_date_formatted,
+    img_path,
+    info,
   } = tournament;
 
   return (
@@ -28,7 +35,9 @@ function TurnajCard({ tournament }) {
       </div>
 
       <div className="flex flex-col justify-between p-4 flex-1 min-w-0 gap-3">
-        <h2 className="font-extrabold text-lg leading-tight truncate">{name}</h2>
+        <h2 className="font-extrabold text-lg leading-tight truncate">
+          {name}
+        </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-1.5 gap-x-4 text-sm">
           {location && (
@@ -43,10 +52,16 @@ function TurnajCard({ tournament }) {
               <span className="truncate">Startovné: {price} Kč</span>
             </div>
           )}
-          {(start_date_formatted || end_date_formatted) && (
+          {start_date_formatted && (
             <div className="flex items-center gap-2 min-w-0">
               <Calendar size={15} className="text-customGreen flex-shrink-0" />
-              <span className="truncate">{start_date_formatted} – {end_date_formatted}</span>
+              <span className="truncate">
+                {start_date_formatted}
+                {end_date_formatted &&
+                end_date_formatted !== start_date_formatted
+                  ? ` – ${end_date_formatted}`
+                  : ""}
+              </span>
             </div>
           )}
           {type_name && (

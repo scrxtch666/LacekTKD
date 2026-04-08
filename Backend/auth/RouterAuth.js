@@ -228,10 +228,6 @@ router.put("/me", verifyToken, async (req, res) => {
   const formattedPhone = formatCzechPhoneNumber(phone);
 
   try {
-    // Validace dat narození
-    // let birthDate = birth ? new Date(birth) : null;
-    const now = new Date();
-    const minAge = 3;
     let birthDate = null;
 
     if (birth && birth !== "") {

@@ -101,7 +101,7 @@ router.get("/admin", verifyToken, isAdminOrTrainer, (req, res) => {
         e.user_id,
         u.login AS author,
         DATE_FORMAT(e.date_start, '%d.%m.%Y') AS date_start,
-        e.date_start AS date_start_raw,
+        DATE_FORMAT(e.date_start, '%Y-%m-%d') AS date_start_raw,
         e.created_at
      FROM event e
      LEFT JOIN users u ON e.user_id = u.id
@@ -222,7 +222,7 @@ router.post("/", verifyToken, isAdminOrTrainer, uploadFields, (req, res) => {
       body || null,
       status || "Availible",
       date_start || null,
-      req.user.id, // ← z JWT tokenu, ne z body
+      req.user.id,
       coverPath,
     ],
     (err, result) => {

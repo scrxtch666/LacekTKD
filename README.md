@@ -74,14 +74,12 @@ Backend - cd  .\Backend\ - node server.js
 # PRAKTICKÁ ČÁST
 ---------------------------------------------------------------------------
 # CO MUSÍM UDĚLAT
-- prohlížení fotek u aktualit - je tam nějaký ten padding
+- nejdou mi mazat některé turnaje
 - přihlášení uživatele na zkoušku a turnaj - jakožto admin a trener
 - do admin/me přidat nějaké info pole, které bude informovat, že pokud není přidělený uživatelský účet, tak že nějaký informace nepůjdou editovat a že nebude možné se přihlásit na turnje a zkoušky
 - zase mi nefunugje filtr na skrytí - uživatel vidí i skryté
 - podívat se na filtry turnajů - kolik jich to vypisuje a tak
-- když přidávám turnaj, tak je defaultní stav skrytý
-- pokud je jednodenní turnaj tak odebrat tu pomlčku
-- úprava turnaje - nepamatuje si to data
+- možná i nějaký ten proklik na detail z adminu
 
 # TEXTOVÁ ČÁST POZNÁMKY
 ---------------------------------------------------------------------------

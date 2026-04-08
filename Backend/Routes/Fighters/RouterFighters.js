@@ -4,6 +4,7 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const db = require("../../Libs/db");
+const { parseDateSafe } = require("../../utils/date");
 
 const router = express.Router();
 
@@ -86,11 +87,11 @@ router.get("/", async (req, res) => {
 
 // GET /admin - výpis závodníků pro admin/trenéra
 router.get("/admin", (req, res) => {
-  console.log("Middleware prošly, jsem v routě!");
   db.query(
     `SELECT 
-        fighters.id, fighters.img_path, fighters.name, fighters.surname,
-        fighters.birth, fighters.best, fighters.legend, fighters.active,
+        fighters.id, fighters.img_path, fighters.name, fighters.surname, 
+         DATE_FORMAT(fighters.birth, '%Y-%m-%d') AS birth,
+        fighters.best, fighters.legend, fighters.active,
         fighters.actual_weight_category, fighters.belts_id, fighters.category_id,
         TIMESTAMPDIFF(YEAR, fighters.birth, CURDATE()) AS age,
         belts.cup, belts.img_path AS belt_path,
@@ -138,7 +139,6 @@ router.get("/countAll", (req, res) => {
   });
 });
 
-// POST / - pridani zavodnika
 router.post("/", upload.single("image"), (req, res) => {
   const {
     name,
@@ -153,8 +153,39 @@ router.post("/", upload.single("image"), (req, res) => {
     user_id,
   } = req.body;
 
-  if (!name || !surname) {
-    return res.status(400).json({ error: "Chybi jmeno nebo prijmeni" });
+  // VALIDACE VĚKU
+  let parsedBirth = null;
+
+  if (birth && birth !== "") {
+    const [year, month, day] = birth.split("-");
+    const parsed = new Date(year, month - 1, day);
+
+    if (!isNaN(parsed.getTime())) {
+      parsedBirth = parsed;
+
+      const now = new Date();
+      const minAge = 3;
+
+      const age = now.getFullYear() - parsed.getFullYear();
+      const monthDiff = now.getMonth() - parsed.getMonth();
+      const dayDiff = now.getDate() - parsed.getDate();
+
+      const isTooYoung =
+        age < minAge ||
+        (age === minAge && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)));
+
+      if (parsed > now) {
+        return res
+          .status(400)
+          .json({ error: "Datum narození nemůže být v budoucnu." });
+      }
+
+      if (isTooYoung) {
+        return res.status(400).json({
+          error: `Uživatel musí být alespoň ${minAge} let starý.`,
+        });
+      }
+    }
   }
 
   const img_path = req.file ? "/uploads/fighters/" + req.file.filename : null;
@@ -164,8 +195,8 @@ router.post("/", upload.single("image"), (req, res) => {
     [
       name,
       surname,
-      birth || null,
-      belts_id || null,
+      parseDateSafe(birth),
+      belts_id,
       img_path,
       best === "1" ? 1 : 0,
       legend === "1" ? 1 : 0,
@@ -210,7 +241,7 @@ router.get("/:id", (req, res) => {
   db.query(
     `SELECT 
         f.id, f.img_path, f.name, f.surname,
-        f.birth, f.best, f.legend, f.active,
+        DATE_FORMAT(f.birth, '%Y-%m-%d') AS birth, f.best, f.legend, f.active,
         f.actual_weight_category, f.belts_id, f.category_id,
         TIMESTAMPDIFF(YEAR, f.birth, CURDATE()) AS age,
         b.cup, b.img_path AS belt_path,
@@ -278,89 +309,139 @@ router.put("/:id", upload.single("image"), (req, res) => {
     return res.status(400).json({ error: "Chybi jmeno nebo prijmeni" });
   }
 
-  const doUpdate = (new_img_path) => {
-    const hasNewImg = new_img_path !== undefined;
-    const query = hasNewImg
-      ? "UPDATE fighters SET name=?, surname=?, birth=?, belts_id=?, img_path=?, best=?, legend=?, active=?, category_id=?, actual_weight_category=? WHERE id=?"
-      : "UPDATE fighters SET name=?, surname=?, birth=?, belts_id=?, best=?, legend=?, active=?, category_id=?, actual_weight_category=? WHERE id=?";
-    const params = hasNewImg
-      ? [
-          name,
-          surname,
-          birth || null,
-          belts_id || null,
-          new_img_path,
-          best === "1" ? 1 : 0,
-          legend === "1" ? 1 : 0,
-          active === "1" ? 1 : 0,
-          category_id || null,
-          actual_weight_category || null,
-          id,
-        ]
-      : [
-          name,
-          surname,
-          birth || null,
-          belts_id || null,
-          best === "1" ? 1 : 0,
-          legend === "1" ? 1 : 0,
-          active === "1" ? 1 : 0,
-          category_id || null,
-          actual_weight_category || null,
-          id,
-        ];
+  try {
+    let birthDate = null;
 
-    db.query(query, params, (err, result) => {
-      if (err)
-        return res
-          .status(500)
-          .json({ error: "Chyba pri aktualizaci zavodnika" });
-      if (result.affectedRows === 0)
-        return res.status(404).json({ error: "Zavodnik nenalezen" });
+    if (birth && birth !== "") {
+      const [year, month, day] = birth.split("-");
+      const parsed = new Date(year, month - 1, day);
 
+      if (!isNaN(parsed.getTime())) {
+        birthDate = parsed;
+
+        const now = new Date();
+        const minAge = 3;
+
+        const age = now.getFullYear() - parsed.getFullYear();
+        const monthDiff = now.getMonth() - parsed.getMonth();
+        const dayDiff = now.getDate() - parsed.getDate();
+
+        const isTooYoung =
+          age < minAge ||
+          (age === minAge &&
+            (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)));
+
+        if (parsed > now) {
+          return res
+            .status(400)
+            .json({ error: "Datum narození nemůže být v budoucnu." });
+        }
+
+        if (isTooYoung) {
+          return res.status(400).json({
+            error: `Uživatel musí být alespoň ${minAge} let starý.`,
+          });
+        }
+      }
+    }
+
+    const doUpdate = (new_img_path) => {
+      const hasNewImg = new_img_path !== undefined;
+
+      const query = hasNewImg
+        ? "UPDATE fighters SET name=?, surname=?, birth=?, belts_id=?, img_path=?, best=?, legend=?, active=?, category_id=?, actual_weight_category=? WHERE id=?"
+        : "UPDATE fighters SET name=?, surname=?, birth=?, belts_id=?, best=?, legend=?, active=?, category_id=?, actual_weight_category=? WHERE id=?";
+
+      const params = hasNewImg
+        ? [
+            name,
+            surname,
+            birth || null,
+            belts_id || null,
+            new_img_path,
+            best === "1" ? 1 : 0,
+            legend === "1" ? 1 : 0,
+            active === "1" ? 1 : 0,
+            category_id || null,
+            actual_weight_category || null,
+            id,
+          ]
+        : [
+            name,
+            surname,
+            birth || null,
+            belts_id || null,
+            best === "1" ? 1 : 0,
+            legend === "1" ? 1 : 0,
+            active === "1" ? 1 : 0,
+            category_id || null,
+            actual_weight_category || null,
+            id,
+          ];
+
+      db.query(query, params, (err, result) => {
+        if (err)
+          return res
+            .status(500)
+            .json({ error: "Chyba pri aktualizaci zavodnika" });
+
+        if (result.affectedRows === 0)
+          return res.status(404).json({ error: "Zavodnik nenalezen" });
+
+        db.query(
+          "UPDATE users SET fighter_id = NULL WHERE fighter_id = ?",
+          [id],
+          (err2) => {
+            if (err2) console.error("Chyba pri odpojovani usera:", err2);
+
+            if (user_id && user_id !== "null" && user_id !== "") {
+              db.query(
+                "UPDATE users SET fighter_id = ? WHERE id = ?",
+                [id, user_id],
+                (err3) => {
+                  if (err3) console.error("Chyba pri prirazeni usera:", err3);
+                },
+              );
+            }
+          },
+        );
+
+        res.json({ success: true, message: "Zavodnik byl upraven" });
+      });
+    };
+
+    if (req.file) {
       db.query(
-        "UPDATE users SET fighter_id = NULL WHERE fighter_id = ?",
+        "SELECT img_path FROM fighters WHERE id = ?",
         [id],
-        (err2) => {
-          if (err2) console.error("Chyba pri odpojovani usera:", err2);
-          if (user_id && user_id !== "null" && user_id !== "") {
-            db.query(
-              "UPDATE users SET fighter_id = ? WHERE id = ?",
-              [id, user_id],
-              (err3) => {
-                if (err3) console.error("Chyba pri prirazeni usera:", err3);
-              },
+        (err, results) => {
+          if (err)
+            return res
+              .status(500)
+              .json({ error: "Chyba pri hledani zavodnika" });
+
+          if (results.length === 0)
+            return res.status(404).json({ error: "Zavodnik nenalezen" });
+
+          const oldImg = results[0].img_path;
+
+          if (oldImg) {
+            const fullOldPath = path.join(
+              "C:\\LacekTKD\\Frontend\\public",
+              oldImg,
             );
+            if (fs.existsSync(fullOldPath)) fs.unlinkSync(fullOldPath);
           }
+
+          doUpdate("/uploads/fighters/" + req.file.filename);
         },
       );
-
-      res.json({ success: true, message: "Zavodnik byl upraven" });
-    });
-  };
-
-  if (req.file) {
-    db.query(
-      "SELECT img_path FROM fighters WHERE id = ?",
-      [id],
-      (err, results) => {
-        if (err)
-          return res.status(500).json({ error: "Chyba pri hledani zavodnika" });
-        if (results.length === 0)
-          return res.status(404).json({ error: "Zavodnik nenalezen" });
-        const oldImg = results[0].img_path;
-        if (oldImg) {
-          const fullOldPath = path.join(
-            "C:\\LacekTKD\\Frontend\\public",
-            oldImg,
-          );
-          if (fs.existsSync(fullOldPath)) fs.unlinkSync(fullOldPath);
-        }
-        doUpdate("/uploads/fighters/" + req.file.filename);
-      },
-    );
-  } else {
-    doUpdate(undefined);
+    } else {
+      doUpdate(undefined);
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Interní chyba serveru" });
   }
 });
 

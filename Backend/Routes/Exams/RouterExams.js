@@ -4,6 +4,7 @@ const db = require("../../Libs/db");
 const { verifyToken } = require("../../auth/auth");
 const jwt = require("jsonwebtoken");
 const SECRET_KEY = process.env.ACCESS_TOKEN_SECRET || "tajnyklic";
+const { parseDateSafe } = require("../../utils/date");
 
 // --- POMOCNÉ FUNKCE ---
 
@@ -74,7 +75,11 @@ router.get("/admin", verifyToken, (req, res) => {
   const isRegisteredSQL = getIsRegisteredSQL(userId);
 
   db.query(
-    `SELECT e.*, u.login AS created_by_name, ${isRegisteredSQL}
+    `SELECT 
+    e.id, e.title, e.description, e.location, e.price, e.status, e.created_by,
+    DATE_FORMAT(e.date, '%Y-%m-%d') AS date, 
+    DATE_FORMAT(e.registrable_date, '%Y-%m-%d') AS registrable_date,
+    u.login AS created_by_name, ${isRegisteredSQL}
      FROM exam e
      LEFT JOIN users u ON u.id = e.created_by
      ORDER BY e.date DESC`,
@@ -122,13 +127,13 @@ router.post("/", verifyToken, (req, res) => {
 
   db.query(
     `INSERT INTO exam (title, description, date, location, registrable_date, price, status, created_by)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+   VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       title,
       description || null,
-      date,
+      parseDateSafe(date),
       location || null,
-      registrable_date || null,
+      parseDateSafe(registrable_date),
       price || null,
       status || "hidden",
       req.user.id,
@@ -156,13 +161,13 @@ router.put("/:id", verifyToken, (req, res) => {
 
   db.query(
     `UPDATE exam SET title=?, description=?, date=?, location=?, registrable_date=?, price=?, status=?
-     WHERE id=?`,
+   WHERE id=?`,
     [
       title,
       description || null,
-      date,
+      parseDateSafe(date),
       location || null,
-      registrable_date || null,
+      parseDateSafe(registrable_date),
       price || null,
       status || "hidden",
       req.params.id,
@@ -194,16 +199,33 @@ router.post("/:id/register", verifyToken, (req, res) => {
       if (err || !results.length)
         return res.status(400).json({ error: "Uživatel nenalezen" });
 
-      const { fighter_id, name, surname, birth, actual_weight_category } = results[0];
+      const { fighter_id, name, surname, birth, actual_weight_category } =
+        results[0];
 
       if (!fighter_id)
-        return res.status(400).json({ error: "Nemáš přiřazeného závodníka. Kontaktuj trenéra." });
+        return res
+          .status(400)
+          .json({ error: "Nemáš přiřazeného závodníka. Kontaktuj trenéra." });
       if (!name || !surname)
-        return res.status(400).json({ error: "Závodník nemá vyplněné jméno a příjmení. Kontaktuj trenéra." });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Závodník nemá vyplněné jméno a příjmení. Kontaktuj trenéra.",
+          });
       if (!birth || birth.toString().startsWith("0000"))
-        return res.status(400).json({ error: "Závodník nemá vyplněné datum narození. Kontaktuj trenéra." });
+        return res
+          .status(400)
+          .json({
+            error: "Závodník nemá vyplněné datum narození. Kontaktuj trenéra.",
+          });
       if (!actual_weight_category)
-        return res.status(400).json({ error: "Závodník nemá vyplněnou váhovou kategorii. Kontaktuj trenéra nebo ji doplň v profilu." });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Závodník nemá vyplněnou váhovou kategorii. Kontaktuj trenéra nebo ji doplň v profilu.",
+          });
 
       db.query(
         "INSERT INTO exam_registration (exam_id, fighter_id) VALUES (?, ?)",
@@ -212,9 +234,9 @@ router.post("/:id/register", verifyToken, (req, res) => {
           if (err2)
             return res.status(500).json({ error: "Chyba při přihlašování" });
           res.json({ success: true });
-        }
+        },
       );
-    }
+    },
   );
 });
 

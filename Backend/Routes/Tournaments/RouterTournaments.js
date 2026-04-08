@@ -239,26 +239,26 @@ router.get("/", (req, res) => {
 
   db.query(
     `SELECT
-        tournament.id,
-        tournament.name,
-        tournament.location,
-        tournament.price,
-        tournament.info,
-        tournament.img_path,
-        DATE_FORMAT(tournament.registrable_date, '%d.%m.%Y') AS registrable_date_formatted,
-        tournament.registrable_date AS registrable_date_raw,
-        tournament.status,
-        tournament.type_id,
-        type.name AS type_name,
-        DATE_FORMAT(tournament.start_date, '%d.%m.') AS start_date_formatted,
-        DATE_FORMAT(tournament.end_date, '%d.%m.%Y') AS end_date_formatted,
-        tournament.start_date AS start_date_raw,
-        tournament.end_date AS end_date_raw,
-        ${isRegisteredSQL}
-     FROM tournament
-     LEFT JOIN type ON tournament.type_id = type.id
-     ${whereClause}
-     ORDER BY tournament.start_date DESC`,
+      tournament.id,
+      tournament.name,
+      tournament.location,
+      tournament.price,
+      tournament.info,
+      tournament.img_path,
+      DATE_FORMAT(tournament.registrable_date, '%d.%m.%Y') AS registrable_date_formatted,
+      DATE_FORMAT(tournament.registrable_date, '%Y-%m-%d') AS registrable_date_raw,
+      tournament.status,
+      tournament.type_id,
+      type.name AS type_name,
+      DATE_FORMAT(tournament.start_date, '%d.%m.') AS start_date_formatted,
+      DATE_FORMAT(tournament.end_date, '%d.%m.%Y') AS end_date_formatted,
+      DATE_FORMAT(tournament.start_date, '%Y-%m-%d') AS start_date_raw,
+      DATE_FORMAT(tournament.end_date, '%Y-%m-%d') AS end_date_raw,
+      ${isRegisteredSQL}
+   FROM tournament
+   LEFT JOIN type ON tournament.type_id = type.id
+   ${whereClause}
+   ORDER BY tournament.start_date DESC`,
     (err, results) => {
       if (err)
         return res.status(500).json({ error: "Chyba při načítání turnajů" });
@@ -406,6 +406,7 @@ router.post("/", upload.single("image"), async (req, res) => {
     end_date,
     registrable_date,
     info,
+    status,
   } = req.body;
 
   if (!name) return res.status(400).json({ error: "Chybí název turnaje" });
@@ -423,9 +424,12 @@ router.post("/", upload.single("image"), async (req, res) => {
     end_date: end_date || start_date || null,
   });
 
+  const finalStatus =
+    status === "completed" || status === "uncompleted" ? status : "completed";
+
   db.query(
-    `INSERT INTO tournament (name, location, price, type_id, start_date, end_date, registrable_date, info, img_path, google_event_id)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO tournament (name, location, price, type_id, start_date, end_date, registrable_date, info, img_path, google_event_id, status)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       name,
       location || null,
@@ -437,6 +441,7 @@ router.post("/", upload.single("image"), async (req, res) => {
       info || null,
       img_path,
       googleEventId,
+      finalStatus,
     ],
     (err, result) => {
       if (err) {
@@ -467,9 +472,13 @@ router.put("/:id", upload.single("image"), async (req, res) => {
     end_date,
     registrable_date,
     info,
+    status,
   } = req.body;
 
   if (!name) return res.status(400).json({ error: "Chybí název turnaje" });
+
+  const finalStatus =
+    status === "completed" || status === "uncompleted" ? status : undefined;
 
   // Načti stávající google_event_id
   db.query(
@@ -495,34 +504,34 @@ router.put("/:id", upload.single("image"), async (req, res) => {
       const doUpdate = (new_img_path) => {
         const hasNewImg = new_img_path !== undefined;
 
-        const query = hasNewImg
-          ? `UPDATE tournament SET name=?, location=?, price=?, type_id=?, start_date=?, end_date=?, registrable_date=?, info=?, img_path=? WHERE id=?`
-          : `UPDATE tournament SET name=?, location=?, price=?, type_id=?, start_date=?, end_date=?, registrable_date=?, info=? WHERE id=?`;
+        let query = "UPDATE tournament SET ";
+        let params = [];
 
-        const params = hasNewImg
-          ? [
-              name,
-              location || null,
-              price || null,
-              type_id || null,
-              start_date || null,
-              end_date || null,
-              registrable_date || null,
-              info || null,
-              new_img_path,
-              id,
-            ]
-          : [
-              name,
-              location || null,
-              price || null,
-              type_id || null,
-              start_date || null,
-              end_date || null,
-              registrable_date || null,
-              info || null,
-              id,
-            ];
+        query +=
+          "name=?, location=?, price=?, type_id=?, start_date=?, end_date=?, registrable_date=?, info=?";
+        params.push(
+          name,
+          location || null,
+          price || null,
+          type_id || null,
+          start_date || null,
+          end_date || null,
+          registrable_date || null,
+          info || null,
+        );
+
+        if (hasNewImg) {
+          query += ", img_path=?";
+          params.push(new_img_path);
+        }
+
+        if (finalStatus !== undefined) {
+          query += ", status=?";
+          params.push(finalStatus);
+        }
+
+        query += " WHERE id=?";
+        params.push(id);
 
         db.query(query, params, (err2, result) => {
           if (err2)
@@ -531,6 +540,7 @@ router.put("/:id", upload.single("image"), async (req, res) => {
               .json({ error: "Chyba při aktualizaci turnaje" });
           if (result.affectedRows === 0)
             return res.status(404).json({ error: "Turnaj nenalezen" });
+
           res.json({ success: true, message: "Turnaj byl úspěšně upraven" });
         });
       };
@@ -571,25 +581,18 @@ router.post("/:id/register", verifyToken, (req, res) => {
           .status(400)
           .json({ error: "Nemáš přiřazeného závodníka. Kontaktuj trenéra." });
       if (!name || !surname)
-        return res
-          .status(400)
-          .json({
-            error:
-              "Závodník nemá vyplněné jméno a příjmení. Kontaktuj trenéra.",
-          });
+        return res.status(400).json({
+          error: "Závodník nemá vyplněné jméno a příjmení. Kontaktuj trenéra.",
+        });
       if (!birth || birth.toString().startsWith("0000"))
-        return res
-          .status(400)
-          .json({
-            error: "Závodník nemá vyplněné datum narození. Kontaktuj trenéra.",
-          });
+        return res.status(400).json({
+          error: "Závodník nemá vyplněné datum narození. Kontaktuj trenéra.",
+        });
       if (!actual_weight_category)
-        return res
-          .status(400)
-          .json({
-            error:
-              "Závodník nemá vyplněnou váhovou kategorii. Kontaktuj trenéra nebo ji doplň v profilu.",
-          });
+        return res.status(400).json({
+          error:
+            "Závodník nemá vyplněnou váhovou kategorii. Kontaktuj trenéra nebo ji doplň v profilu.",
+        });
 
       db.query(
         "INSERT INTO tournament_registration (tournament_id, fighter_id) VALUES (?, ?)",
@@ -607,6 +610,7 @@ router.post("/:id/register", verifyToken, (req, res) => {
 });
 
 // DELETE /:id – smazání turnaje + Google Calendar
+/*
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -640,6 +644,44 @@ router.delete("/:id", async (req, res) => {
         res.json({ success: true, message: "Turnaj byl úspěšně smazán" });
       });
     },
+  );
+});
+*/
+
+// DELETE /:id – smazání turnaje + Google Calendar
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  db.query(
+    "SELECT img_path, google_event_id FROM tournament WHERE id = ?",
+    [id],
+    async (err, results) => {
+      if (err) return res.status(500).json({ error: "Chyba při hledání" });
+      if (!results.length) return res.status(404).json({ error: "Nenalezeno" });
+
+      const { google_event_id, img_path } = results[0];
+
+      // 1. Smaž z Google Kalendáře
+      await deleteGoogleEvent(google_event_id);
+
+      // 2. NEJDŘÍVE smaž všechny registrace k tomuto turnaji
+      db.query("DELETE FROM tournament_registration WHERE tournament_id = ?", [id], (errReg) => {
+        if (errReg) return res.status(500).json({ error: "Chyba při mazání registrací" });
+
+        // 3. POTOM smaž samotný turnaj
+        db.query("DELETE FROM tournament WHERE id = ?", [id], (err2) => {
+          if (err2) return res.status(500).json({ error: "Chyba při mazání turnaje" });
+
+          // 4. Smaž obrázek
+          if (img_path) {
+            const fullPath = path.join("C:\\LacekTKD\\Frontend\\public", img_path);
+            if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
+          }
+
+          res.json({ success: true, message: "Smazáno kompletně" });
+        });
+      });
+    }
   );
 });
 

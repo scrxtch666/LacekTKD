@@ -9,6 +9,7 @@ import {
   ZoomIn,
   Pencil,
 } from "lucide-react";
+import { createPortal } from "react-dom";
 
 const PhotoGallery = ({ photos }) => {
   const [lightbox, setLightbox] = useState(null);
@@ -59,47 +60,49 @@ const PhotoGallery = ({ photos }) => {
         ))}
       </div>
 
-      {lightbox && (
-        <div
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
-          onClick={() => setLightbox(null)}
-        >
-          <button
+      {lightbox &&
+        createPortal(
+          <div
+            className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
             onClick={() => setLightbox(null)}
-            className="absolute top-4 right-4 text-white hover:text-gray-300 bg-white/10 rounded-full p-2"
           >
-            <X size={24} />
-          </button>
+            <button
+              onClick={() => setLightbox(null)}
+              className="absolute top-4 right-4 text-white hover:text-gray-300 bg-white/10 rounded-full p-2"
+            >
+              <X size={24} />
+            </button>
 
-          {photos.length > 1 && (
-            <>
-              <button
-                onClick={prev}
-                className="absolute left-4 text-white bg-white/10 hover:bg-white/20 rounded-full p-3 transition-colors"
-              >
-                ‹
-              </button>
-              <button
-                onClick={next}
-                className="absolute right-4 text-white bg-white/10 hover:bg-white/20 rounded-full p-3 transition-colors"
-              >
-                ›
-              </button>
-            </>
-          )}
+            {photos.length > 1 && (
+              <>
+                <button
+                  onClick={prev}
+                  className="absolute left-4 text-white bg-white/10 hover:bg-white/20 rounded-full p-3 transition-colors"
+                >
+                  ‹
+                </button>
+                <button
+                  onClick={next}
+                  className="absolute right-4 text-white bg-white/10 hover:bg-white/20 rounded-full p-3 transition-colors"
+                >
+                  ›
+                </button>
+              </>
+            )}
 
-          <img
-            src={lightbox}
-            alt=""
-            className="max-h-[85vh] max-w-[85vw] object-contain rounded-xl"
-            onClick={(e) => e.stopPropagation()}
-          />
+            <img
+              src={lightbox}
+              alt=""
+              className="max-h-[85vh] max-w-[85vw] object-contain rounded-xl"
+              onClick={(e) => e.stopPropagation()}
+            />
 
-          <p className="absolute bottom-4 text-white/60 text-sm">
-            {lightboxIndex + 1} / {photos.length}
-          </p>
-        </div>
-      )}
+            <p className="absolute bottom-4 text-white/60 text-sm">
+              {lightboxIndex + 1} / {photos.length}
+            </p>
+          </div>,
+          document.body,
+        )}
     </>
   );
 };
@@ -175,7 +178,7 @@ function AktualitaDetail() {
                   <div className="flex items-center gap-1.5">
                     <Pencil size={10} className="text-gray-400" />
                     <span className="text-gray-400 text-xs">
-                       {event.created_at_formatted}
+                      {event.created_at_formatted}
                     </span>
                   </div>
                 )}

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { getUserRole } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
+import { createPortal } from "react-dom";
 
 const TournamentForm = ({
   data,
@@ -79,6 +80,20 @@ const TournamentForm = ({
               {t.name}
             </option>
           ))}
+        </select>
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Status
+        </label>
+        <select
+          value={data.status}
+          onChange={(e) => setData({ ...data, status: e.target.value })}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+        >
+          <option value="completed">Aktivní (zobrazena na webu)</option>
+          <option value="uncompleted">Skrytá</option>
+          
         </select>
       </div>
       <div>
@@ -209,6 +224,7 @@ function AdminTurnaje() {
     registrable_date: "",
     info: "",
     image: null,
+    status: "",
   });
   const [previewUrl, setPreviewUrl] = useState(null);
   const [formError, setFormError] = useState("");
@@ -516,25 +532,27 @@ function AdminTurnaje() {
       registrable_date: "",
       info: "",
       image: null,
+      status: "",
     });
   };
 
   const startEdit = (t) => {
-    setEditingId(t.id);
-    setEditTournament({
-      name: t.name || "",
-      location: t.location || "",
-      price: t.price || "",
-      type_id: t.type_id || "",
-      start_date: t.start_date_raw?.substring(0, 10) || "",
-      end_date: t.end_date_raw?.substring(0, 10) || "",
-      registrable_date: t.registrable_date?.substring(0, 10) || "",
-      info: t.info || "",
-      image: null,
-    });
-    setEditPreviewUrl(null);
-    setEditError("");
-  };
+  setEditingId(t.id);
+  setEditTournament({
+    name: t.name || "",
+    location: t.location || "",
+    price: t.price || "",
+    type_id: t.type_id || "",
+    start_date: t.start_date_raw?.substring(0, 10) || "",
+    end_date: t.end_date_raw?.substring(0, 10) || "",
+    registrable_date: t.registrable_date_raw?.substring(0, 10) || "",
+    info: t.info || "",
+    image: null,
+    status: t.status || "",
+  });
+  setEditPreviewUrl(null);
+  setEditError("");
+};
 
   const cancelEdit = () => {
     setEditingId(null);
@@ -731,7 +749,7 @@ function AdminTurnaje() {
               setFilterOld(false);
               setFilterTournament("");
             }}
-            className="px-4 py-2 bg-customWhite border border-gray-300 text-gray-600 rounded-lg text-sm transition-colors hover:bg-gray-50"
+            className="px-4 py-2 bg-customWhite border border-gray-300 rounded-lg text-sm transition-colors hover:bg-gray-50"
           >
             Zrušit filtry
           </button>
@@ -995,56 +1013,60 @@ function AdminTurnaje() {
           )}
         </div>
       )}
-      {showRegisterModal && (
-        <div
-          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-          onClick={() => setShowRegisterModal(null)}
-        >
+      {showRegisterModal &&
+        createPortal(
           <div
-            className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm space-y-4"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4"
+            onClick={() => setShowRegisterModal(null)}
           >
-            <div className="flex justify-between items-center">
-              <h3 className="font-semibold text-gray-800">
-                Přihlásit závodníka
-              </h3>
-              <button
-                onClick={() => setShowRegisterModal(null)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <select
-              value={selectedFighter}
-              onChange={(e) => setSelectedFighter(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-sm"
+            <div
+              className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm space-y-4"
+              onClick={(e) => e.stopPropagation()}
             >
-              <option value="">-- Vyber závodníka --</option>
-              {fighters.map((f) => (
-                <option key={f.id} value={f.id}>
-                  {f.name} {f.surname}
-                </option>
-              ))}
-            </select>
-            <div className="flex gap-2">
-              <button
-                onClick={handleAdminRegisterFighter}
-                disabled={registerLoading}
-                className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm disabled:opacity-50"
+              <div className="flex justify-between items-center">
+                <h3 className="font-semibold text-gray-800">
+                  Přihlásit závodníka
+                </h3>
+                <button
+                  onClick={() => setShowRegisterModal(null)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <select
+                value={selectedFighter}
+                onChange={(e) => setSelectedFighter(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-sm"
               >
-                {registerLoading ? "Přihlašuji..." : "Přihlásit"}
-              </button>
-              <button
-                onClick={() => setShowRegisterModal(null)}
-                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm"
-              >
-                Zrušit
-              </button>
+                <option value="">-- Vyber závodníka --</option>
+                {fighters.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.name} {f.surname}
+                  </option>
+                ))}
+              </select>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={handleAdminRegisterFighter}
+                  disabled={registerLoading}
+                  className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm disabled:opacity-50"
+                >
+                  {registerLoading ? "Přihlašuji..." : "Přihlásit"}
+                </button>
+                <button
+                  onClick={() => setShowRegisterModal(null)}
+                  className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm"
+                >
+                  Zrušit
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body, // Tento řádek musí být jako druhý argument funkce createPortal
+        )}
       {/* ─── TAB: PŘIHLÁŠKY ─── */}
       {activeTab === "prihlasky" && (
         <div className="space-y-4">
@@ -1148,7 +1170,7 @@ function AdminTurnaje() {
                               setShowRegisterModal(tournamentId);
                               setSelectedFighter("");
                             }}
-                            className="flex items-center gap-1.5 px-3 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm transition-colors"
+                            className="flex items-center gap-1.5 px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm transition-colors"
                           >
                             <Plus size={15} /> Přihlásit závodníka
                           </button>

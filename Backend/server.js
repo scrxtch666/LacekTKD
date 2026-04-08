@@ -17,6 +17,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use("/uploads", express.static("uploads"));
 app.use(express.json());
+//app.use(express.static(path.join(__dirname, "public")));
 
 // ─── ROUTERY ───
 app.use("/api", router);

@@ -57,7 +57,6 @@ function AdminZkousky() {
         });
     }
   }, []);
-  
 
   useEffect(() => {
     fetchExams();
@@ -112,13 +111,24 @@ function AdminZkousky() {
   };
 
   const startEdit = (exam) => {
+    // Pomocná funkce pro bezpečné získání YYYY-MM-DD z jakéhokoliv formátu
+    const toISODate = (d) => {
+      if (!d) return "";
+      const dateObj = new Date(d);
+      // Vytvoříme string podle lokálního času, ne UTC
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const day = String(dateObj.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
+
     setEditingId(exam.id);
     setFormData({
       title: exam.title || "",
       description: exam.description || "",
-      date: exam.date?.substring(0, 10) || "",
+      date: toISODate(exam.date),
+      registrable_date: toISODate(exam.registrable_date),
       location: exam.location || "",
-      registrable_date: exam.registrable_date?.substring(0, 10) || "",
       price: exam.price || "",
       status: exam.status || "hidden",
     });
@@ -192,7 +202,12 @@ function AdminZkousky() {
     fetchExams();
   };
 
-  const formatDate = (d) => (d ? new Date(d).toLocaleDateString("cs-CZ") : "—");
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "—";
+    // Pokud datum přijde jako "2026-04-08...", vezmeme jen prvních 10 znaků
+    const [year, month, day] = dateStr.substring(0, 10).split("-");
+    return `${day}.${month}.${year}`;
+  };
 
   if (loading)
     return (
