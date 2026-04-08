@@ -75,15 +75,20 @@ Backend - cd  .\Backend\ - node server.js
 ---------------------------------------------------------------------------
 # CO MUSÍM UDĚLAT
 - prohlížení fotek u aktualit - je tam nějaký ten padding
-- přihlášení uživatele na zkoušku a turnaj
+- přihlášení uživatele na zkoušku a turnaj - jakožto admin a trener
+- do admin/me přidat nějaké info pole, které bude informovat, že pokud není přidělený uživatelský účet, tak že nějaký informace nepůjdou editovat a že nebude možné se přihlásit na turnje a zkoušky
 - zase mi nefunugje filtr na skrytí - uživatel vidí i skryté
 - podívat se na filtry turnajů - kolik jich to vypisuje a tak
 - když přidávám turnaj, tak je defaultní stav skrytý
+- pokud je jednodenní turnaj tak odebrat tu pomlčku
+- úprava turnaje - nepamatuje si to data
 
 # TEXTOVÁ ČÁST POZNÁMKY
 ---------------------------------------------------------------------------
 # DO TEXTOVÉ ČÁSTI PŘIDAT
-- porovnání s aktuální webovou stránkou
+- porovnání s aktuální webovou stránkou - dát tam screen o špatné responzivitě
+- porovnání s ostatníma webama
+- kapitola o testování - debugging
 - něco o registraci
 - něco o kalendáři akcí 
 - přidávání úspěchů závodníkům - tohle musím spíš dopsat

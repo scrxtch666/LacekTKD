@@ -226,10 +226,22 @@ function AdminTurnaje() {
   const [filterOld, setFilterOld] = useState(false);
   const [filterTournament, setFilterTournament] = useState(""); // "completed" | "uncompleted" |
 
+  const [fighters, setFighters] = useState([]);
+  const [showRegisterModal, setShowRegisterModal] = useState(null); // tournamentId
+  const [selectedFighter, setSelectedFighter] = useState("");
+  const [registerLoading, setRegisterLoading] = useState(false);
+
   useEffect(() => {
     const handleAuthChange = () => setUserRole(getUserRole());
     window.addEventListener("authChange", handleAuthChange);
     return () => window.removeEventListener("authChange", handleAuthChange);
+  }, []);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/fighters")
+      .then((res) => res.json())
+      .then((data) => setFighters(Array.isArray(data) ? data : []))
+      .catch(console.error);
   }, []);
 
   useEffect(() => {
@@ -294,6 +306,25 @@ function AdminTurnaje() {
         console.error("ERROR:", err);
         setLoadingReg(false);
       });
+  };
+
+  const handleAdminRegisterFighter = async () => {
+    if (!selectedFighter) return alert("Vyber závodníka");
+    setRegisterLoading(true);
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+      `http://localhost:3000/api/tournamentRegistration/${showRegisterModal}/fighter/${selectedFighter}`,
+      { method: "POST", headers: { Authorization: `Bearer ${token}` } },
+    );
+    const data = await response.json();
+    if (response.ok) {
+      setShowRegisterModal(null);
+      setSelectedFighter("");
+      fetchRegistrations();
+    } else {
+      alert(data.error || "Nepodařilo se přihlásit závodníka");
+    }
+    setRegisterLoading(false);
   };
 
   const handleRegister = async (tournamentId) => {
@@ -964,7 +995,56 @@ function AdminTurnaje() {
           )}
         </div>
       )}
-
+      {showRegisterModal && (
+        <div
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowRegisterModal(null)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center">
+              <h3 className="font-semibold text-gray-800">
+                Přihlásit závodníka
+              </h3>
+              <button
+                onClick={() => setShowRegisterModal(null)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <select
+              value={selectedFighter}
+              onChange={(e) => setSelectedFighter(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-sm"
+            >
+              <option value="">-- Vyber závodníka --</option>
+              {fighters.map((f) => (
+                <option key={f.id} value={f.id}>
+                  {f.name} {f.surname}
+                </option>
+              ))}
+            </select>
+            <div className="flex gap-2">
+              <button
+                onClick={handleAdminRegisterFighter}
+                disabled={registerLoading}
+                className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm disabled:opacity-50"
+              >
+                {registerLoading ? "Přihlašuji..." : "Přihlásit"}
+              </button>
+              <button
+                onClick={() => setShowRegisterModal(null)}
+                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm"
+              >
+                Zrušit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* ─── TAB: PŘIHLÁŠKY ─── */}
       {activeTab === "prihlasky" && (
         <div className="space-y-4">
@@ -1060,20 +1140,34 @@ function AdminTurnaje() {
                           )}
                         </div>
                       </div>
+                      {/* Rozbalit + Přihlásit */}
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {(userRole === "admin" || userRole === "trainer") && (
+                          <button
+                            onClick={() => {
+                              setShowRegisterModal(tournamentId);
+                              setSelectedFighter("");
+                            }}
+                            className="flex items-center gap-1.5 px-3 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg text-sm transition-colors"
+                          >
+                            <Plus size={15} /> Přihlásit závodníka
+                          </button>
+                        )}
+                        <button
+                          onClick={() =>
+                            setExpandedTournament(
+                              isExpanded ? null : tournamentId,
+                            )
+                          }
+                          className="flex items-center gap-2 px-4 py-2 bg-customWhite border border-customGreen text-customBlack rounded-lg text-sm transition-colors"
+                        >
+                          {isExpanded
+                            ? "Skrýt závodníky ▲"
+                            : "Zobrazit závodníky ▼"}
+                        </button>
+                      </div>
 
                       {/* Rozbalit */}
-                      <button
-                        onClick={() =>
-                          setExpandedTournament(
-                            isExpanded ? null : tournamentId,
-                          )
-                        }
-                        className="flex items-center gap-2 px-4 py-2 bg-customWhite border border-customGreen text-customBlack rounded-lg text-sm transition-colors flex-shrink-0"
-                      >
-                        {isExpanded
-                          ? "Skrýt závodníky ▲"
-                          : "Zobrazit závodníky ▼"}
-                      </button>
                     </div>
                   </div>
 
