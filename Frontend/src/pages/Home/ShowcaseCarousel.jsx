@@ -41,7 +41,7 @@ function ShowcaseCarousel() {
             className="relative min-w-full h-[300px] md:h-[400px] lg:h-96 overflow-hidden bg-customBlack"
           >
             <img
-              src={banner.img_path}
+              src={`http://localhost:3000${banner.img_path}`}
               alt={banner.banner_name}
               className="w-full h-full object-cover brightness-50 opacity-75"
             />

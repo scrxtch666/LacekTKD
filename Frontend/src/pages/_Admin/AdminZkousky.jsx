@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { getUserRole } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
+import { createPortal } from "react-dom";
 
 const API = "http://localhost:3000";
 const authHeader = () => ({
@@ -45,6 +46,10 @@ function AdminZkousky() {
   const navigate = useNavigate();
   const isAdminOrTrainer = userRole === "admin" || userRole === "trainer";
   const headerText = isAdminOrTrainer ? "Správa zkoušek" : "Zkoušky";
+  const [fighters, setFighters] = useState([]);
+  const [showRegisterModal, setShowRegisterModal] = useState(null);
+  const [selectedFighter, setSelectedFighter] = useState("");
+  const [registerLoading, setRegisterLoading] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -61,6 +66,33 @@ function AdminZkousky() {
   useEffect(() => {
     fetchExams();
   }, [myFighterId]);
+
+  useEffect(() => {
+    if (userRole === "admin" || userRole === "trainer") {
+      fetch(`${API}/api/fighters`)
+        .then((res) => res.json())
+        .then((data) => setFighters(Array.isArray(data) ? data : []))
+        .catch(console.error);
+    }
+  }, []);
+
+  const handleAdminRegisterFighter = async () => {
+    if (!selectedFighter) return alert("Vyber závodníka");
+    setRegisterLoading(true);
+    const res = await fetch(
+      `${API}/api/exams/${showRegisterModal}/register/fighter/${selectedFighter}`,
+      { method: "POST", headers: authHeader() },
+    );
+    const data = await res.json();
+    if (res.ok) {
+      setShowRegisterModal(null);
+      setSelectedFighter("");
+      fetchExams();
+    } else {
+      alert(data.error || "Nepodařilo se přihlásit závodníka");
+    }
+    setRegisterLoading(false);
+  };
 
   const fetchExams = () => {
     // User volá veřejný endpoint (pouze active), admin/trainer volá /admin (vše)
@@ -551,7 +583,19 @@ function AdminZkousky() {
                   </div>
                 </div>
               </div>
-
+              {(userRole === "admin" || userRole === "trainer") && (
+                <div className="px-4 py-3 border-b border-gray-100">
+                  <button
+                    onClick={() => {
+                      setShowRegisterModal(exam.id);
+                      setSelectedFighter("");
+                    }}
+                    className="addBtn"
+                  >
+                    <Plus size={16} /> Přidat závodníka
+                  </button>
+                </div>
+              )}
               {/* Přihlášení závodníci */}
               {expanded === exam.id && (
                 <div className="border-t border-gray-100">
@@ -587,15 +631,15 @@ function AdminZkousky() {
                           </div>
                         </div>
                         {(userRole === "admin" || userRole === "trainer") && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleAdminUnregister(reg.reg_id);
-                            }}
-                            className="flex items-center gap-1 px-3 py-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-lg text-xs transition-colors"
-                          >
-                            <X size={12} /> Odhlásit
-                          </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleAdminUnregister(reg.reg_id);
+                              }}
+                              className="flex items-center gap-1 px-3 py-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-lg text-xs transition-colors"
+                            >
+                              <X size={12} /> Odhlásit
+                            </button>
                         )}
                       </div>
                     ))
@@ -606,6 +650,58 @@ function AdminZkousky() {
           ))}
         </div>
       )}
+      {showRegisterModal &&
+        createPortal(
+          <div
+            className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-4"
+            onClick={() => setShowRegisterModal(null)}
+          >
+            <div
+              className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm space-y-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center">
+                <h3 className="font-semibold text-gray-800">
+                  Přihlásit závodníka na zkoušku
+                </h3>
+                <button
+                  onClick={() => setShowRegisterModal(null)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+              <select
+                value={selectedFighter}
+                onChange={(e) => setSelectedFighter(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-sm"
+              >
+                <option value="">-- Vyber závodníka --</option>
+                {fighters.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.name} {f.surname}
+                  </option>
+                ))}
+              </select>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleAdminRegisterFighter}
+                  disabled={registerLoading}
+                  className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm disabled:opacity-50"
+                >
+                  {registerLoading ? "Přihlašuji..." : "Přihlásit"}
+                </button>
+                <button
+                  onClick={() => setShowRegisterModal(null)}
+                  className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm"
+                >
+                  Zrušit
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

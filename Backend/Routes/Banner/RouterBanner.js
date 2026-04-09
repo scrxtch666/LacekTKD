@@ -1,49 +1,16 @@
 const express = require("express");
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
+const { createUpload, getFilePath } = require("../../utils/upload");
 const db = require("../../Libs/db");
+const fs = require("fs");
 
 const router = express.Router();
 
-// --- KONFIGURACE MULTER PRO UPLOAD BANNERŮ ---
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const uploadDir = "C:\\LacekTKD\\Frontend\\public\\uploads\\banners";
-
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, "banner-" + uniqueSuffix + path.extname(file.originalname));
-  },
-});
-
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // Max 5MB
-  fileFilter: function (req, file, cb) {
-    const allowedTypes = /jpeg|jpg|png|gif|webp/;
-    const extname = allowedTypes.test(
-      path.extname(file.originalname).toLowerCase(),
-    );
-    const mimetype = allowedTypes.test(file.mimetype);
-
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      cb(new Error("Pouze obrázky jsou povoleny!"));
-    }
-  },
-});
+// --- MULTER PRO UPLOAD BANNERŮ ---
+const upload = createUpload("banners");
 
 // --- ENDPOINTY ---
 
-// GET - Získání všech bannerů (s možností filtrace)
+// GET - Získání všech bannerů
 router.get("/", (req, res) => {
   const { active } = req.query;
 
@@ -68,6 +35,8 @@ router.get("/", (req, res) => {
 
 // POST - Přidání nového banneru
 router.post("/", upload.single("image"), (req, res) => {
+    console.log("Soubor nahrán:", req.file);
+  console.log("Cesta:", req.file?.path);
   const { banner_name, active } = req.body;
 
   if (!banner_name || !req.file) {
@@ -83,23 +52,21 @@ router.post("/", upload.single("image"), (req, res) => {
     (err, result) => {
       if (err) {
         console.error("Chyba při ukládání do DB:", err);
-        return res
-          .status(500)
-          .json({ error: "Chyba při ukládání do databáze" });
+        return res.status(500).json({ error: "Chyba při ukládání do databáze" });
       }
 
       res.status(201).json({
         success: true,
         message: "Banner byl úspěšně přidán",
         id: result.insertId,
-        img_path: img_path,
+        img_path,
         active: isActive,
       });
-    },
+    }
   );
 });
 
-// PATCH - Změna stavu banneru (aktivní/neaktivní)
+// PATCH - Aktivace/deaktivace banneru
 router.patch("/:id/toggle", (req, res) => {
   const { id } = req.params;
   const { active } = req.body;
@@ -120,9 +87,9 @@ router.patch("/:id/toggle", (req, res) => {
       res.json({
         success: true,
         message: `Banner byl ${active ? "aktivován" : "deaktivován"}`,
-        active: active,
+        active,
       });
-    },
+    }
   );
 });
 
@@ -130,7 +97,6 @@ router.patch("/:id/toggle", (req, res) => {
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
 
-  // Nejdřív získáme cestu k obrázku
   db.query("SELECT img_path FROM banner WHERE id = ?", [id], (err, results) => {
     if (err) {
       console.error("Chyba při hledání banneru:", err);
@@ -142,16 +108,14 @@ router.delete("/:id", (req, res) => {
     }
 
     const imgPath = results[0].img_path;
-    const fullPath = path.join("C:\\LacekTKD\\Frontend\\public", imgPath);
+    const fullPath = getFilePath(imgPath);
 
-    // Smažeme z databáze
     db.query("DELETE FROM banner WHERE id = ?", [id], (err, result) => {
       if (err) {
         console.error("Chyba při mazání banneru:", err);
         return res.status(500).json({ error: "Chyba při mazání z databáze" });
       }
 
-      // Smažeme soubor z disku
       if (fs.existsSync(fullPath)) {
         fs.unlinkSync(fullPath);
         console.log(`Soubor ${fullPath} byl smazán`);

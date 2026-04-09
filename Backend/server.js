@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const db = require("./Libs/db");
 const router = require("./Routes/Router");
 const bannerRouter = require("./Routes/Banner/RouterBanner");
@@ -15,9 +16,10 @@ const corsOptions = {
   allowedHeaders: "Content-Type,Authorization",
 };
 app.use(cors(corsOptions));
-app.use("/uploads", express.static("uploads"));
+//app.use("/uploads", express.static("uploads"));
 app.use(express.json());
-//app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")));
+
 
 // ─── ROUTERY ───
 app.use("/api", router);

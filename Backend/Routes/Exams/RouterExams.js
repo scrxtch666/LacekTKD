@@ -304,18 +304,30 @@ router.put("/:id/status", verifyToken, (req, res) => {
   );
 });
 
-/*
+
 // POST /:id/register/fighter/:fighterId – admin přihlásí konkrétního závodníka
 router.post("/:id/register/fighter/:fighterId", verifyToken, (req, res) => {
   const { id, fighterId } = req.params;
+
+  // Kontrola, jestli už není přihlášen
   db.query(
-    "INSERT INTO exam_registration (exam_id, fighter_id) VALUES (?, ?)",
+    "SELECT COUNT(*) AS count FROM exam_registration WHERE exam_id=? AND fighter_id=?",
     [id, fighterId],
-    (err) => {
-      if (err) return res.status(500).json({ error: "Chyba při přihlašování" });
-      res.json({ success: true });
+    (err, duplicate) => {
+      if (err) return res.status(500).json({ error: "Chyba serveru" });
+      if (duplicate[0].count > 0)
+        return res.status(409).json({ error: "Závodník je už na tuto zkoušku přihlášen" });
+
+      db.query(
+        "INSERT INTO exam_registration (exam_id, fighter_id) VALUES (?, ?)",
+        [id, fighterId],
+        (err2) => {
+          if (err2) return res.status(500).json({ error: "Chyba při přihlašování" });
+          res.json({ success: true });
+        }
+      );
     }
   );
 });
- */
+ 
 module.exports = router;
