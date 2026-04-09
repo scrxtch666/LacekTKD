@@ -224,9 +224,8 @@ function Prihlasky() {
                               className="w-9 h-9 rounded-full object-cover border-2 border-gray-200"
                             />
                           ) : (
-                            <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-xs font-bold">
+                            <div className="w-9 h-9 noPfp">
                               {reg.fighter_name?.charAt(0)}
-                              {reg.fighter_surname?.charAt(0)}
                             </div>
                           )}
                           <div>

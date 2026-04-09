@@ -184,7 +184,7 @@ useEffect(() => {
                       className="w-full h-full object-cover object-center"
                     />
                   ) : (
-                    <div className="w-full h-full rounded-xl bg-customGreen flex items-center justify-center text-white text-2xl font-bold">
+                    <div className="w-full h-full rounded-xl noPfp">
                       {fighter.name?.charAt(0).toUpperCase() || "?"}
                     </div>
                   )}

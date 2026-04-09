@@ -748,7 +748,7 @@ function AdminZavodnici() {
                         className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
                       />
                     ) : (
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white text-2xl font-bold">
+                      <div className="w-16 h-16 noPfp">
                         {fighter.name?.charAt(0).toUpperCase() || "Z"}
                       </div>
                     )}

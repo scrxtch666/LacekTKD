@@ -663,7 +663,7 @@ function AdminUsers() {
                         alt={user.login}
                       />
                     ) : (
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-br bg-customGreen flex items-center justify-center text-customWhite text-2xl font-bold">
+                      <div className="w-16 h-16 noPfp">
                         {user.login?.charAt(0).toUpperCase() || "U"}
                       </div>
                     )}

@@ -76,7 +76,7 @@ function AdminRequests() {
               key={req.id}
               className="bg-customWhite rounded-lg shadow-md p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4"
             >
-              <div className="w-10 h-10 rounded-full bg-customGreen flex items-center justify-center text-customWhite font-bold flex-shrink-0">
+              <div className="w-10 h-10 noPfp">
                 {req.login?.charAt(0).toUpperCase()}
               </div>
 
