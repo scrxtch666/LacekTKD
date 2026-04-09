@@ -309,23 +309,20 @@ router.put("/:id/status", verifyToken, (req, res) => {
 router.post("/:id/register/fighter/:fighterId", verifyToken, (req, res) => {
   const { id, fighterId } = req.params;
 
-  // Kontrola, jestli už není přihlášen
   db.query(
-    "SELECT COUNT(*) AS count FROM exam_registration WHERE exam_id=? AND fighter_id=?",
+    "INSERT INTO exam_registration (exam_id, fighter_id) VALUES (?, ?)",
     [id, fighterId],
-    (err, duplicate) => {
-      if (err) return res.status(500).json({ error: "Chyba serveru" });
-      if (duplicate[0].count > 0)
-        return res.status(409).json({ error: "Závodník je už na tuto zkoušku přihlášen" });
-
-      db.query(
-        "INSERT INTO exam_registration (exam_id, fighter_id) VALUES (?, ?)",
-        [id, fighterId],
-        (err2) => {
-          if (err2) return res.status(500).json({ error: "Chyba při přihlašování" });
-          res.json({ success: true });
+    (err) => {
+      if (err) {
+        if (err.code === "ER_DUP_ENTRY") {
+          return res.status(409).json({
+            error: "Závodník je už na tuto zkoušku přihlášen",
+          });
         }
-      );
+        return res.status(500).json({ error: "Chyba při přihlašování" });
+      }
+
+      res.json({ success: true });
     }
   );
 });

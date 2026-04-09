@@ -567,14 +567,14 @@ const handleAdminRegisterFighter = async () => {
                         </button>
                         <button
                           onClick={() => startEdit(exam)}
-                          className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                          className="editBtn"
                         >
                           <Pencil size={16} />
                         </button>
                         <button
                           onClick={() => handleDelete(exam.id)}
                           disabled={deleting === exam.id}
-                          className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors disabled:opacity-50"
+                          className="deleteBtn"
                         >
                           <Trash2 size={16} />
                         </button>

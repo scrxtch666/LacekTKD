@@ -762,7 +762,7 @@ function AdminTurnaje() {
                         <>
                           <button
                             onClick={() => startEdit(tournament)}
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                            className="editBtn"
                           >
                             <Pencil size={18} />
                             <span>Editovat</span>
@@ -770,7 +770,7 @@ function AdminTurnaje() {
                           <button
                             onClick={() => handleDelete(tournament.id)}
                             disabled={deleting === tournament.id}
-                            className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors disabled:opacity-50"
+                            className="deleteBtn"
                           >
                             <Trash2 size={18} />
                             <span>

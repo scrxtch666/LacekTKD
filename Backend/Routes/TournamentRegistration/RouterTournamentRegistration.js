@@ -125,14 +125,25 @@ router.get("/prihlaseny", verifyToken, (req, res) => {
   );
 });
 
+// POST /:id/register/fighter/:fighterId – admin přihlásí konkrétního závodníka
 router.post("/:tournamentId/fighter/:fighterId", verifyToken, (req, res) => {
+  const { tournamentId, fighterId } = req.params;
+
   db.query(
     "INSERT INTO tournament_registration (tournament_id, fighter_id) VALUES (?, ?)",
-    [req.params.tournamentId, req.params.fighterId],
+    [tournamentId, fighterId],
     (err) => {
-      if (err) return res.status(500).json({ error: "Chyba při přihlašování" });
+      if (err) {
+        if (err.code === "ER_DUP_ENTRY") {
+          return res.status(409).json({
+            error: "Závodník je už na tento turnaj přihlášen",
+          });
+        }
+        return res.status(500).json({ error: "Chyba při přihlašování" });
+      }
+
       res.json({ success: true });
-    },
+    }
   );
 });
 

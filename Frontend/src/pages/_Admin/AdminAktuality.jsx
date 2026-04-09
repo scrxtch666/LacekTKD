@@ -760,7 +760,7 @@ function AdminAktuality() {
                   <div className="flex gap-2 flex-shrink-0">
                     <button
                       onClick={() => startEdit(event)}
-                      className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200"
+                      className="editBtn"
                     >
                       <Pencil size={18} />
                       <span>Editovat</span>
@@ -768,7 +768,7 @@ function AdminAktuality() {
                     <button
                       onClick={() => handleDelete(event.id)}
                       disabled={deleting === event.id}
-                      className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-200 disabled:opacity-50"
+                      className="deleteBtn"
                     >
                       <Trash2 size={18} />
                       <span>

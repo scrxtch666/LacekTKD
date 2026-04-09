@@ -706,7 +706,7 @@ function AdminUsers() {
                   <div className="flex flex-col sm:flex-row gap-2">
                     <button
                       onClick={() => startEdit(user)}
-                      className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200"
+                      className="editBtn"
                     >
                       <Pencil size={18} />
                       <span>Editovat</span>
@@ -714,7 +714,7 @@ function AdminUsers() {
                     <button
                       onClick={() => handleDelete(user.id)}
                       disabled={deleting === user.id}
-                      className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="deleteBtn disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Trash2 size={18} />
                       <span>{deleting === user.id ? "Mažu..." : "Smazat"}</span>

@@ -361,7 +361,7 @@ function AdminBanner() {
                   <button
                     onClick={() => handleDelete(banner.id)}
                     disabled={deleting === banner.id}
-                    className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="deleteBtn disabled:cursor-not-allowed"
                   >
                     <Trash2 size={18} />
                     <span>{deleting === banner.id ? "Mažu..." : "Smazat"}</span>
