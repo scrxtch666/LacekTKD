@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
+const API = "http://localhost:3000";
+
 function SponsorCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const intervalRef = useRef(null);
@@ -72,7 +74,7 @@ function SponsorCarousel() {
                 >
                   <Link to={sponsor.url} target="_blank">
                     <img
-                      src={sponsor.img_path}
+                      src={`${API}${sponsor.img_path}`}
                       alt={`Logo ${sponsor.sponsor_name}`}
                       className="h-16 object-contain mx-auto"
                     />

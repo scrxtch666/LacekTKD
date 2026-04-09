@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Phone, Mail } from "lucide-react";
 
+const API = "http://localhost:3000";
   const getRoleLabel = (role) => {
   switch (role) {
       case "trainer":
@@ -18,7 +19,7 @@ const CoachCard = ({ ocoach }) => {
       {/* Profilový obrázek s okrajem */}
       <div className="relative">
         <img
-          src={ocoach.img_path}
+        src={`${API}${ocoach.img_path}`}
           alt={`${ocoach.name} ${ocoach.surname}`}
           className="rounded-full h-32 w-32 object-cover object-center ring-4 ring-customGreen/10"
         />

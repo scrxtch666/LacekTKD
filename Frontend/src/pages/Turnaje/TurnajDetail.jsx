@@ -153,7 +153,7 @@ function TurnajDetail() {
         {tournament.img_path && (
           <div className="h-64 sm:h-80 overflow-hidden">
             <img
-              src={tournament.img_path}
+              src={`${API}${tournament.img_path}`}
               alt={tournament.name}
               className="w-full h-full object-cover"
             />
@@ -301,7 +301,7 @@ function TurnajDetail() {
                 {reg.fighter_pfp ? (
                   <img
                     className="w-9 h-9 rounded-full object-cover"
-                    src={reg.fighter_pfp}
+                    src={`${API}${reg.fighter_pfp}`}
                     alt={reg.fighter_name}
                   />
                 ) : (

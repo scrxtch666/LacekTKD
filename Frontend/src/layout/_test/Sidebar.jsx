@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { getUserRole, authService } from "../../utils/auth";
 
+const API = "http://localhost:3000";
+
 function SideBar() {
   const [open, setOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
@@ -178,7 +180,7 @@ function SideBar() {
         <div className="flex items-center gap-3 px-1">
           {currentUser?.img_path ? (
             <img
-              src={currentUser.img_path}
+            src={`${API}${currentUser.img_path}`}
               alt={currentUser.login}
               className="w-8 h-8 rounded-lg object-cover flex-shrink-0"
             />

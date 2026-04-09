@@ -183,7 +183,7 @@ function AdminMe() {
             <div className="absolute -bottom-10 left-6">
               {user.img_path ? (
                 <img
-                  src={user.img_path}
+                  src={`${API}${user.img_path}`}
                   alt={user.login}
                   className="w-20 h-20 rounded-2xl object-cover border-4 border-customWhite shadow-md"
                 />

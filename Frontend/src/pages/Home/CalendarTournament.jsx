@@ -1,5 +1,7 @@
 import React from "react";
 
+const API = "http://localhost:3000";
+
 function CalendarTournament({ tournaments }) {
   // Ošetření prázdného stavu
   if (tournaments.length === 0) {
@@ -20,7 +22,7 @@ function CalendarTournament({ tournaments }) {
             {/* OBRÁZEK */}
             <div className="flex w-44 max-w-44 h-full items-center justify-center overflow-hidden shrink-0 hidden sm:flex">
               <img
-                src={tournament.img_path}
+                src={`${API}${tournament.img_path}`}
                 alt={tournament.name}
                 className="object-cover w-full h-full rounded-md shadow-sm"
               />

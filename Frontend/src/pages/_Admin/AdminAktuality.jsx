@@ -212,9 +212,9 @@ const PhotoGallery = ({ photos, onDeletePhoto }) => {
         {photos.map((photo) => (
           <div key={photo.id} className="relative group">
             <img
-              src={photo.img_path}
+              src={`${API}${photo.img_path}`}
               alt=""
-              onClick={() => setLightbox(photo.img_path)}
+              onClick={() => setLightbox(`${API}${photo.img_path}`)}
               className="h-16 w-16 object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity"
             />
             <button
@@ -642,7 +642,7 @@ function AdminAktuality() {
                         Stávající náhledová fotka
                       </p>
                       <img
-                        src={event.cover_photo}
+                        src={`${API}${event.cover_photo}`}
                         alt="Cover"
                         className="h-24 object-contain rounded-lg border border-gray-200"
                       />
@@ -686,7 +686,7 @@ function AdminAktuality() {
                   <div className="flex-shrink-0">
                     {event.cover_photo ? (
                       <img
-                        src={event.cover_photo}
+                       src={`${API}${event.cover_photo}`}
                         alt={event.title}
                         className="w-16 h-16 rounded-lg object-cover border-2 border-gray-200"
                       />

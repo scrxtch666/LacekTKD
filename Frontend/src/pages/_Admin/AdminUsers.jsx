@@ -12,6 +12,8 @@ import {
   Users,
 } from "lucide-react";
 
+const API = "http://localhost:3000";
+
 function AdminUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -659,7 +661,7 @@ function AdminUsers() {
                     {user.img_path ? (
                       <img
                         className="w-16 h-16 rounded-full object-cover"
-                        src={user.img_path}
+                        src={`${API}${user.img_path}`}
                         alt={user.login}
                       />
                     ) : (

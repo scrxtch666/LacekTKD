@@ -124,7 +124,7 @@ function EventCard() {
                 <div className="relative">
                   {event.cover_photo ? (
                     <img
-                      src={event.cover_photo}
+                    src={`${API}${event.cover_photo}`}
                       alt={event.title}
                       className="w-full h-52 object-cover"
                     />

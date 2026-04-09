@@ -22,6 +22,8 @@ function AdminSponsors() {
     fetchSponsors();
   }, []);
 
+  const API = "http://localhost:3000";
+
   const fetchSponsors = () => {
     fetch("http://localhost:3000/api/sponsors")
       .then((res) => res.json())
@@ -325,7 +327,7 @@ function AdminSponsors() {
                   </div>
                   <div className="flex-shrink-0">
                     <img
-                      src={sponsor.img_path}
+                      src={`${API}${sponsor.img_path}`}
                       alt={sponsor.sponsor_name}
                       className="w-32 h-20 object-contain rounded-lg border-2 border-gray-200 p-1 bg-gray-50"
                     />

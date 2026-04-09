@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 
+const API = "http://localhost:3000";
+
 function ShowcaseCarousel() {
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,7 +43,7 @@ function ShowcaseCarousel() {
             className="relative min-w-full h-[300px] md:h-[400px] lg:h-96 overflow-hidden bg-customBlack"
           >
             <img
-              src={`http://localhost:3000${banner.img_path}`}
+              src={`${API}${banner.img_path}`}
               alt={banner.banner_name}
               className="w-full h-full object-cover brightness-50 opacity-75"
             />

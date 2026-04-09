@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+const API = "http://localhost:3000";
+
 function Event() {
   const [events, setEvents] = useState([]); // Stav pro uchování dat turnajů
   const [loading, setLoading] = useState(true); // Stav pro zobrazení načítání dat
@@ -31,7 +33,7 @@ function Event() {
             <div className="h-full flex gap-2">
               <div className="flex max-w-52 w-full object-cover object-center">
                 <img
-                  src={event.img_path} // Předpokládáme, že obrázek má název podle názvu turnaje
+                  src={`${API}${event.img_path}`}
                   alt={event.name}
                   className="object-cover object-center rounded-md"
                 />

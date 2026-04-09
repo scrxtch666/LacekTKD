@@ -179,7 +179,7 @@ useEffect(() => {
                 <div className="w-28 flex-shrink-0 rounded-xl overflow-hidden self-stretch">
                   {fighter.img_path ? (
                     <img
-                      src={fighter.img_path}
+                    src={`${API}${fighter.img_path}`}
                       alt={fighter.name}
                       className="w-full h-full object-cover object-center"
                     />

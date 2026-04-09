@@ -34,7 +34,7 @@ function ActualEvent() {
             <div className="h-full flex gap-2">
               <div className="flex max-w-52 w-full object-cover object-center items-center">
                 <img
-                  src={tournament.img_path}
+                src={`${API}${tournament.img_path}`}
                   alt={tournament.name}
                   className="object-cover object-center rounded-md"
                 />

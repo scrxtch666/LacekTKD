@@ -613,7 +613,7 @@ function AdminZkousky() {
                         <div className="flex items-center gap-3">
                           {reg.fighter_pfp ? (
                             <img
-                              src={reg.fighter_pfp}
+                            src={`${API}${reg.fighter_pfp}`}
                               alt={reg.fighter_name}
                               className="w-9 h-9 rounded-full object-cover border-2 border-gray-200"
                             />

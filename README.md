@@ -71,15 +71,18 @@ Backend - cd  .\Backend\ - node server.js
 - upravit responzivitu v adminu
 
 
+src={`${API}${banner.img_path}`}
+
 # PRAKTICKÁ ČÁST
 ---------------------------------------------------------------------------
 # CO MUSÍM UDĚLAT
-- přihlášení uživatele na zkoušku a turnaj - jakožto admin a trener
 - do admin/me přidat nějaké info pole, které bude informovat, že pokud není přidělený uživatelský účet, tak že nějaký informace nepůjdou editovat a že nebude možné se přihlásit na turnje a zkoušky
 - zase mi nefunugje filtr na skrytí - uživatel vidí i skryté
 - podívat se na filtry turnajů - kolik jich to vypisuje a tak
 - vyřešit ty obrázky s tím serverem
 - restruktualizace kodu - classy, názvy a tak
+- editace turnaje
+- kdyz upravím profil závodníka, tak se pojebou role v uživatelích
 
 # TEXTOVÁ ČÁST POZNÁMKY
 ---------------------------------------------------------------------------

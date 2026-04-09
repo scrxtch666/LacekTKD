@@ -71,7 +71,7 @@ function Turnaj() {
       <div className="sm:w-44 sm:flex-shrink-0 h-44 sm:h-auto">
         {event.img_path ? (
           <img
-            src={event.img_path}
+          src={`${API}${event.img_path}`}
             alt={event.name}
             className="w-full h-full object-cover object-center"
           />

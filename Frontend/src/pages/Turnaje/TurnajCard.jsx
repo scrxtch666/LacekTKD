@@ -1,6 +1,8 @@
 import { MapPin, Euro, Tag, Calendar, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+const API = "http://localhost:3000";
+
 function TurnajCard({ tournament }) {
   const navigate = useNavigate();
   const {
@@ -23,7 +25,7 @@ function TurnajCard({ tournament }) {
       <div className="sm:w-44 sm:flex-shrink-0 h-44 sm:h-auto">
         {img_path ? (
           <img
-            src={img_path}
+          src={`${API}${img_path}`}
             alt={name}
             className="w-full h-full object-cover object-center"
           />

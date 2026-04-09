@@ -4,42 +4,11 @@ const path = require("path");
 const fs = require("fs");
 const db = require("../../Libs/db");
 const { verifyToken, isAdmin, isAdminOrTrainer } = require("../../auth/auth");
+const { createUpload, getFilePath } = require("../../utils/upload");
 
 const router = express.Router();
+const upload = createUpload("events");
 
-// --- MULTER ---
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = "C:\\LacekTKD\\Frontend\\public\\uploads\\events";
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    cb(
-      null,
-      "event-" +
-        Date.now() +
-        "-" +
-        Math.round(Math.random() * 1e9) +
-        path.extname(file.originalname),
-    );
-  },
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    const allowed = /jpeg|jpg|png|gif|webp/;
-    if (
-      allowed.test(path.extname(file.originalname).toLowerCase()) &&
-      allowed.test(file.mimetype)
-    ) {
-      return cb(null, true);
-    }
-    cb(new Error("Pouze obrázky jsou povoleny!"));
-  },
-});
 
 const uploadFields = upload.fields([
   { name: "cover", maxCount: 1 },
@@ -328,10 +297,7 @@ router.delete("/photo/:photoId", verifyToken, isAdminOrTrainer, (req, res) => {
         if (err2)
           return res.status(500).json({ error: "Chyba při mazání fotky" });
 
-        const fullPath = path.join(
-          "C:\\LacekTKD\\Frontend\\public",
-          results[0].img_path,
-        );
+       const fullPath = getFilePath(results[0].img_path);
         if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
 
         res.json({ success: true, message: "Fotka byla smazána" });
@@ -357,29 +323,23 @@ router.delete("/:id", verifyToken, isAdminOrTrainer, (req, res) => {
           if (result.affectedRows === 0)
             return res.status(404).json({ error: "Aktualita nenalezena" });
 
-          if (eventRows?.[0]?.photo) {
-            const coverPath = path.join(
-              "C:\\LacekTKD\\Frontend\\public",
-              eventRows[0].photo,
-            );
-            if (fs.existsSync(coverPath)) fs.unlinkSync(coverPath);
-          }
+        if (eventRows?.[0]?.photo) {
+  const coverPath = getFilePath(eventRows[0].photo);
+  if (fs.existsSync(coverPath)) fs.unlinkSync(coverPath);
+}
 
           if (photos) {
             photos.forEach((photo) => {
-              const fullPath = path.join(
-                "C:\\LacekTKD\\Frontend\\public",
-                photo.img_path,
-              );
-              if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
-            });
+  const fullPath = getFilePath(photo.img_path);
+  if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
+});
           }
 
           res.json({ success: true, message: "Aktualita byla smazána" });
         });
       },
     );
-  });
+});
 });
 
 module.exports = router;

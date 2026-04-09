@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+const API = "http://localhost:3000";
+
 const EventCardLatest = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +47,7 @@ const EventCardLatest = () => {
           <div className="relative">
             {event.cover_photo ? (
               <img
-                src={event.cover_photo}
+              src={`${API}${event.cover_photo}`}
                 alt={event.title}
                 className="w-full h-52 object-cover"
               />

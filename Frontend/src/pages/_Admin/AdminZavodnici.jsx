@@ -329,7 +329,7 @@ function AdminZavodnici() {
               setFilterLegend(false);
               setFilterAccount("");
             }}
-            className="px-4 py-2 bg-customWhite border border-gray-300 text-gray-600 rounded-lg text-sm transition-colors hover:bg-gray-50"
+            className="px-4 py-2 bg-customWhite border border-gray-300 rounded-lg text-sm transition-colors hover:bg-gray-50"
           >
             Zrušit filtry
           </button>
@@ -743,7 +743,7 @@ function AdminZavodnici() {
                   <div className="flex-shrink-0">
                     {fighter.img_path ? (
                       <img
-                        src={fighter.img_path}
+                      src={`${API}${fighter.img_path}`}
                         alt={fighter.name}
                         className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
                       />

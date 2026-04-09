@@ -8,8 +8,10 @@ const db = require("../../Libs/db");
 const { google } = require("googleapis");
 const { verifyToken } = require("../../auth/auth");
 const jwt = require("jsonwebtoken");
+const { createUpload, getFilePath } = require("../../utils/upload");
 
 const router = express.Router();
+const upload = createUpload("tournaments");
 
 // ─── GOOGLE CALENDAR SETUP ───
 // Vlož cestu ke svému service account JSON souboru
@@ -108,40 +110,6 @@ const deleteGoogleEvent = async (googleEventId) => {
     console.error("Google Calendar – chyba při mazání eventu:", err.message);
   }
 };
-
-// ─── MULTER ───
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = "C:\\LacekTKD\\Frontend\\public\\uploads\\tournaments";
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    cb(
-      null,
-      "tournament-" +
-        Date.now() +
-        "-" +
-        Math.round(Math.random() * 1e9) +
-        path.extname(file.originalname),
-    );
-  },
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    const allowed = /jpeg|jpg|png|gif|webp/;
-    if (
-      allowed.test(path.extname(file.originalname).toLowerCase()) &&
-      allowed.test(file.mimetype)
-    ) {
-      return cb(null, true);
-    }
-    cb(new Error("Pouze obrázky jsou povoleny!"));
-  },
-});
 
 // ─── ROUTES ───
 
@@ -548,10 +516,7 @@ router.put("/:id", upload.single("image"), async (req, res) => {
       if (req.file) {
         // Smaž starý obrázek
         if (oldImg) {
-          const fullOldPath = path.join(
-            "C:\\LacekTKD\\Frontend\\public",
-            oldImg,
-          );
+         const fullOldPath = getFilePath(oldImg);;
           if (fs.existsSync(fullOldPath)) fs.unlinkSync(fullOldPath);
         }
         doUpdate("/uploads/tournaments/" + req.file.filename);
@@ -609,44 +574,6 @@ router.post("/:id/register", verifyToken, (req, res) => {
   );
 });
 
-// DELETE /:id – smazání turnaje + Google Calendar
-/*
-router.delete("/:id", async (req, res) => {
-  const { id } = req.params;
-
-  db.query(
-    "SELECT img_path, google_event_id FROM tournament WHERE id = ?",
-    [id],
-    async (err, results) => {
-      if (err)
-        return res.status(500).json({ error: "Chyba při hledání turnaje" });
-      if (!results.length)
-        return res.status(404).json({ error: "Turnaj nenalezen" });
-
-      const { google_event_id, img_path } = results[0];
-
-      // Smaž z Google Kalendáře
-      await deleteGoogleEvent(google_event_id);
-
-      db.query("DELETE FROM tournament WHERE id = ?", [id], (err2) => {
-        if (err2)
-          return res.status(500).json({ error: "Chyba při mazání turnaje" });
-
-        // Smaž fyzický soubor obrázku
-        if (img_path) {
-          const fullPath = path.join(
-            "C:\\LacekTKD\\Frontend\\public",
-            img_path,
-          );
-          if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
-        }
-
-        res.json({ success: true, message: "Turnaj byl úspěšně smazán" });
-      });
-    },
-  );
-});
-*/
 
 // DELETE /:id – smazání turnaje + Google Calendar
 router.delete("/:id", async (req, res) => {
@@ -674,7 +601,7 @@ router.delete("/:id", async (req, res) => {
 
           // 4. Smaž obrázek
           if (img_path) {
-            const fullPath = path.join("C:\\LacekTKD\\Frontend\\public", img_path);
+            const fullPath = getFilePath(img_path);
             if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
           }
 

@@ -5,36 +5,10 @@ const path = require("path");
 const fs = require("fs");
 const db = require("../../Libs/db");
 const { parseDateSafe } = require("../../utils/date");
+const { createUpload, getFilePath } = require("../../utils/upload");
 
 const router = express.Router();
-
-// --- MULTER ---
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = "C:\\LacekTKD\\Frontend\\public\\uploads\\fighters";
-    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, "fighter-" + uniqueSuffix + path.extname(file.originalname));
-  },
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    const allowed = /jpeg|jpg|png|gif|webp/;
-    if (
-      allowed.test(path.extname(file.originalname).toLowerCase()) &&
-      allowed.test(file.mimetype)
-    ) {
-      return cb(null, true);
-    }
-    cb(new Error("Pouze obrazky jsou povoleny!"));
-  },
-});
+const upload = createUpload("fighters");
 
 // GET / - verejny vypis zavodnikua (puvodni route zachovana)
 router.get("/", async (req, res) => {
@@ -306,7 +280,7 @@ router.put("/:id", upload.single("image"), (req, res) => {
   } = req.body;
 
   if (!name || !surname) {
-    return res.status(400).json({ error: "Chybi jmeno nebo prijmeni" });
+    return res.status(400).json({ error: "Chybí jméno nebo příjmení" });
   }
 
   try {
@@ -388,23 +362,25 @@ router.put("/:id", upload.single("image"), (req, res) => {
         if (result.affectedRows === 0)
           return res.status(404).json({ error: "Zavodnik nenalezen" });
 
-        db.query(
-          "UPDATE users SET fighter_id = NULL WHERE fighter_id = ?",
-          [id],
-          (err2) => {
-            if (err2) console.error("Chyba pri odpojovani usera:", err2);
+        if (user_id !== undefined) {
+          db.query(
+            "UPDATE users SET fighter_id = NULL WHERE fighter_id = ?",
+            [id],
+            (err2) => {
+              if (err2) console.error("Chyba pri odpojovani usera:", err2);
 
-            if (user_id && user_id !== "null" && user_id !== "") {
-              db.query(
-                "UPDATE users SET fighter_id = ? WHERE id = ?",
-                [id, user_id],
-                (err3) => {
-                  if (err3) console.error("Chyba pri prirazeni usera:", err3);
-                },
-              );
-            }
-          },
-        );
+              if (user_id && user_id !== "null" && user_id !== "") {
+                db.query(
+                  "UPDATE users SET fighter_id = ? WHERE id = ?",
+                  [id, user_id],
+                  (err3) => {
+                    if (err3) console.error("Chyba pri prirazeni usera:", err3);
+                  },
+                );
+              }
+            },
+          );
+        }
 
         res.json({ success: true, message: "Zavodnik byl upraven" });
       });
@@ -426,10 +402,7 @@ router.put("/:id", upload.single("image"), (req, res) => {
           const oldImg = results[0].img_path;
 
           if (oldImg) {
-            const fullOldPath = path.join(
-              "C:\\LacekTKD\\Frontend\\public",
-              oldImg,
-            );
+            const fullOldPath = getFilePath(oldImg);
             if (fs.existsSync(fullOldPath)) fs.unlinkSync(fullOldPath);
           }
 
@@ -477,11 +450,7 @@ router.delete("/:id", (req, res) => {
 
                   // 5. Smazat soubor
                   if (imgPath) {
-                    const fullPath = path.join(
-                      __dirname,
-                      "../../public",
-                      imgPath,
-                    ); // Opravená cesta
+                    const fullPath = getFilePath(imgPath);
                     if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
                   }
                   res.json({

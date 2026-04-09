@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Trash2, Image as ImageIcon, Plus, Upload, X, Eye, EyeOff } from "lucide-react";
 
+const API = "http://localhost:3000";
+
 function AdminBanner() {
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -305,7 +307,7 @@ function AdminBanner() {
                 {/* Obrázek */}
                 <div className="flex-shrink-0 relative">
                   <img
-                    src={banner.img_path}
+                    src={`${API}${banner.img_path}`}
                     alt={banner.banner_name}
                     className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
                   />

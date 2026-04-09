@@ -11,6 +11,9 @@ import {
 } from "lucide-react";
 import { createPortal } from "react-dom";
 
+const API = "http://localhost:3000";
+const getImageUrl = (path) => `${API}${path}`;
+
 const PhotoGallery = ({ photos }) => {
   const [lightbox, setLightbox] = useState(null);
   const [lightboxIndex, setLightboxIndex] = useState(0);
@@ -19,21 +22,21 @@ const PhotoGallery = ({ photos }) => {
 
   const openLightbox = (index) => {
     setLightboxIndex(index);
-    setLightbox(photos[index].img_path);
+    setLightbox(getImageUrl(photos[index].img_path));
   };
 
   const prev = (e) => {
     e.stopPropagation();
     const newIndex = (lightboxIndex - 1 + photos.length) % photos.length;
     setLightboxIndex(newIndex);
-    setLightbox(photos[newIndex].img_path);
+    setLightbox(getImageUrl(photos[newIndex].img_path));
   };
 
   const next = (e) => {
     e.stopPropagation();
     const newIndex = (lightboxIndex + 1) % photos.length;
     setLightboxIndex(newIndex);
-    setLightbox(photos[newIndex].img_path);
+    setLightbox(getImageUrl(photos[newIndex].img_path));
   };
 
   return (
@@ -46,7 +49,7 @@ const PhotoGallery = ({ photos }) => {
             className="relative group aspect-square overflow-hidden rounded-xl cursor-pointer"
           >
             <img
-              src={photo.img_path}
+              src={`${API}${photo.img_path}`}
               alt=""
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
@@ -153,7 +156,7 @@ function AktualitaDetail() {
         {event.photo && (
           <div className="h-72 sm:h-96 overflow-hidden">
             <img
-              src={event.photo}
+              src={`${API}${event.photo}`}
               alt={event.title}
               className="w-full h-full object-cover"
             />

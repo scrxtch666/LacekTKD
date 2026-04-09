@@ -267,7 +267,7 @@ function Calendar() {
                 <div className="flex-shrink-0">
                   {tournament.img_path ? (
                     <img
-                      src={tournament.img_path}
+                    src={`${API}${tournament.img_path}`}
                       alt={tournament.name}
                       className="w-16 h-16 rounded-lg object-cover"
                     />

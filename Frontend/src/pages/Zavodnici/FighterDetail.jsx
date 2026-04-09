@@ -51,7 +51,7 @@ function FighterDetail() {
 
         {fighter.img_path ? (
           <img
-            src={fighter.img_path}
+           src={`${API}${fighter.img_path}`}
             alt={fighter.name}
             className="w-40 h-40 object-cover rounded-xl"
           />

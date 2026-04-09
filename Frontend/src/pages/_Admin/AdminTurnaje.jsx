@@ -15,6 +15,8 @@ import { getUserRole } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 
+const API = "http://localhost:3000";
+
 const TournamentForm = ({
   data,
   setData,
@@ -832,7 +834,7 @@ function AdminTurnaje() {
                     <div className="flex-shrink-0">
                       {tournament.img_path ? (
                         <img
-                          src={tournament.img_path}
+                          src={`${API}${tournament.img_path}`}
                           alt={tournament.name}
                           className="w-16 h-16 rounded-lg object-cover border-2 border-gray-200"
                         />
@@ -1112,7 +1114,7 @@ function AdminTurnaje() {
                       <div className="flex-shrink-0">
                         {group.tournament_img ? (
                           <img
-                            src={group.tournament_img}
+                            src={`${API}${group.tournament_img}`}
                             alt={group.tournament_name}
                             className="w-16 h-16 rounded-lg object-cover border-2 border-gray-200"
                           />
@@ -1209,7 +1211,7 @@ function AdminTurnaje() {
                           >
                             {reg.fighter_pfp ? (
                               <img
-                                src={reg.fighter_pfp}
+                                src={`${API}${reg.fighter_pfp}`}
                                 alt={reg.fighter_name}
                                 className="w-9 h-9 rounded-full object-cover border-2 border-gray-200 cursor-pointer"
                               />
