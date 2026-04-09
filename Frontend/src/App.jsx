@@ -46,7 +46,7 @@ function Layout() {
     return (
       // Chráněné admin routy
 
-      <div className="flex min-h-screen bg-slate-100">
+      <div className="flex min-h-screen">
         <SideBar />
 
         <main className="pt-14 lg:pt-0 lg:ml-64 min-h-screen w-full">

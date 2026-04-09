@@ -111,11 +111,8 @@ function SideBar() {
 
   const SidebarContent = () => (
     <div
-      className="w-64 h-full flex flex-col text-white"
-      style={{
-        background:
-          "linear-gradient(180deg, #15803d 0%, #166534 60%, #14532d 100%)",
-      }}
+      className="w-64 h-full flex flex-col text-white bg-customGreen"
+      
     >
       {/* Logo */}
       <div className="flex items-center justify-between px-5 py-4 border-b border-green-600 flex-shrink-0">
@@ -215,8 +212,7 @@ function SideBar() {
     <>
       {/* ── MOBILE TOPBAR ── */}
       <div
-        className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 shadow-md"
-        style={{ background: "#15803d" }}
+        className="lg:hidden fixed bg-customGreen top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 shadow-md"
       >
         <button
           onClick={() => setOpen(true)}

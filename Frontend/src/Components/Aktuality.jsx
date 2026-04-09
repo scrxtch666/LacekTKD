@@ -1,14 +1,11 @@
 import React from "react";
-import EventCard from "../pages/Home/EventCard";
+import EventCardList from "../pages/Aktuality/EventCardList";
 
 function Aktuality() {
   return (
     <>
-      <div class="devider">AKTUALITY</div>
-
-      <div class="grid grid-cols-1 gap-5">
-        <EventCard />
-      </div>
+      <div className="devider">AKTUALITY</div>
+      <EventCardList />
     </>
   );
 }

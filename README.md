@@ -79,10 +79,12 @@ src={`${API}${banner.img_path}`}
 - do admin/me přidat nějaké info pole, které bude informovat, že pokud není přidělený uživatelský účet, tak že nějaký informace nepůjdou editovat a že nebude možné se přihlásit na turnje a zkoušky
 - zase mi nefunugje filtr na skrytí - uživatel vidí i skryté
 - podívat se na filtry turnajů - kolik jich to vypisuje a tak
-- vyřešit ty obrázky s tím serverem
 - restruktualizace kodu - classy, názvy a tak
 - editace turnaje
-- kdyz upravím profil závodníka, tak se pojebou role v uživatelích
+- ikonky nejsou statické nebo tak
+- možná se podívat na datum a validace formuláře
+- search bar jako utilka
+- když něco smažu tak indexace v db od 1.
 
 # TEXTOVÁ ČÁST POZNÁMKY
 ---------------------------------------------------------------------------
@@ -98,6 +100,7 @@ src={`${API}${banner.img_path}`}
 - upravit obrázek u Tailwindu, aby tam bylo něco více vidět
 - zkontrolovat si, že nikde nepíšu nic o newsletteru
 - prostě připsat ty tabulky a zkontrolovat si diagram (obrázek)
+- dát si pozor na zkoušky v kalednáři
 
 
 Oprava data narození

@@ -430,37 +430,51 @@ router.post("/", upload.single("image"), async (req, res) => {
 
 // PUT /:id – editace turnaje + Google Calendar
 router.put("/:id", upload.single("image"), async (req, res) => {
-  const { id } = req.params;
-  const {
-    name,
-    location,
-    price,
-    type_id,
-    start_date,
-    end_date,
-    registrable_date,
-    info,
-    status,
-  } = req.body;
+  try {
+    const { id } = req.params;
+    const {
+      name,
+      location,
+      price,
+      type_id,
+      start_date,
+      end_date,
+      registrable_date,
+      info,
+      status,
+    } = req.body;
 
-  if (!name) return res.status(400).json({ error: "Chybí název turnaje" });
+    if (!name) return res.status(400).json({ error: "Chybí název turnaje" });
 
-  const finalStatus =
-    status === "completed" || status === "uncompleted" ? status : undefined;
+    const finalStatus =
+      status === "completed" || status === "uncompleted" ? status : undefined;
 
-  // Načti stávající google_event_id
-  db.query(
-    "SELECT img_path, google_event_id FROM tournament WHERE id = ?",
-    [id],
-    async (err, results) => {
-      if (err)
-        return res.status(500).json({ error: "Chyba při hledání turnaje" });
-      if (!results.length)
-        return res.status(404).json({ error: "Turnaj nenalezen" });
+    // ─── Načti stávající data turnaje ───
+    const [results] = await db
+      .promise()
+      .query("SELECT img_path, google_event_id FROM tournament WHERE id = ?", [
+        id,
+      ]);
 
-      const { google_event_id, img_path: oldImg } = results[0];
+    if (!results.length)
+      return res.status(404).json({ error: "Turnaj nenalezen" });
 
-      // Aktualizuj Google Calendar event
+    let { google_event_id, img_path: oldImg } = results[0];
+
+    // ─── Google Calendar ───
+    let googleEventIdToUse = google_event_id;
+
+    if (!googleEventIdToUse) {
+      // Vytvoř nový Google event
+      googleEventIdToUse = await createGoogleEvent({
+        name,
+        location,
+        info,
+        start_date: start_date || null,
+        end_date: end_date || start_date || null,
+      });
+    } else {
+      // Aktualizuj existující event
       await updateGoogleEvent(google_event_id, {
         name,
         location,
@@ -468,63 +482,63 @@ router.put("/:id", upload.single("image"), async (req, res) => {
         start_date: start_date || null,
         end_date: end_date || start_date || null,
       });
+    }
 
-      const doUpdate = (new_img_path) => {
-        const hasNewImg = new_img_path !== undefined;
-
-        let query = "UPDATE tournament SET ";
-        let params = [];
-
-        query +=
-          "name=?, location=?, price=?, type_id=?, start_date=?, end_date=?, registrable_date=?, info=?";
-        params.push(
-          name,
-          location || null,
-          price || null,
-          type_id || null,
-          start_date || null,
-          end_date || null,
-          registrable_date || null,
-          info || null,
-        );
-
-        if (hasNewImg) {
-          query += ", img_path=?";
-          params.push(new_img_path);
-        }
-
-        if (finalStatus !== undefined) {
-          query += ", status=?";
-          params.push(finalStatus);
-        }
-
-        query += " WHERE id=?";
-        params.push(id);
-
-        db.query(query, params, (err2, result) => {
-          if (err2)
-            return res
-              .status(500)
-              .json({ error: "Chyba při aktualizaci turnaje" });
-          if (result.affectedRows === 0)
-            return res.status(404).json({ error: "Turnaj nenalezen" });
-
-          res.json({ success: true, message: "Turnaj byl úspěšně upraven" });
-        });
-      };
-
-      if (req.file) {
-        // Smaž starý obrázek
-        if (oldImg) {
-         const fullOldPath = getFilePath(oldImg);;
-          if (fs.existsSync(fullOldPath)) fs.unlinkSync(fullOldPath);
-        }
-        doUpdate("/uploads/tournaments/" + req.file.filename);
-      } else {
-        doUpdate(undefined);
+    // ─── Obrázek ───
+    let newImgPath = undefined;
+    if (req.file) {
+      if (oldImg) {
+        const fullOldPath = getFilePath(oldImg);
+        if (fs.existsSync(fullOldPath)) fs.unlinkSync(fullOldPath);
       }
-    },
-  );
+      newImgPath = "/uploads/tournaments/" + req.file.filename;
+    }
+
+    // ─── Aktualizace databáze ───
+    let query = `
+      UPDATE tournament SET
+        name=?, location=?, price=?, type_id=?, start_date=?, end_date=?, registrable_date=?, info=?
+    `;
+    const params = [
+      name,
+      location || null,
+      price || null,
+      type_id || null,
+      start_date || null,
+      end_date || null,
+      registrable_date || null,
+      info || null,
+    ];
+
+    if (newImgPath) {
+      query += ", img_path=?";
+      params.push(newImgPath);
+    }
+
+    if (finalStatus !== undefined) {
+      query += ", status=?";
+      params.push(finalStatus);
+    }
+
+    // Ulož google_event_id pokud vznikl nový
+    if (!google_event_id && googleEventIdToUse) {
+      query += ", google_event_id=?";
+      params.push(googleEventIdToUse);
+    }
+
+    query += " WHERE id=?";
+    params.push(id);
+
+    const [updateResult] = await db.promise().query(query, params);
+
+    if (updateResult.affectedRows === 0)
+      return res.status(404).json({ error: "Turnaj nenalezen" });
+
+    res.json({ success: true, message: "Turnaj byl úspěšně upraven" });
+  } catch (err) {
+    console.error("Chyba při úpravě turnaje:", err);
+    res.status(500).json({ error: "Chyba serveru při úpravě turnaje" });
+  }
 });
 
 router.post("/:id/register", verifyToken, (req, res) => {
@@ -574,7 +588,6 @@ router.post("/:id/register", verifyToken, (req, res) => {
   );
 });
 
-
 // DELETE /:id – smazání turnaje + Google Calendar
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
@@ -592,23 +605,33 @@ router.delete("/:id", async (req, res) => {
       await deleteGoogleEvent(google_event_id);
 
       // 2. NEJDŘÍVE smaž všechny registrace k tomuto turnaji
-      db.query("DELETE FROM tournament_registration WHERE tournament_id = ?", [id], (errReg) => {
-        if (errReg) return res.status(500).json({ error: "Chyba při mazání registrací" });
+      db.query(
+        "DELETE FROM tournament_registration WHERE tournament_id = ?",
+        [id],
+        (errReg) => {
+          if (errReg)
+            return res
+              .status(500)
+              .json({ error: "Chyba při mazání registrací" });
 
-        // 3. POTOM smaž samotný turnaj
-        db.query("DELETE FROM tournament WHERE id = ?", [id], (err2) => {
-          if (err2) return res.status(500).json({ error: "Chyba při mazání turnaje" });
+          // 3. POTOM smaž samotný turnaj
+          db.query("DELETE FROM tournament WHERE id = ?", [id], (err2) => {
+            if (err2)
+              return res
+                .status(500)
+                .json({ error: "Chyba při mazání turnaje" });
 
-          // 4. Smaž obrázek
-          if (img_path) {
-            const fullPath = getFilePath(img_path);
-            if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
-          }
+            // 4. Smaž obrázek
+            if (img_path) {
+              const fullPath = getFilePath(img_path);
+              if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
+            }
 
-          res.json({ success: true, message: "Smazáno kompletně" });
-        });
-      });
-    }
+            res.json({ success: true, message: "Smazáno kompletně" });
+          });
+        },
+      );
+    },
   );
 });
 

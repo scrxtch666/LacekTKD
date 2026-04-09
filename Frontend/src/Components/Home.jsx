@@ -8,9 +8,8 @@ const Home = () => {
       <ShowcaseCarousel />
 
       <div className="devider">aktuality</div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        <EventCardLatest />
-      </div>
+      
+      <EventCardLatest />
 
       <div className="devider">nadcházející akce</div>
 
