@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import EventCardSingle from "./EventCardSingle";
+import SearchBar from "../../Components/SearchBar";
 
 const API = "http://localhost:3000";
 
@@ -22,16 +23,20 @@ const EventCardList = () => {
   if (loading) return <div>Načítám data...</div>;
 
   // Vypočítat dostupná období
-  const periods = [...new Set(
-    news.map((event) => {
-      const d = new Date(event.date_start_raw);
-      return `${d.toLocaleString("cs-CZ", { month: "long" })} ${d.getFullYear()}`;
-    })
-  )].sort((a, b) => b.localeCompare(a));
+  const periods = [
+    ...new Set(
+      news.map((event) => {
+        const d = new Date(event.date_start_raw);
+        return `${d.toLocaleString("cs-CZ", { month: "long" })} ${d.getFullYear()}`;
+      }),
+    ),
+  ].sort((a, b) => b.localeCompare(a));
 
   // Filtr
   const filtered = news.filter((event) => {
-    const matchesSearch = event.title?.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch = event.title
+      ?.toLowerCase()
+      .includes(search.toLowerCase());
     const d = new Date(event.date_start_raw);
     const period = `${d.toLocaleString("cs-CZ", { month: "long" })} ${d.getFullYear()}`;
     const matchesPeriod = selectedPeriod === "" || period === selectedPeriod;
@@ -47,38 +52,32 @@ const EventCardList = () => {
     return acc;
   }, {});
 
-  const sortedGroups = Object.entries(groups).sort(([a], [b]) => b.localeCompare(a));
+  const sortedGroups = Object.entries(groups).sort(([a], [b]) =>
+    b.localeCompare(a),
+  );
 
   return (
     <div className="space-y-8">
       {/* Filtry */}
-      <div className="flex gap-3 flex-col sm:flex-row">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Hledat aktualitu..."
-          className="bg-customWhite flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
-        />
-        <select
-          value={selectedPeriod}
-          onChange={(e) => setSelectedPeriod(e.target.value)}
-          className="bg-customWhite px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
-        >
-          <option value="">Všechna období</option>
-          {periods.map((period) => (
-            <option key={period} value={period}>{period}</option>
-          ))}
-        </select>
-        {(search || selectedPeriod) && (
-          <button
-            onClick={() => { setSearch(""); setSelectedPeriod(""); }}
-            className="bg-customWhite px-4 py-2 rounded-lg transition-colors"
-          >
-            Zrušit filtry
-          </button>
-        )}
-      </div>
+      <SearchBar
+        search={search}
+        onSearchChange={setSearch}
+        placeholder="Hledat aktualitu..."
+        hasActiveFilter={!!(search || selectedPeriod)}
+        onClear={() => {
+          setSearch("");
+          setSelectedPeriod("");
+        }}
+        filters={[
+          {
+            key: "period",
+            value: selectedPeriod,
+            onChange: setSelectedPeriod,
+            placeholder: "Všechna období",
+            options: periods.map((p) => ({ value: p, label: p })),
+          },
+        ]}
+      />
 
       {/* Žádné výsledky */}
       {sortedGroups.length === 0 && (
@@ -93,7 +92,12 @@ const EventCardList = () => {
           <div className="devider flex justify-between mb-4">
             <span>{period}</span>
             <span className="text-customGreen">
-              {events.length} {events.length === 1 ? "aktualita" : events.length <= 4 ? "aktuality" : "aktualit"}
+              {events.length}{" "}
+              {events.length === 1
+                ? "aktualita"
+                : events.length <= 4
+                  ? "aktuality"
+                  : "aktualit"}
             </span>
           </div>
 

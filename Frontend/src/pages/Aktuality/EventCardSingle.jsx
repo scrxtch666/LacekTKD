@@ -29,8 +29,8 @@ const EventCardSingle = ({ event }) => {
       {/* Text */}
       <div className="px-4 py-2 bg-customWhite">
         <div className="flex justify-between gap-5 text-sm font-medium text-gray-700">
-          <p className="truncate text-customBlack">{event.title}</p>
-          <p className="text-gray-500">{event.date_start}</p>
+          <p className="font-medium">{event.title}</p>
+          <p className="text-customGreen font-medium">{event.date_start}</p>
         </div>
       </div>
     </div>

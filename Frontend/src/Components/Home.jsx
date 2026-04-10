@@ -8,13 +8,12 @@ const Home = () => {
       <ShowcaseCarousel />
 
       <div className="devider">aktuality</div>
-      
+
       <EventCardLatest />
 
       <div className="devider">nadcházející akce</div>
 
       <Calendar />
-
     </>
   );
 };
