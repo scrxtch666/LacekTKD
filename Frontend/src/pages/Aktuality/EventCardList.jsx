@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import EventCardSingle from "./EventCardSingle";
 import SearchBar from "../../Components/SearchBar";
+import config from "../../../config";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 
 const EventCardList = () => {
   const [news, setNews] = useState([]);

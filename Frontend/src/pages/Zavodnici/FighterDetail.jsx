@@ -3,8 +3,9 @@ import { useState, useEffect } from "react";
 import { ArrowLeft, Calendar, Users, Info, Star, Trophy } from "lucide-react";
 import { getUserRole } from "../../utils/auth";
 import NotFound from "../Login/NotFound";
+import config from "../../../config";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 
 function FighterDetail() {
   const { id } = useParams();

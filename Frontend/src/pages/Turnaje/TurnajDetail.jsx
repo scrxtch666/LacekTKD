@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { getUserRole } from "../../utils/auth";
 import { Plus } from "lucide-react";
 import NotFound from "../Login/NotFound";
+import config from "../../../config";
 
 import {
   MapPin,
@@ -15,7 +16,7 @@ import {
   CalendarOff,
 } from "lucide-react";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 
 function TurnajDetail() {
   const { id } = useParams();

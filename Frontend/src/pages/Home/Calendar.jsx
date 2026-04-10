@@ -9,10 +9,10 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getUserRole } from "../../utils/auth";
+import config from "../../../config";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 
-// Názvy měsíců a dnů v češtině
 const MONTHS_CZ = [
   "Leden",
   "Únor",
@@ -29,7 +29,6 @@ const MONTHS_CZ = [
 ];
 const DAYS_CZ = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"];
 
-// Vrátí YYYY-MM-DD string z Date objektu (lokální čas, ne UTC)
 const toDateStr = (date) => {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -37,13 +36,11 @@ const toDateStr = (date) => {
   return `${y}-${m}-${d}`;
 };
 
-// Vrátí první den v měsíci (pondělí = 0 ... neděle = 6)
 const getFirstDayOfMonth = (year, month) => {
   const day = new Date(year, month, 1).getDay();
-  return day === 0 ? 6 : day - 1; // Převod na pondělí=0
+  return day === 0 ? 6 : day - 1;
 };
 
-// Počet dní v měsíci
 const getDaysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
 
 function Calendar() {
@@ -57,7 +54,6 @@ function Calendar() {
   const navigate = useNavigate();
   const userRole = getUserRole();
 
-  // Načti turnaje při změně měsíce
   useEffect(() => {
     fetchTournaments();
   }, [currentYear, currentMonth]);
@@ -87,7 +83,6 @@ function Calendar() {
     }
   };
 
-  // Vrátí turnaje pro konkrétní den (datum je string YYYY-MM-DD)
   const getEventsForDay = (dateStr) => {
     const tours = tournaments.filter((t) => {
       const start = t.start_date?.substring(0, 10);
@@ -102,11 +97,9 @@ function Calendar() {
     return { tours, exams: examEvents };
   };
 
-  // Turnaje pro vybraný den
   const { tours: selectedTours, exams: selectedExams } =
     getEventsForDay(selectedDate);
 
-  // Navigace měsíce
   const prevMonth = () => {
     if (currentMonth === 0) {
       setCurrentYear((y) => y - 1);
@@ -125,18 +118,15 @@ function Calendar() {
     }
   };
 
-  // Sestavení mřížky kalendáře
   const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
   const daysInMonth = getDaysInMonth(currentYear, currentMonth);
   const todayStr = toDateStr(today);
 
-  // Pole buněk: null = prázdná buňka před začátkem měsíce
   const cells = [
     ...Array(firstDay).fill(null),
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
   ];
 
-  // Formátování vybraného data pro zobrazení
   const formatSelectedDate = (dateStr) => {
     const d = new Date(dateStr + "T00:00:00");
     return d.toLocaleDateString("cs-CZ", {
@@ -164,7 +154,6 @@ function Calendar() {
           </button>
         </div>
 
-        {/* Záhlaví dnů */}
         <div className="grid grid-cols-7 mb-2">
           {DAYS_CZ.map((d) => (
             <div
@@ -176,7 +165,6 @@ function Calendar() {
           ))}
         </div>
 
-        {/* Buňky dnů */}
         <div className="grid grid-cols-7 gap-y-1">
           {cells.map((day, idx) => {
             if (!day) return <div key={`empty-${idx}`} />;
@@ -253,9 +241,7 @@ function Calendar() {
         </div>
       </div>
 
-      {/* ─── PRAVÁ STRANA – DETAIL DNE ─── */}
       <div className="flex-1 bg-customWhite rounded-2xl shadow-md p-5">
-        {/* Záhlaví s vybraným datem */}
         <div className="flex items-center gap-2 mb-5 pb-4 border-b border-gray-100">
           <CalendarIcon size={20} className="text-green-600 flex-shrink-0" />
           <h3 className="text-base font-semibold text-gray-800 capitalize">
@@ -284,7 +270,6 @@ function Calendar() {
                     : "border-gray-100 hover:border-customGreen hover:shadow-sm"
                 }`}
               >
-                {/* Obrázek nebo ikona */}
                 <div className="flex-shrink-0">
                   {tournament.img_path ? (
                     <img

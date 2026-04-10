@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import config from "../../config";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 
 function SponsorCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -12,7 +13,7 @@ function SponsorCarousel() {
 
   useEffect(() => {
     // Načítání dat z backendu
-    fetch("http://localhost:3000/api/sponsors")
+    fetch(`${API}/api/sponsors`)
       .then((response) => response.json())
       .then((data) => {
         setSponsors(data);

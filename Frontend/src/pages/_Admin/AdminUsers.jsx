@@ -11,8 +11,9 @@ import {
   User,
   Users,
 } from "lucide-react";
+import config from "../../../config";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 
 function AdminUsers() {
   const [users, setUsers] = useState([]);
@@ -47,7 +48,7 @@ function AdminUsers() {
   }, []);
 
   const fetchUsers = () => {
-    fetch("http://localhost:3000/api/users")
+    fetch(`${API}/api/users`)
       .then((res) => res.json())
       .then((data) => {
         setUsers(Array.isArray(data) ? data : []);
@@ -96,14 +97,14 @@ function AdminUsers() {
   };
 
   const fetchRoles = () => {
-    fetch("http://localhost:3000/api/roles")
+    fetch(`${API}/api/roles`)
       .then((res) => res.json())
       .then((data) => setRoles(Array.isArray(data) ? data : []))
       .catch((err) => console.error("Chyba při načítání rolí:", err));
   };
 
   const fetchFighters = () => {
-    fetch("http://localhost:3000/api/fighters")
+    fetch(`${API}/api/fighters`)
       .then((res) => res.json())
       .then((data) => setFighters(Array.isArray(data) ? data : []))
       .catch((err) => console.error("Chyba při načítání závodníků:", err));
@@ -113,7 +114,7 @@ function AdminUsers() {
     if (!confirm("Opravdu chcete smazat tohoto uživatele?")) return;
     setDeleting(id);
     try {
-      const response = await fetch(`http://localhost:3000/api/users/${id}`, {
+      const response = await fetch(`${API}/api/users/${id}`, {
         method: "DELETE",
       });
       if (response.ok) setUsers(users.filter((u) => u.id !== id));
@@ -174,7 +175,7 @@ function AdminUsers() {
     if (editUser.password) payload.password = editUser.password;
 
     try {
-      const response = await fetch(`http://localhost:3000/api/users/${id}`, {
+      const response = await fetch(`${API}/api/users/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -216,7 +217,7 @@ function AdminUsers() {
 
     setSaving(true);
     try {
-      const response = await fetch("http://localhost:3000/api/users", {
+      const response = await fetch(`${API}/api/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

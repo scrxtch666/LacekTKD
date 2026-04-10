@@ -1,27 +1,29 @@
 import React, { useState, useEffect } from "react";
+import config from "../../../../config";
 
 function FighterTest() {
-  const [fighters, setFighters] = useState([]); // Stav pro uchování dat turnajů
-  const [loading, setLoading] = useState(true); // Stav pro zobrazení načítání dat
-  const [count, setCount] = useState(null); // Počet závodníků v headru
+  const [fighters, setFighters] = useState([]); 
+  const [loading, setLoading] = useState(true); 
+  const [count, setCount] = useState(null); 
 
-  // Funkce pro načítání dat o turnajích
+  const API = config.API_URL;
+
   useEffect(() => {
-    // Načítání dat z backendu
-    fetch("http://localhost:3000/fighters")
+    
+    fetch(`${API}/fighters`)
       .then((response) => response.json())
       .then((data) => {
-        setFighters(data); // Nastavení získaných dat do stavu
-        setLoading(false); // Nastavení stavu načítání na false
+        setFighters(data); 
+        setLoading(false); 
       })
       .catch((error) => {
         console.error("Chyba při načítání dat:", error);
-        setLoading(false); // I když dojde k chybě, stav načítání bude false
+        setLoading(false); 
       });
   }, []);
 
   if (loading) {
-    return <div>Načítám data...</div>; // Zobrazení textu při načítání
+    return <div>Načítám data...</div>; 
   }
   return (
     <>

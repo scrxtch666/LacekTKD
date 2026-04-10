@@ -11,8 +11,9 @@ import {
 } from "lucide-react";
 import { createPortal } from "react-dom";
 import NotFound from "../Login/NotFound";
+import config from "../../../config";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 const getImageUrl = (path) => `${API}${path}`;
 
 const PhotoGallery = ({ photos }) => {

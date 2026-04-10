@@ -3,28 +3,30 @@ import React, { useState, useEffect } from "react";
 import AddButton from "../pages/AddFighter/AddButton";
 import Stats from "../pages/_Admin/Stats";
 import AllFightersAdmin from "../pages/AddFighter/AllFightersAdmin";
+import config from "../../config";
 
 function FightersAdminTable() {
-  const [fighters, setFighters] = useState([]); // Stav pro uchování dat turnajů
-  const [loading, setLoading] = useState(true); // Stav pro zobrazení načítání dat
+  const [fighters, setFighters] = useState([]); 
+  const [loading, setLoading] = useState(true); 
+  const API = config.API_URL;
 
-  // Funkce pro načítání dat o turnajích
+ 
   useEffect(() => {
     // Načítání dat z backendu
-    fetch("http://localhost:3000/api/fighters")
+    fetch(`${API}/api/fighters`)
       .then((response) => response.json())
       .then((data) => {
-        setFighters(data); // Nastavení získaných dat do stavu
-        setLoading(false); // Nastavení stavu načítání na false
+        setFighters(data); 
+        setLoading(false); 
       })
       .catch((error) => {
         console.error("Chyba při načítání dat:", error);
-        setLoading(false); // I když dojde k chybě, stav načítání bude false
+        setLoading(false); 
       });
   }, []);
 
   if (loading) {
-    return <div>Načítám data...</div>; // Zobrazení textu při načítání
+    return <div>Načítám data...</div>; 
   }
   return (
     <>

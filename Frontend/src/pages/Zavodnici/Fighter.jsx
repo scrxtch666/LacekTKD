@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Star, Trophy } from "lucide-react";
+import config from "../../../config";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 
 const BELT_ORDER = [
   "5. DAN",

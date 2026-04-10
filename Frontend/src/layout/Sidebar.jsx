@@ -15,8 +15,9 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { getUserRole, authService } from "../utils/auth";
+import config from "../../config";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 
 function SideBar() {
   const [open, setOpen] = useState(false);

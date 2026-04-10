@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import config from "../../../config";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 
 function EventCard() {
   const [news, setNews] = useState([]);
@@ -31,7 +32,6 @@ function EventCard() {
     ),
   ].sort((a, b) => b.localeCompare(a));
 
-  // Filtruj podle textu i období
   const filtered = news.filter((event) => {
     const matchesSearch = event.title
       ?.toLowerCase()
@@ -44,7 +44,6 @@ function EventCard() {
     return matchesSearch && matchesPeriod;
   });
 
-  // Seskup filtrovaná data
   const groups = filtered.reduce((acc, event) => {
     const d = new Date(event.date_start_raw);
     const year = `${d.toLocaleString("cs-CZ", { month: "long" })} ${d.getFullYear()}`;
@@ -57,7 +56,6 @@ function EventCard() {
 
   return (
     <div className="space-y-8">
-      {/* Searchbar + filtr období */}
       <div className="flex gap-3 flex-col sm:flex-row">
         <input
           type="text"
@@ -79,7 +77,6 @@ function EventCard() {
           ))}
         </select>
 
-        {/* Reset filtrů – zobrazí se jen když je něco vyplněno */}
         {(search || selectedPeriod) && (
           <button
             onClick={() => {
@@ -93,7 +90,6 @@ function EventCard() {
         )}
       </div>
 
-      {/* Žádné výsledky */}
       {sortedGroups.length === 0 && (
         <p className="text-gray-400 text-center italic py-8">
           Žádná aktualita neodpovídá zadaným filtrům
@@ -124,7 +120,7 @@ function EventCard() {
                 <div className="relative">
                   {event.cover_photo ? (
                     <img
-                    src={`${API}${event.cover_photo}`}
+                      src={`${API}${event.cover_photo}`}
                       alt={event.title}
                       className="w-full h-52 object-cover"
                     />
@@ -134,13 +130,11 @@ function EventCard() {
                     </div>
                   )}
 
-                  {/* Event Title Overlay */}
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent">
                     <div className="px-4 py-3"></div>
                   </div>
                 </div>
 
-                {/* Date Container */}
                 <div className="px-4 py-2 bg-customWhite">
                   <div className="">
                     <span className="text-customGreen text-sm font-medium flex justify-between gap-5">

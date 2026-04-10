@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
+import config from "../../../config";
 
 function Cenik({ onSelectBelt }) {
   const [belts, setBelts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const API = config.API_URL;
+
   useEffect(() => {
-    fetch("http://localhost:3000/api/belts")
+    fetch(`${API}/api/belts`)
       .then((response) => response.json())
       .then((data) => {
         setBelts(data);

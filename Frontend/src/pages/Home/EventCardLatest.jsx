@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import config from "../../../config";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 
-// --- jedna karta
 const EventCard = ({ event }) => {
   const navigate = useNavigate();
 
@@ -36,13 +36,12 @@ const EventCard = ({ event }) => {
   );
 };
 
-// --- grid s fetchováním
 const EventCardLatest = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/events/latest")
+    fetch(`${API}/api/events/latest`)
       .then((res) => res.json())
       .then((data) => {
         setNews(Array.isArray(data) ? data : []);
@@ -55,7 +54,9 @@ const EventCardLatest = () => {
   if (news.length === 0)
     return (
       <div className="card w-full p-10 text-center border-2 border-dashed">
-        <p className="text-gray-500">Momentálně nejsou naplánovány žádné akce.</p>
+        <p className="text-gray-500">
+          Momentálně nejsou naplánovány žádné akce.
+        </p>
       </div>
     );
 

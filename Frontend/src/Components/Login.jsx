@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Navigate, redirect, useNavigate } from "react-router-dom";
 import { getUserRole } from "../utils/auth";
+import config from "../../config";
 
+const API = config.API_URL;
 const Login = () => {
   const [formData, setFormData] = useState({ login: "", password: "" });
   const navigate = useNavigate();
@@ -9,7 +11,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/auth/login", {
+      const response = await fetch(`${API}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

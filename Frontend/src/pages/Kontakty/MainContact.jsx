@@ -1,31 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { Phone, Mail } from "lucide-react";
+import config from "../../../config";
 
-const API = "http://localhost:3000";
-  const getRoleLabel = (role) => {
+const API = config.API_URL;
+const getRoleLabel = (role) => {
   switch (role) {
-      case "trainer":
+    case "trainer":
       return "trenér";
     default:
       return role || "";
   }
 };
 
-
-// Samostatná komponenta pro kartu trenéra pro lepší čitelnost
 const CoachCard = ({ ocoach }) => {
   return (
     <div className="bg-customWhite border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 p-6 flex flex-col items-center gap-4">
-      {/* Profilový obrázek s okrajem */}
       <div className="relative">
         <img
-        src={`${API}${ocoach.img_path}`}
+          src={`${API}${ocoach.img_path}`}
           alt={`${ocoach.name} ${ocoach.surname}`}
           className="rounded-full h-32 w-32 object-cover object-center ring-4 ring-customGreen/10"
         />
       </div>
 
-      {/* Jméno a detaily */}
       <div className="text-center">
         <h3 className="font-bold text-xl text-gray-800">
           {ocoach.name} {ocoach.surname}
@@ -34,33 +31,34 @@ const CoachCard = ({ ocoach }) => {
           {ocoach.cup}
         </p>
         <p className="text-xs text-gray-400 mt-1 italic">
-           {getRoleLabel(ocoach?.role_name)}
+          {getRoleLabel(ocoach?.role_name)}
         </p>
       </div>
 
-      {/* Kontaktní údaje jako interaktivní prvky */}
       <div className="w-full space-y-2 mt-2">
         {ocoach.email && (
-        <a
-          href={`mailto:${ocoach.email}`}
-          className="flex items-center gap-3 p-2 rounded-xl hover:border border-customGreen transition-colors group"
-        >
-          <div className="bg-customGreen p-2 rounded-full group-hover:scale-110 transition-transform">
-             <Mail size={11} />
-          </div>
-          <span className="text-sm text-gray-600 truncate">{ocoach.email}</span>
-        </a>
-)}
-      {ocoach.phone  && (
-        <a
-          href={`tel:+420${ocoach.phone}`}
-          className="flex items-center gap-3 p-2 rounded-xl hover:border border-customGreen transition-colors group"
-        >
-          <div className="bg-customGreen p-2 rounded-full group-hover:scale-110 transition-transform">
-             <Phone size={11} />
-          </div>
-          <span className="text-sm text-gray-600">+420 {ocoach.phone}</span>
-        </a>
+          <a
+            href={`mailto:${ocoach.email}`}
+            className="flex items-center gap-3 p-2 rounded-xl hover:border border-customGreen transition-colors group"
+          >
+            <div className="bg-customGreen p-2 rounded-full group-hover:scale-110 transition-transform">
+              <Mail size={11} />
+            </div>
+            <span className="text-sm text-gray-600 truncate">
+              {ocoach.email}
+            </span>
+          </a>
+        )}
+        {ocoach.phone && (
+          <a
+            href={`tel:+420${ocoach.phone}`}
+            className="flex items-center gap-3 p-2 rounded-xl hover:border border-customGreen transition-colors group"
+          >
+            <div className="bg-customGreen p-2 rounded-full group-hover:scale-110 transition-transform">
+              <Phone size={11} />
+            </div>
+            <span className="text-sm text-gray-600">+420 {ocoach.phone}</span>
+          </a>
         )}
       </div>
     </div>
@@ -72,7 +70,7 @@ function MainContact() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/users/trainer")
+    fetch(`${API}/api/users/trainer`)
       .then((response) => response.json())
       .then((data) => {
         setCoaches(data);

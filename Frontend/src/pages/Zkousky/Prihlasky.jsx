@@ -10,8 +10,9 @@ import {
 } from "lucide-react";
 import { getUserRole } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
+import config from "../../../config";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 
 function Prihlasky() {
   const [exams, setExams] = useState([]);

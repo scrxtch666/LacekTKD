@@ -13,8 +13,9 @@ import {
   KeyRound,
 } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
+import config from "../../../config";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 
 function AdminMe() {
   const [user, setUser] = useState(null);

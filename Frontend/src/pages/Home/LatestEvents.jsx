@@ -1,9 +1,11 @@
+import config from "../../../config";
 function LatestEvents() {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const API = config.API_URL;
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/events/latest")
+    fetch(`${API}/api/events/latest`)
       .then((res) => res.json())
       .then((data) => {
         setNews(Array.isArray(data) ? data : []);

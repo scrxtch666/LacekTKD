@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import config from "../../../config";
 
 function Devider() {
   const [count, setCount] = useState(null);
 
+  const API = config.API_URL;
   useEffect(() => {
-    fetch("http://localhost:3000/api/fighters/countAll")
+    fetch(`${API}/api/fighters/countAll`)
       .then((res) => res.json())
       .then((data) => setCount(data.count))
       .catch((error) => console.error("Chyba při načítání:", error));

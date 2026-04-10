@@ -1,43 +1,41 @@
 import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
+import config from "../../../config";
 function Pasky() {
-  const [belts, setBelts] = useState([]); // Stav pro uchování dat turnajů
-  const [loading, setLoading] = useState(true); // Stav pro zobrazení načítání dat
+  const [belts, setBelts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Funkce pro načítání dat o turnajích
+  const API = config.API_URL;
   useEffect(() => {
-    // Načítání dat z backendu
-    fetch("http://localhost:3000/api/belts")
+    fetch(`${API}/api/belts`)
       .then((response) => response.json())
       .then((data) => {
-        setBelts(data); // Nastavení získaných dat do stavu
-        setLoading(false); // Nastavení stavu načítání na false
+        setBelts(data);
+        setLoading(false);
       })
       .catch((error) => {
         console.error("Chyba při načítání dat:", error);
-        setLoading(false); // I když dojde k chybě, stav načítání bude false
+        setLoading(false);
       });
   }, []);
 
   if (loading) {
-    return <div>Načítám data...</div>; // Zobrazení textu při načítání
+    return <div>Načítám data...</div>;
   }
   return (
     <>
-    <div className="card w-full overflow-y-hidden">
-    <span class="font-extrabold text-lg">Pásky</span>
-  <div className="grid grid-cols-2">
+      <div className="card w-full overflow-y-hidden">
+        <span class="font-extrabold text-lg">Pásky</span>
+        <div className="grid grid-cols-2">
+          {belts.map((belt) => (
+            <div className="flex items-center gap-5">
+              <img src={belt.img_path} alt={belt.belt_name} />
+              <p>- {belt.cup} -</p>
 
-  
-      {belts.map((belt) => (
-        <div className="flex items-center gap-5">
-          <img src={belt.img_path} alt={belt.belt_name} />
-          <p>- {belt.cup} -</p>
-
-          <p className="font-bold">{belt.belt_name}</p>
+              <p className="font-bold">{belt.belt_name}</p>
+            </div>
+          ))}
         </div>
-      ))}
-      </div>
       </div>
     </>
   );

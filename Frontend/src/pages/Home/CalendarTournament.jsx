@@ -1,9 +1,9 @@
 import React from "react";
+import config from "../../../config";
 
-const API = "http://localhost:3000";
+ const API = config.API_URL;
 
 function CalendarTournament({ tournaments }) {
-  // Ošetření prázdného stavu
   if (tournaments.length === 0) {
     return (
       <div className="card w-full p-10 text-center border-2 border-dashed rounded-2xl bg-customWhite">

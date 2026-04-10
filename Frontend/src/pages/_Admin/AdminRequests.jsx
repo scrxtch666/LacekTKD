@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Check, X, User, Mail } from "lucide-react";
+import config from "../../../config";
 
-const API = "http://localhost:3000";
+ const API = config.API_URL;
 const authHeader = () => ({
   Authorization: `Bearer ${localStorage.getItem("token")}`,
 });

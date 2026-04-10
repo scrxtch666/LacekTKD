@@ -18,8 +18,9 @@ import {
   Phone,
 } from "lucide-react";
 import { getUserRole } from "../../utils/auth";
+import config from "../../../config";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 const authHeader = () => ({
   Authorization: `Bearer ${localStorage.getItem("token")}`,
 });
@@ -743,7 +744,7 @@ function AdminZavodnici() {
                   <div className="flex-shrink-0">
                     {fighter.img_path ? (
                       <img
-                      src={`${API}${fighter.img_path}`}
+                        src={`${API}${fighter.img_path}`}
                         alt={fighter.name}
                         className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
                       />

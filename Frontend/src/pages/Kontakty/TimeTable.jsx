@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navigovat from "./Navigovat";
+import config from "../../../config";
+
+
 
 const DAY_MAP = {
   pondeli: 1,
@@ -89,9 +92,10 @@ function Otevreno({ trainings }) {
 function TimeTable() {
   const [trainings, setTrainings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const API = config.API_URL;
 
   const fetchTrainings = () => {
-    fetch("http://localhost:3000/api/trainings")
+    fetch(`${API}/api/trainings`)
       .then((res) => res.json())
       .then((data) => {
         setTrainings(data);

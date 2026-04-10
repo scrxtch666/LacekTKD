@@ -1,26 +1,27 @@
 import React, { useState, useEffect } from "react";
+import config from "../../../config";
 
 function ActualEvent() {
-  const [tournaments, setTournaments] = useState([]); // Stav pro uchování dat turnajů
-  const [loading, setLoading] = useState(true); // Stav pro zobrazení načítání dat
+  const [tournaments, setTournaments] = useState([]); 
+  const [loading, setLoading] = useState(true); 
 
-  // Funkce pro načítání dat o turnajích
+ 
   useEffect(() => {
-    // Načítání dat z backendu
-    fetch("http://localhost:3000/api/tournaments")
+    
+    fetch(`${API}/api/tournaments`)
       .then((response) => response.json())
       .then((data) => {
-        setTournaments(data); // Nastavení získaných dat do stavu
-        setLoading(false); // Nastavení stavu načítání na false
+        setTournaments(data); 
+        setLoading(false); 
       })
       .catch((error) => {
         console.error("Chyba při načítání dat:", error);
-        setLoading(false); // I když dojde k chybě, stav načítání bude false
+        setLoading(false); 
       });
   }, []);
 
   if (loading) {
-    return <div>Načítám data...</div>; // Zobrazení textu při načítání
+    return <div>Načítám data...</div>; 
   }
 
   return (

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
+import config from "../../../config";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 
 function ShowcaseCarousel() {
   const [banners, setBanners] = useState([]);
@@ -13,7 +14,7 @@ function ShowcaseCarousel() {
   ]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/banner?active=true")
+    fetch(`${API}/api/banner?active=true`)
       .then((response) => response.json())
       .then((data) => {
         setBanners(Array.isArray(data) ? data : []);

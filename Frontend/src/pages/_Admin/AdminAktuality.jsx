@@ -12,15 +12,13 @@ import {
   Images,
   ImagePlus,
 } from "lucide-react";
+import config from "../../../config";
+const API = config.API_URL;
 
-const API = "http://localhost:3000";
-
-// Pomocná funkce – vrátí Authorization header s JWT tokenem
 const authHeader = () => ({
   Authorization: `Bearer ${localStorage.getItem("token")}`,
 });
 
-// ─── FORMULÁŘ – mimo AdminAktuality aby nedocházelo k remount při psaní ───
 const EventForm = ({
   data,
   setData,
@@ -686,7 +684,7 @@ function AdminAktuality() {
                   <div className="flex-shrink-0">
                     {event.cover_photo ? (
                       <img
-                       src={`${API}${event.cover_photo}`}
+                        src={`${API}${event.cover_photo}`}
                         alt={event.title}
                         className="w-16 h-16 rounded-lg object-cover border-2 border-gray-200"
                       />

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { MapPin, Euro, Tag, Calendar, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import config from "../../../config";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 
 function Turnaj() {
   const [upcoming, setUpcoming] = useState([]);
@@ -45,10 +46,8 @@ function Turnaj() {
       <div className="text-gray-400 text-center py-10">Načítám turnaje...</div>
     );
 
-  // periods pro select filtry
   const periods = ["Nadcházející", "Proběhlé"];
 
-  // filtrování podle search a select
   const filterEvents = (events, type) => {
     return events.filter((t) => {
       const matchesSearch = t.name
@@ -71,7 +70,7 @@ function Turnaj() {
       <div className="sm:w-44 sm:flex-shrink-0 h-44 sm:h-auto">
         {event.img_path ? (
           <img
-          src={`${API}${event.img_path}`}
+            src={`${API}${event.img_path}`}
             alt={event.name}
             className="w-full h-full object-cover object-center"
           />
@@ -130,7 +129,6 @@ function Turnaj() {
 
   return (
     <div className="space-y-8">
-      {/* Searchbar + filtr */}
       <div className="flex gap-3 flex-col sm:flex-row">
         <input
           type="text"
@@ -166,7 +164,6 @@ function Turnaj() {
         )}
       </div>
 
-      {/* Nadcházející */}
       {filteredUpcoming.length > 0 && (
         <div>
           <div className="devider mb-4">nadcházející turnaje</div>
@@ -176,7 +173,6 @@ function Turnaj() {
         </div>
       )}
 
-      {/* Proběhlé */}
       {filteredPast.length > 0 && (
         <div>
           <div className="devider mb-4">proběhlé turnaje</div>

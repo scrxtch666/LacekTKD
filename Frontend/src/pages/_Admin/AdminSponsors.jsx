@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Trash2, Image as ImageIcon, Plus, Upload, X, Pencil, Check } from "lucide-react";
+import config from "../../../config";
 
 function AdminSponsors() {
   const [sponsors, setSponsors] = useState([]);
@@ -22,10 +23,10 @@ function AdminSponsors() {
     fetchSponsors();
   }, []);
 
-  const API = "http://localhost:3000";
+  const API = config.API_URL;
 
   const fetchSponsors = () => {
-    fetch("http://localhost:3000/api/sponsors")
+    fetch(`${API}/api/sponsors`)
       .then((res) => res.json())
       .then((data) => {
         setSponsors(Array.isArray(data) ? data : []);
@@ -42,7 +43,7 @@ function AdminSponsors() {
     if (!confirm("Opravdu chcete smazat tohoto sponzora?")) return;
     setDeleting(id);
     try {
-      const response = await fetch("http://localhost:3000/api/sponsors/" + id, {
+      const response = await fetch(`${API}/api/sponsors/` + id, {
         method: "DELETE",
       });
       if (response.ok) {
@@ -80,7 +81,7 @@ function AdminSponsors() {
     formData.append("url", newSponsor.url);
     formData.append("image", newSponsor.image);
     try {
-      const response = await fetch("http://localhost:3000/api/sponsors", {
+      const response = await fetch(`${API}/api/sponsors`, {
         method: "POST",
         body: formData,
       });
@@ -143,7 +144,7 @@ function AdminSponsors() {
       formData.append("image", editData.image);
     }
     try {
-      const response = await fetch("http://localhost:3000/api/sponsors/" + id, {
+      const response = await fetch(`${API}/api/sponsors/` + id, {
         method: "PUT",
         body: formData,
       });

@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -16,10 +17,8 @@ const corsOptions = {
   allowedHeaders: "Content-Type,Authorization",
 };
 app.use(cors(corsOptions));
-//app.use("/uploads", express.static("uploads"));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
-
 
 // ─── ROUTERY ───
 app.use("/api", router);
@@ -30,4 +29,4 @@ app.get("/", (req, res) => {
   res.send("Server běží správně! 🚀");
 });
 
-app.listen(3000, () => console.log("🚀 Server běží na http://localhost:3000"));
+app.listen(process.env.PORT, () => console.log(`🚀 Server běží na http://localhost:3000`));

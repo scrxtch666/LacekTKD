@@ -14,8 +14,9 @@ import {
 import { getUserRole } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
+import config from "../../../config";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 
 const TournamentForm = ({
   data,
@@ -256,7 +257,7 @@ function AdminTurnaje() {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/fighters")
+    fetch(`${API}/api/fighters`)
       .then((res) => res.json())
       .then((data) => setFighters(Array.isArray(data) ? data : []))
       .catch(console.error);
@@ -269,7 +270,7 @@ function AdminTurnaje() {
 
   const fetchTournaments = () => {
     const token = localStorage.getItem("token");
-    fetch("http://localhost:3000/api/tournaments", {
+    fetch(`${API}/api/tournaments`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     })
       .then((res) => res.json())
@@ -284,7 +285,7 @@ function AdminTurnaje() {
   };
 
   const fetchTypes = () => {
-    fetch("http://localhost:3000/api/tournaments/types")
+    fetch(`${API}/api/tournaments/types`)
       .then((res) => res.json())
       .then((data) => setTypes(Array.isArray(data) ? data : []))
       .catch(console.error);
@@ -293,15 +294,14 @@ function AdminTurnaje() {
   const fetchRegistrations = () => {
     setLoadingReg(true);
 
-    const token = localStorage.getItem("token"); // ✅ správně
-
+    const token = localStorage.getItem("token"); 
     if (!token) {
       console.warn("⚠️ Žádný token");
       setLoadingReg(false);
       return;
     }
 
-    fetch("http://localhost:3000/api/tournamentRegistration", {
+    fetch(`${API}/api/tournamentRegistration`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -331,7 +331,7 @@ function AdminTurnaje() {
     setRegisterLoading(true);
     const token = localStorage.getItem("token");
     const response = await fetch(
-      `http://localhost:3000/api/tournamentRegistration/${showRegisterModal}/fighter/${selectedFighter}`,
+      `${API}/api/tournamentRegistration/${showRegisterModal}/fighter/${selectedFighter}`,
       { method: "POST", headers: { Authorization: `Bearer ${token}` } },
     );
     const data = await response.json();
@@ -349,7 +349,7 @@ function AdminTurnaje() {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:3000/api/tournaments/${tournamentId}/register`,
+        `${API}/api/tournaments/${tournamentId}/register`,
         { method: "POST", headers: { Authorization: `Bearer ${token}` } },
       );
       const data = await response.json();
@@ -374,7 +374,7 @@ function AdminTurnaje() {
       return;
     const token = localStorage.getItem("token");
     const response = await fetch(
-      `http://localhost:3000/api/tournaments/${tournament.id}/status`,
+      `${API}/api/tournaments/${tournament.id}/status`,
       {
         method: "PUT",
         headers: {
@@ -393,7 +393,7 @@ function AdminTurnaje() {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:3000/api/tournaments/${tournamentId}/register`,
+        `${API}/api/tournaments/${tournamentId}/register`,
         { method: "DELETE", headers: { Authorization: `Bearer ${token}` } },
       );
       const data = await response.json();
@@ -408,7 +408,7 @@ function AdminTurnaje() {
     if (!confirm("Odhlásit závodníka?")) return;
     const token = localStorage.getItem("token");
     const response = await fetch(
-      `http://localhost:3000/api/tournamentRegistration/${registrationId}`,
+      `${API}/api/tournamentRegistration/${registrationId}`,
       { method: "DELETE", headers: { Authorization: `Bearer ${token}` } },
     );
     if (response.ok) fetchRegistrations();
@@ -448,7 +448,7 @@ function AdminTurnaje() {
     setDeleting(id);
     try {
       const response = await fetch(
-        `http://localhost:3000/api/tournaments/${id}`,
+        `${API}/api/tournaments/${id}`,
         { method: "DELETE" },
       );
       if (response.ok) setTournaments(tournaments.filter((t) => t.id !== id));
@@ -481,7 +481,7 @@ function AdminTurnaje() {
       else if (key !== "image") formData.append(key, val || "");
     });
     try {
-      const response = await fetch("http://localhost:3000/api/tournaments", {
+      const response = await fetch(`${API}/api/tournaments`, {
         method: "POST",
         body: formData,
       });
@@ -502,7 +502,7 @@ function AdminTurnaje() {
   const handleSaveResult = async () => {
     const token = localStorage.getItem("token");
     const response = await fetch(
-      `http://localhost:3000/api/tournamentRegistration/${editingResult.regId}/result`,
+      `${API}/api/tournamentRegistration/${editingResult.regId}/result`,
       {
         method: "PUT",
         headers: {
@@ -584,7 +584,7 @@ function AdminTurnaje() {
     });
     try {
       const response = await fetch(
-        `http://localhost:3000/api/tournaments/${id}`,
+        `${API}/api/tournaments/${id}`,
         { method: "PUT", body: formData },
       );
       if (response.ok) {

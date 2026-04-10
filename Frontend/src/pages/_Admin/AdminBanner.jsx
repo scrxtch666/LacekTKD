@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Trash2, Image as ImageIcon, Plus, Upload, X, Eye, EyeOff } from "lucide-react";
-
-const API = "http://localhost:3000";
+import config from "../../../config";
+const API = config.API_URL;
 
 function AdminBanner() {
   const [banners, setBanners] = useState([]);
@@ -9,13 +9,12 @@ function AdminBanner() {
   const [deleting, setDeleting] = useState(null);
   const [toggling, setToggling] = useState(null);
 
-  // Stav pro přidání nového banneru
   const [showAddForm, setShowAddForm] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [newBanner, setNewBanner] = useState({
     name: "",
     image: null,
-    active: true, // Výchozí stav - aktivní
+    active: true, 
   });
   const [previewUrl, setPreviewUrl] = useState(null);
 
@@ -24,7 +23,7 @@ function AdminBanner() {
   }, []);
 
   const fetchBanners = () => {
-    fetch("http://localhost:3000/api/banner")
+    fetch(`${API}/api/banner`)
       .then((response) => response.json())
       .then((data) => {
         setBanners(Array.isArray(data) ? data : []);
@@ -42,7 +41,7 @@ function AdminBanner() {
 
     setDeleting(id);
     try {
-      const response = await fetch(`http://localhost:3000/api/banner/${id}`, {
+      const response = await fetch(`${API}/api/banner/${id}`, {
         method: "DELETE",
       });
 
@@ -62,7 +61,7 @@ function AdminBanner() {
   const handleToggleActive = async (id, currentActive) => {
     setToggling(id);
     try {
-      const response = await fetch(`http://localhost:3000/api/banner/${id}/toggle`, {
+      const response = await fetch(`${API}/api/banner/${id}/toggle`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -117,7 +116,7 @@ function AdminBanner() {
     formData.append("active", newBanner.active ? "1" : "0");
 
     try {
-      const response = await fetch("http://localhost:3000/api/banner", {
+      const response = await fetch(`${API}/api/banner`, {
         method: "POST",
         body: formData,
       });

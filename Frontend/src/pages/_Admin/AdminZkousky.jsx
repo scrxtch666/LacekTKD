@@ -15,8 +15,9 @@ import {
 import { getUserRole } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
+import config from "../../../config";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 const authHeader = () => ({
   Authorization: `Bearer ${localStorage.getItem("token")}`,
 });
@@ -143,11 +144,9 @@ function AdminZkousky() {
   };
 
   const startEdit = (exam) => {
-    // Pomocná funkce pro bezpečné získání YYYY-MM-DD z jakéhokoliv formátu
     const toISODate = (d) => {
       if (!d) return "";
       const dateObj = new Date(d);
-      // Vytvoříme string podle lokálního času, ne UTC
       const year = dateObj.getFullYear();
       const month = String(dateObj.getMonth() + 1).padStart(2, "0");
       const day = String(dateObj.getDate()).padStart(2, "0");
@@ -188,10 +187,10 @@ function AdminZkousky() {
   const handleRegister = async (examId) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        `http://localhost:3000/api/exams/${examId}/register`,
-        { method: "POST", headers: { Authorization: `Bearer ${token}` } },
-      );
+      const response = await fetch(`${API}/api/exams/${examId}/register`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const data = await response.json();
       if (response.ok) {
         fetchExams();
@@ -236,7 +235,6 @@ function AdminZkousky() {
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "—";
-    // Pokud datum přijde jako "2026-04-08...", vezmeme jen prvních 10 znaků
     const [year, month, day] = dateStr.substring(0, 10).split("-");
     return `${day}.${month}.${year}`;
   };
@@ -613,7 +611,7 @@ function AdminZkousky() {
                         <div className="flex items-center gap-3">
                           {reg.fighter_pfp ? (
                             <img
-                            src={`${API}${reg.fighter_pfp}`}
+                              src={`${API}${reg.fighter_pfp}`}
                               alt={reg.fighter_name}
                               className="w-9 h-9 rounded-full object-cover border-2 border-gray-200"
                             />
@@ -630,15 +628,15 @@ function AdminZkousky() {
                           </div>
                         </div>
                         {(userRole === "admin" || userRole === "trainer") && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleAdminUnregister(reg.reg_id);
-                              }}
-                              className="flex items-center gap-1 px-3 py-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-lg text-xs transition-colors"
-                            >
-                              <X size={12} /> Odhlásit
-                            </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleAdminUnregister(reg.reg_id);
+                            }}
+                            className="flex items-center gap-1 px-3 py-1 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-lg text-xs transition-colors"
+                          >
+                            <X size={12} /> Odhlásit
+                          </button>
                         )}
                       </div>
                     ))

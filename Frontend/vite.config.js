@@ -1,12 +1,15 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import config from './config'
+
+const API = config.API_URL
 
 export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3000', // Adresa tvého backendu
+        target: API,
         changeOrigin: true,
         secure: false,
       },

@@ -1,7 +1,8 @@
 import { MapPin, Euro, Tag, Calendar, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import config from "../../../config";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 
 function TurnajCard({ tournament }) {
   const navigate = useNavigate();

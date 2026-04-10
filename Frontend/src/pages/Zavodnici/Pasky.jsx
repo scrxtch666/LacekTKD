@@ -1,25 +1,27 @@
 import React, { useState, useEffect } from "react";
+import config from "../../../config";
 function Pasky() {
-  const [belts, setBelts] = useState([]); // Stav pro uchování dat turnajů
-  const [loading, setLoading] = useState(true); // Stav pro zobrazení načítání dat
+  const [belts, setBelts] = useState([]); 
+  const [loading, setLoading] = useState(true); 
 
-  // Funkce pro načítání dat o turnajích
+const API = config.API_URL;
+  
   useEffect(() => {
-    // Načítání dat z backendu
-    fetch("http://localhost:3000/api/belts")
+  
+    fetch(`${API}/api/belts`)
       .then((response) => response.json())
       .then((data) => {
-        setBelts(data); // Nastavení získaných dat do stavu
-        setLoading(false); // Nastavení stavu načítání na false
+        setBelts(data); 
+        setLoading(false); 
       })
       .catch((error) => {
         console.error("Chyba při načítání dat:", error);
-        setLoading(false); // I když dojde k chybě, stav načítání bude false
+        setLoading(false); 
       });
   }, []);
 
   if (loading) {
-    return <div>Načítám data...</div>; // Zobrazení textu při načítání
+    return <div>Načítám data...</div>; 
   }
   return (
       <div class="devider">

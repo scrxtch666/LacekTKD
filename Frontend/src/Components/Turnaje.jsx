@@ -1,8 +1,9 @@
 import SearchBar from "../pages/Turnaje/SearchBar";
 import TurnajList from "../pages/Turnaje/TurnajList";
 import { useState, useEffect } from "react";
+import config from "../../config";
 
-const API = "http://localhost:3000";
+const API = config.API_URL;
 
 function Turnaje() {
   const [upcoming, setUpcoming] = useState([]);
@@ -16,8 +17,8 @@ function Turnaje() {
       .then((res) => res.json())
       .then((data) => {
         const now = new Date();
-        setUpcoming(data.filter(t => new Date(t.start_date_raw) >= now));
-        setPast(data.filter(t => new Date(t.start_date_raw) < now));
+        setUpcoming(data.filter((t) => new Date(t.start_date_raw) >= now));
+        setPast(data.filter((t) => new Date(t.start_date_raw) < now));
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -25,40 +26,35 @@ function Turnaje() {
 
   return (
     <>
-    <div className="devider">Turnaje</div>
-    <main className="space-y-8">
-      
+      <div className="devider">Turnaje</div>
+      <main className="space-y-8">
+        <SearchBar
+          search={search}
+          setSearch={setSearch}
+          selectedPeriod={selectedPeriod}
+          setSelectedPeriod={setSelectedPeriod}
+        />
 
-      {/* Search + filter */}
-      <SearchBar
-        search={search}
-        setSearch={setSearch}
-        selectedPeriod={selectedPeriod}
-        setSelectedPeriod={setSelectedPeriod}
-      />
+        <TurnajList
+          title="Nadcházející turnaje"
+          tournaments={upcoming}
+          search={search}
+          selectedPeriod={selectedPeriod}
+        />
 
-      {/* Seznam nadcházejících turnajů */}
-      <TurnajList
-        title="Nadcházející turnaje"
-        tournaments={upcoming}
-        search={search}
-        selectedPeriod={selectedPeriod}
-      />
+        <TurnajList
+          title="Proběhlé turnaje"
+          tournaments={past}
+          search={search}
+          selectedPeriod={selectedPeriod}
+        />
 
-      {/* Seznam proběhlých turnajů */}
-      <TurnajList
-        title="Proběhlé turnaje"
-        tournaments={past}
-        search={search}
-        selectedPeriod={selectedPeriod}
-      />
-
-      {loading && (
-        <div className="text-gray-400 text-center py-10">
-          Načítám turnaje...
-        </div>
-      )}
-    </main>
+        {loading && (
+          <div className="text-gray-400 text-center py-10">
+            Načítám turnaje...
+          </div>
+        )}
+      </main>
     </>
   );
 }
