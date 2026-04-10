@@ -14,7 +14,7 @@ import {
   Landmark,
   ChevronRight,
 } from "lucide-react";
-import { getUserRole, authService } from "../../utils/auth";
+import { getUserRole, authService } from "../utils/auth";
 
 const API = "http://localhost:3000";
 
@@ -29,7 +29,6 @@ function SideBar() {
     authService.getCurrentUser().then((data) => setCurrentUser(data));
   }, []);
 
-  // Zavři sidebar při změně stránky
   useEffect(() => {
     setOpen(false);
   }, [location.pathname]);
@@ -110,11 +109,7 @@ function SideBar() {
       : currentUser?.login?.charAt(0).toUpperCase() || "?";
 
   const SidebarContent = () => (
-    <div
-      className="w-64 h-full flex flex-col text-white bg-customGreen"
-      
-    >
-      {/* Logo */}
+    <div className="w-64 h-full flex flex-col text-white bg-customGreen">
       <div className="flex items-center justify-between px-5 py-4 border-b border-green-600 flex-shrink-0">
         <Link
           to="/"
@@ -130,7 +125,6 @@ function SideBar() {
         </button>
       </div>
 
-      {/* Nav */}
       <nav className="flex-1 overflow-y-auto p-3 space-y-4">
         {visibleSections.map((section) => (
           <div key={section.title}>
@@ -172,12 +166,11 @@ function SideBar() {
         ))}
       </nav>
 
-      {/* Uživatel dole */}
       <div className="border-t border-green-600 p-3 flex-shrink-0">
         <div className="flex items-center gap-3 px-1">
           {currentUser?.img_path ? (
             <img
-            src={`${API}${currentUser.img_path}`}
+              src={`${API}${currentUser.img_path}`}
               alt={currentUser.login}
               className="w-8 h-8 rounded-lg object-cover flex-shrink-0"
             />
@@ -210,10 +203,8 @@ function SideBar() {
 
   return (
     <>
-      {/* ── MOBILE TOPBAR ── */}
-      <div
-        className="lg:hidden fixed bg-customGreen top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 shadow-md"
-      >
+      {/* Zobrazení na mobilu */}
+      <div className="lg:hidden fixed bg-customGreen top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 shadow-md">
         <button
           onClick={() => setOpen(true)}
           className="p-1.5 text-white hover:bg-white/10 rounded-lg transition-colors"
@@ -221,13 +212,12 @@ function SideBar() {
           <Menu size={22} />
         </button>
         <span className="text-white font-semibold text-sm">LacekTKD</span>
-        {/* Avatar vpravo nahoře na mobilu */}
+
         <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-white font-bold text-xs">
           {initials}
         </div>
       </div>
 
-      {/* ── MOBILE OVERLAY ── */}
       {open && (
         <div
           className="lg:hidden fixed inset-0 bg-black/60 z-50"
@@ -235,7 +225,6 @@ function SideBar() {
         />
       )}
 
-      {/* ── MOBILE DRAWER ── */}
       <div
         className={`
           lg:hidden fixed top-0 left-0 h-full w-64 z-50
@@ -246,7 +235,7 @@ function SideBar() {
         <SidebarContent />
       </div>
 
-      {/* ── DESKTOP SIDEBAR (vždy viditelný) ── */}
+      {/* PC */}
       <div className="hidden lg:flex lg:flex-col lg:fixed lg:top-0 lg:left-0 lg:h-screen lg:w-64 lg:z-30">
         <SidebarContent />
       </div>

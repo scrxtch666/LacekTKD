@@ -10,6 +10,7 @@ import {
   Pencil,
 } from "lucide-react";
 import { createPortal } from "react-dom";
+import NotFound from "../Login/NotFound";
 
 const API = "http://localhost:3000";
 const getImageUrl = (path) => `${API}${path}`;
@@ -117,13 +118,21 @@ function AktualitaDetail() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/events/${id}`)
-      .then((res) => res.json())
+    setLoading(true);
+    fetch(`${API}/api/events/${id}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Aktualita nenalezena");
+        return res.json();
+      })
       .then((data) => {
         setEvent(data);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((err) => {
+        console.error(err);
+        setEvent(null);
+        setLoading(false);
+      });
   }, [id]);
 
   if (loading)
@@ -133,12 +142,7 @@ function AktualitaDetail() {
       </div>
     );
 
-  if (!event)
-    return (
-      <div className="flex items-center justify-center h-64 text-gray-400">
-        Aktualita nenalezena
-      </div>
-    );
+  if (!event) return <NotFound />;
 
   return (
     <div className="max-w-4xl space-y-6">

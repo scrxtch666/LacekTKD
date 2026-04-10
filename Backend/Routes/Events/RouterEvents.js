@@ -9,7 +9,6 @@ const { createUpload, getFilePath } = require("../../utils/upload");
 const router = express.Router();
 const upload = createUpload("events");
 
-
 const uploadFields = upload.fields([
   { name: "cover", maxCount: 1 },
   { name: "photos", maxCount: 10 },
@@ -297,7 +296,7 @@ router.delete("/photo/:photoId", verifyToken, isAdminOrTrainer, (req, res) => {
         if (err2)
           return res.status(500).json({ error: "Chyba při mazání fotky" });
 
-       const fullPath = getFilePath(results[0].img_path);
+        const fullPath = getFilePath(results[0].img_path);
         if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
 
         res.json({ success: true, message: "Fotka byla smazána" });
@@ -323,23 +322,23 @@ router.delete("/:id", verifyToken, isAdminOrTrainer, (req, res) => {
           if (result.affectedRows === 0)
             return res.status(404).json({ error: "Aktualita nenalezena" });
 
-        if (eventRows?.[0]?.photo) {
-  const coverPath = getFilePath(eventRows[0].photo);
-  if (fs.existsSync(coverPath)) fs.unlinkSync(coverPath);
-}
+          if (eventRows?.[0]?.photo) {
+            const coverPath = getFilePath(eventRows[0].photo);
+            if (fs.existsSync(coverPath)) fs.unlinkSync(coverPath);
+          }
 
           if (photos) {
             photos.forEach((photo) => {
-  const fullPath = getFilePath(photo.img_path);
-  if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
-});
+              const fullPath = getFilePath(photo.img_path);
+              if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
+            });
           }
 
           res.json({ success: true, message: "Aktualita byla smazána" });
         });
       },
     );
-});
+  });
 });
 
 module.exports = router;

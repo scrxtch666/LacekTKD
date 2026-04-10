@@ -16,7 +16,7 @@ import Home from "./Components/Home";
 import Turnaje from "./Components/Turnaje";
 import AboutUs from "./Components/AboutUS";
 import Detail from "./pages/Turnaje/Detail";
-import SideBar from "./layout/_test/Sidebar";
+import SideBar from "./layout/Sidebar";
 import AddFighter from "./Components/AddFighter";
 import FightersAdmin from "./Components/FightersAdmin";
 import Login from "./Components/Login";
@@ -45,7 +45,6 @@ function Layout() {
   if (isAdmin) {
     return (
       // Chráněné admin routy
-
       <div className="flex min-h-screen">
         <SideBar />
 
@@ -53,7 +52,6 @@ function Layout() {
           <div className="p-4 sm:p-6 lg:p-8">
             <Routes>
               <Route path="*" element={<NotFound />} />
-              {/* Veřejné admin routy – jen přihlášený */}
 
               <Route
                 path="/admin/me"
@@ -64,7 +62,6 @@ function Layout() {
                 }
               />
 
-              {/* Admin + trenér */}
               <Route
                 path="/admin/zavodnici"
                 element={
@@ -106,7 +103,6 @@ function Layout() {
                 }
               />
 
-              {/* Pouze admin */}
               <Route
                 path="/admin/aktuality"
                 element={
@@ -154,6 +150,7 @@ function Layout() {
     );
   }
 
+  // Veřejné routy
   return (
     <>
       <Header />

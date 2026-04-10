@@ -30,7 +30,7 @@ function Fighter() {
   const navigate = useNavigate();
 
 useEffect(() => {
-  fetch(`${API}/api/fighters`) // ✅ PUBLIC endpoint
+  fetch(`${API}/api/fighters`)
     .then((response) => response.json())
     .then((data) => {
       setFighters(Array.isArray(data) ? data : []);

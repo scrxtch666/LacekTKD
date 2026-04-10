@@ -51,7 +51,8 @@ function Calendar() {
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(today.getMonth()); // 0-11
   const [selectedDate, setSelectedDate] = useState(toDateStr(today));
-  const [tournaments, setTournaments] = useState([]); // turnaje pro aktuální měsíc
+  const [tournaments, setTournaments] = useState([]);
+  const [exams, setExams] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const userRole = getUserRole();
@@ -65,33 +66,45 @@ function Calendar() {
     setLoading(true);
     const monthStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}`;
     const token = localStorage.getItem("token");
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
     try {
-      const res = await fetch(
-        `${API}/api/tournaments/calendar?month=${monthStr}`,
-        {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        },
-      );
-      const data = await res.json();
-      setTournaments(Array.isArray(data) ? data : []);
+      const [tourRes, examRes] = await Promise.all([
+        fetch(`${API}/api/tournaments/calendar?month=${monthStr}`, { headers }),
+        fetch(`${API}/api/exams/calendar?month=${monthStr}`, { headers }),
+      ]);
+
+      const tourData = await tourRes.json();
+      const examData = await examRes.json();
+
+      setTournaments(Array.isArray(tourData) ? tourData : []);
+      setExams(Array.isArray(examData) ? examData : []);
     } catch {
       setTournaments([]);
+      setExams([]);
     } finally {
       setLoading(false);
     }
   };
 
   // Vrátí turnaje pro konkrétní den (datum je string YYYY-MM-DD)
-  const getTournamentsForDay = (dateStr) => {
-    return tournaments.filter((t) => {
+  const getEventsForDay = (dateStr) => {
+    const tours = tournaments.filter((t) => {
       const start = t.start_date?.substring(0, 10);
       const end = t.end_date?.substring(0, 10) || start;
       return dateStr >= start && dateStr <= end;
     });
+
+    const examEvents = exams.filter(
+      (e) => e.start_date?.substring(0, 10) === dateStr,
+    );
+
+    return { tours, exams: examEvents };
   };
 
   // Turnaje pro vybraný den
-  const selectedTournaments = getTournamentsForDay(selectedDate);
+  const { tours: selectedTours, exams: selectedExams } =
+    getEventsForDay(selectedDate);
 
   // Navigace měsíce
   const prevMonth = () => {
@@ -171,7 +184,9 @@ function Calendar() {
             const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
             const isToday = dateStr === todayStr;
             const isSelected = dateStr === selectedDate;
-            const hasTournament = getTournamentsForDay(dateStr).length > 0;
+            const { tours, exams: dayExams } = getEventsForDay(dateStr);
+            const hasTournament = tours.length > 0;
+            const hasExam = dayExams.length > 0;
 
             return (
               <button
@@ -192,11 +207,10 @@ function Calendar() {
                 {hasTournament &&
                   !isSelected &&
                   (() => {
-                    const dayTournaments = getTournamentsForDay(dateStr);
-                    const hasUncompleted = dayTournaments.some(
+                    const hasUncompleted = tours.some(
                       (t) => t.status === "uncompleted",
                     );
-                    const hasCompleted = dayTournaments.some(
+                    const hasCompleted = tours.some(
                       (t) => t.status === "completed",
                     );
                     return (
@@ -214,6 +228,9 @@ function Calendar() {
                 {hasTournament && isSelected && (
                   <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white" />
                 )}
+                {hasExam && !isSelected && (
+                  <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-red-400" />
+                )}
               </button>
             );
           })}
@@ -224,6 +241,10 @@ function Calendar() {
           <span className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
             Turnaj / akce
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-red-400 inline-block" />
+            Zkoušky
           </span>
           <span className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-green-200 inline-block" />
@@ -246,14 +267,14 @@ function Calendar() {
           <div className="flex items-center justify-center h-32 text-gray-400 text-sm">
             Načítám...
           </div>
-        ) : selectedTournaments.length === 0 ? (
+        ) : selectedTours.length === 0 && selectedExams.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-32 text-gray-400">
             <Trophy size={32} className="mb-2 opacity-30" />
             <p className="text-sm">V tento den není žádná akce</p>
           </div>
         ) : (
           <div className="space-y-4">
-            {selectedTournaments.map((tournament) => (
+            {selectedTours.map((tournament) => (
               <div
                 key={tournament.id}
                 onClick={() => navigate(`/turnaj/${tournament.id}`)}
@@ -267,7 +288,7 @@ function Calendar() {
                 <div className="flex-shrink-0">
                   {tournament.img_path ? (
                     <img
-                    src={`${API}${tournament.img_path}`}
+                      src={`${API}${tournament.img_path}`}
                       alt={tournament.name}
                       className="w-16 h-16 rounded-lg object-cover"
                     />
@@ -353,6 +374,46 @@ function Calendar() {
                 </div>
               </div>
             ))}
+            {/* Zkoušky */}
+            {selectedExams.length > 0 && (
+              <div className="space-y-3 mt-2">
+                {selectedExams.map((exam) => (
+                  <div
+                    key={exam.id}
+                    className="flex gap-4 p-4 rounded-xl border border-red-100 bg-red-50 hover:border-red-300 transition-all"
+                  >
+                    <div className="flex-shrink-0">
+                      <div className="w-16 h-16 rounded-lg bg-red-100 flex items-center justify-center">
+                        <Trophy size={24} className="text-red-500" />
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-800 text-sm">
+                        {exam.name}
+                      </h4>
+                      <div className="space-y-1 mt-1">
+                        {exam.location && (
+                          <p className="text-xs text-gray-500 flex items-center gap-1">
+                            <MapPin size={12} /> {exam.location}
+                          </p>
+                        )}
+                        {exam.price && (
+                          <p className="text-xs text-gray-500">
+                            Startovné: {exam.price} Kč
+                          </p>
+                        )}
+                        {(userRole === "admin" || userRole === "trainer") &&
+                          exam.status === "hidden" && (
+                            <span className="text-xs text-orange-500">
+                              ○ Skrytá
+                            </span>
+                          )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

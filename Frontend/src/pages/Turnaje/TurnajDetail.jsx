@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getUserRole } from "../../utils/auth";
 import { Plus } from "lucide-react";
+import NotFound from "../Login/NotFound";
 
 import {
   MapPin,
@@ -28,12 +29,19 @@ function TurnajDetail() {
   useEffect(() => {
     fetchRegistrations();
     fetch(`${API}/api/tournaments/${id}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("Turnaj nenalezen"); // Toto vyvolá .catch
+        return res.json();
+      })
       .then((data) => {
         setTournament(data);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((err) => {
+        console.error(err);
+        setTournament(null); // Explicitně null pro podmínku níže
+        setLoading(false);
+      });
 
     const token = localStorage.getItem("token");
 
@@ -76,8 +84,6 @@ function TurnajDetail() {
 
     if (response.ok) {
       setIsRegistered(true);
-
-      // 🔥 DŮLEŽITÉ – reload registrací
       fetchRegistrations();
     } else {
       alert(data.error || "Nepodařilo se přihlásit.");
@@ -124,6 +130,8 @@ function TurnajDetail() {
 
   const formatDate = (dateStr) =>
     dateStr ? new Date(dateStr).toLocaleDateString("cs-CZ") : "—";
+
+  if (!tournament) return <NotFound />;
 
   if (loading)
     return (

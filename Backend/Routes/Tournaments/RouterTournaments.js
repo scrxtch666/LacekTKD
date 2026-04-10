@@ -13,13 +13,12 @@ const { createUpload, getFilePath } = require("../../utils/upload");
 const router = express.Router();
 const upload = createUpload("tournaments");
 
-// ─── GOOGLE CALENDAR SETUP ───
-// Vlož cestu ke svému service account JSON souboru
+// Google kalendář
 const GOOGLE_SERVICE_ACCOUNT_KEY = path.join(
   __dirname,
   "../../lacektkd-12aaabdf5383.json",
 );
-// Vlož Calendar ID svého Google Kalendáře
+
 const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID;
 
 const getGoogleCalendarClient = () => {
@@ -30,7 +29,7 @@ const getGoogleCalendarClient = () => {
   return google.calendar({ version: "v3", auth });
 };
 
-// Vytvoří event v Google Kalendáři, vrátí google_event_id
+// Tvorba eventu
 const createGoogleEvent = async (tournament) => {
   try {
     console.log("📅 Vytvářím Google event...");
@@ -67,7 +66,6 @@ const createGoogleEvent = async (tournament) => {
   }
 };
 
-// Aktualizuje existující event v Google Kalendáři
 const updateGoogleEvent = async (googleEventId, tournament) => {
   if (!googleEventId) return;
   try {
@@ -97,7 +95,6 @@ const updateGoogleEvent = async (googleEventId, tournament) => {
   }
 };
 
-// Smaže event z Google Kalendáře
 const deleteGoogleEvent = async (googleEventId) => {
   if (!googleEventId) return;
   try {
@@ -110,8 +107,6 @@ const deleteGoogleEvent = async (googleEventId) => {
     console.error("Google Calendar – chyba při mazání eventu:", err.message);
   }
 };
-
-// ─── ROUTES ───
 
 router.get("/calendar", (req, res) => {
   const { month } = req.query;
@@ -127,7 +122,6 @@ router.get("/calendar", (req, res) => {
 
   const isAdminOrTrainer = userRole === "admin" || userRole === "trainer";
 
-  // Admin/trainer vidí vše, ostatní pouze completed
   let whereClause = isAdminOrTrainer
     ? "WHERE 1=1"
     : "WHERE tournament.status = 'completed'";
@@ -200,7 +194,6 @@ router.get("/", (req, res) => {
         AND tr.fighter_id = (SELECT fighter_id FROM users WHERE id = ${db.escape(userId)})) AS is_registered`
     : `0 AS is_registered`;
 
-  // Přidej status filtr pro běžné uživatele
   const whereClause = isAdminOrTrainer
     ? ""
     : "WHERE tournament.status = 'completed'";
@@ -238,7 +231,6 @@ router.get("/", (req, res) => {
 router.delete("/:id/register", verifyToken, (req, res) => {
   const tournamentId = req.params.id;
 
-  // Kontrola, zda už není po uzávěrce
   db.query(
     "SELECT registrable_date FROM tournament WHERE id = ?",
     [tournamentId],
@@ -255,7 +247,6 @@ router.delete("/:id/register", verifyToken, (req, res) => {
           .json({ error: "Po uzávěrce se již nelze odhlásit!" });
       }
 
-      // Pokud je OK, smažeme registraci
       db.query(
         `DELETE tr FROM tournament_registration tr
          JOIN users u ON u.fighter_id = tr.fighter_id
@@ -286,7 +277,6 @@ router.put("/:id/status", verifyToken, (req, res) => {
   );
 });
 
-// GET /latest – poslední turnaj
 router.get("/latest", (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   let userRole = "guest";
@@ -303,7 +293,6 @@ router.get("/latest", (req, res) => {
 
   const isAdminOrTrainer = userRole === "admin" || userRole === "trainer";
 
-  // Filtrujeme podle statusu pro veřejnou část
   const whereClause = isAdminOrTrainer
     ? ""
     : "WHERE tournament.status = 'completed'";
@@ -332,7 +321,6 @@ router.get("/latest", (req, res) => {
   );
 });
 
-// GET /types – typy pro select
 router.get("/types", (req, res) => {
   db.query("SELECT * FROM type ORDER BY id ASC", (err, results) => {
     if (err) return res.status(500).json({ error: "Chyba při načítání typů" });
@@ -340,7 +328,6 @@ router.get("/types", (req, res) => {
   });
 });
 
-// GET /:id – detail turnaje
 router.get("/:id", (req, res) => {
   const { id } = req.params;
 
@@ -363,7 +350,6 @@ router.get("/:id", (req, res) => {
   );
 });
 
-// POST / – přidání turnaje + Google Calendar
 router.post("/", upload.single("image"), async (req, res) => {
   const {
     name,
@@ -383,7 +369,6 @@ router.post("/", upload.single("image"), async (req, res) => {
     ? "/uploads/tournaments/" + req.file.filename
     : null;
 
-  // Vytvoř event v Google Kalendáři
   const googleEventId = await createGoogleEvent({
     name,
     location,
@@ -428,7 +413,7 @@ router.post("/", upload.single("image"), async (req, res) => {
   );
 });
 
-// PUT /:id – editace turnaje + Google Calendar
+// Editace
 router.put("/:id", upload.single("image"), async (req, res) => {
   try {
     const { id } = req.params;
@@ -449,7 +434,6 @@ router.put("/:id", upload.single("image"), async (req, res) => {
     const finalStatus =
       status === "completed" || status === "uncompleted" ? status : undefined;
 
-    // ─── Načti stávající data turnaje ───
     const [results] = await db
       .promise()
       .query("SELECT img_path, google_event_id FROM tournament WHERE id = ?", [
@@ -461,11 +445,9 @@ router.put("/:id", upload.single("image"), async (req, res) => {
 
     let { google_event_id, img_path: oldImg } = results[0];
 
-    // ─── Google Calendar ───
     let googleEventIdToUse = google_event_id;
 
     if (!googleEventIdToUse) {
-      // Vytvoř nový Google event
       googleEventIdToUse = await createGoogleEvent({
         name,
         location,
@@ -474,7 +456,6 @@ router.put("/:id", upload.single("image"), async (req, res) => {
         end_date: end_date || start_date || null,
       });
     } else {
-      // Aktualizuj existující event
       await updateGoogleEvent(google_event_id, {
         name,
         location,
@@ -484,7 +465,6 @@ router.put("/:id", upload.single("image"), async (req, res) => {
       });
     }
 
-    // ─── Obrázek ───
     let newImgPath = undefined;
     if (req.file) {
       if (oldImg) {
@@ -494,7 +474,6 @@ router.put("/:id", upload.single("image"), async (req, res) => {
       newImgPath = "/uploads/tournaments/" + req.file.filename;
     }
 
-    // ─── Aktualizace databáze ───
     let query = `
       UPDATE tournament SET
         name=?, location=?, price=?, type_id=?, start_date=?, end_date=?, registrable_date=?, info=?
@@ -520,7 +499,6 @@ router.put("/:id", upload.single("image"), async (req, res) => {
       params.push(finalStatus);
     }
 
-    // Ulož google_event_id pokud vznikl nový
     if (!google_event_id && googleEventIdToUse) {
       query += ", google_event_id=?";
       params.push(googleEventIdToUse);
@@ -588,7 +566,7 @@ router.post("/:id/register", verifyToken, (req, res) => {
   );
 });
 
-// DELETE /:id – smazání turnaje + Google Calendar
+// Smazání
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -601,10 +579,8 @@ router.delete("/:id", async (req, res) => {
 
       const { google_event_id, img_path } = results[0];
 
-      // 1. Smaž z Google Kalendáře
       await deleteGoogleEvent(google_event_id);
 
-      // 2. NEJDŘÍVE smaž všechny registrace k tomuto turnaji
       db.query(
         "DELETE FROM tournament_registration WHERE tournament_id = ?",
         [id],
@@ -614,14 +590,12 @@ router.delete("/:id", async (req, res) => {
               .status(500)
               .json({ error: "Chyba při mazání registrací" });
 
-          // 3. POTOM smaž samotný turnaj
           db.query("DELETE FROM tournament WHERE id = ?", [id], (err2) => {
             if (err2)
               return res
                 .status(500)
                 .json({ error: "Chyba při mazání turnaje" });
 
-            // 4. Smaž obrázek
             if (img_path) {
               const fullPath = getFilePath(img_path);
               if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);

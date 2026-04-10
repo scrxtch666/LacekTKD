@@ -77,8 +77,6 @@ src={`${API}${banner.img_path}`}
 ---------------------------------------------------------------------------
 # CO MUSÍM UDĚLAT
 - do admin/me přidat nějaké info pole, které bude informovat, že pokud není přidělený uživatelský účet, tak že nějaký informace nepůjdou editovat a že nebude možné se přihlásit na turnje a zkoušky
-- zase mi nefunugje filtr na skrytí - uživatel vidí i skryté
-- podívat se na filtry turnajů - kolik jich to vypisuje a tak
 - restruktualizace kodu - classy, názvy a tak
 - editace turnaje
 - ikonky nejsou statické nebo tak
@@ -101,6 +99,12 @@ src={`${API}${banner.img_path}`}
 - zkontrolovat si, že nikde nepíšu nic o newsletteru
 - prostě připsat ty tabulky a zkontrolovat si diagram (obrázek)
 - dát si pozor na zkoušky v kalednáři
+
+- od každé části jednu ukázku ... obecný přehled, admin menu eventuelně kalendář
+
+active record aka raw sql
+
+téma je nějaký to modern light nebo tak
 
 
 Oprava data narození

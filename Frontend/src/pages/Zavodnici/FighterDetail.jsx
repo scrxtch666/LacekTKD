@@ -15,12 +15,21 @@ function FighterDetail() {
 
   useEffect(() => {
     fetch(`${API}/api/fighters/${id}`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Nenalezeno");
+        }
+        return res.json();
+      })
       .then((data) => {
         setFighter(data);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((err) => {
+        console.error(err);
+        setFighter(null);
+        setLoading(false);
+      });
   }, [id]);
 
   const formatDate = (dateStr) =>
@@ -51,7 +60,7 @@ function FighterDetail() {
 
         {fighter.img_path ? (
           <img
-           src={`${API}${fighter.img_path}`}
+            src={`${API}${fighter.img_path}`}
             alt={fighter.name}
             className="w-40 h-40 object-cover rounded-xl"
           />

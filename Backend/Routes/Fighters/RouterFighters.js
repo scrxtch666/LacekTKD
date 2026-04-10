@@ -248,8 +248,7 @@ router.get("/:id", (req, res) => {
          JOIN tournament t ON t.id = tr.tournament_id
          WHERE tr.place IS NOT NULL
            AND tr.fighter_id = ?
-         ORDER BY t.start_date DESC
-         LIMIT 4`,
+         ORDER BY t.start_date DESC`,
         [id],
         (err2, results) => {
           if (err2) return res.status(500).json({ error: "Chyba" });

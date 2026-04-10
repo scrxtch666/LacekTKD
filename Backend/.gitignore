@@ -24,3 +24,6 @@ dist-ssr
 *.sln
 *.sw?
 *.env
+
+# Service keys
+lacektkd-12aaabdf5383.json

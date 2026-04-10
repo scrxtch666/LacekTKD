@@ -13,7 +13,7 @@ const { parseDateSafe } = require("../../utils/date");
 // --- GOOGLE CALENDAR KONFIGURACE ---
 const GOOGLE_SERVICE_ACCOUNT_KEY = path.join(
   __dirname,
-  "../../lacektkd-12aaabdf5383.json",
+  "../../lacektkd-12aaabdf5383.json"
 );
 const CALENDAR_ID = process.env.GOOGLE_CALENDAR_ID;
 
@@ -136,9 +136,9 @@ router.get("/", (req, res) => {
             registrations: regs.filter((r) => r.exam_id === exam.id),
           }));
           res.json(result);
-        },
+        }
       );
-    },
+    }
   );
 });
 
@@ -155,7 +155,7 @@ router.get("/admin", verifyToken, (req, res) => {
      ORDER BY e.date DESC`,
     (err, exams) => {
       if (err) return res.status(500).json({ error: "Chyba serveru" });
-
+      
       db.query(
         `SELECT er.exam_id, er.id AS reg_id, f.id AS fighter_id,
                 f.name AS fighter_name, f.surname AS fighter_surname,
@@ -165,32 +165,21 @@ router.get("/admin", verifyToken, (req, res) => {
          LEFT JOIN belts b ON b.id = f.belts_id`,
         (err2, regs) => {
           if (err2) return res.status(500).json({ error: "Chyba serveru" });
-          res.json(
-            exams.map((e) => ({
-              ...e,
-              is_registered: !!e.is_registered,
-              registrations: regs.filter((r) => r.exam_id === e.id),
-            })),
-          );
-        },
+          res.json(exams.map(e => ({
+            ...e,
+            is_registered: !!e.is_registered,
+            registrations: regs.filter(r => r.exam_id === e.id)
+          })));
+        }
       );
-    },
+    }
   );
 });
 
 // POST / – Přidání zkoušky (včetně kalendáře)
 router.post("/", verifyToken, async (req, res) => {
-  const {
-    title,
-    description,
-    date,
-    location,
-    registrable_date,
-    price,
-    status,
-  } = req.body;
-  if (!title || !date)
-    return res.status(400).json({ error: "Chybí název nebo datum" });
+  const { title, description, date, location, registrable_date, price, status } = req.body;
+  if (!title || !date) return res.status(400).json({ error: "Chybí název nebo datum" });
 
   const formattedDate = parseDateSafe(date);
 
@@ -199,117 +188,71 @@ router.post("/", verifyToken, async (req, res) => {
     title,
     location,
     description,
-    date: formattedDate,
+    date: formattedDate
   });
 
   db.query(
     `INSERT INTO exam (title, description, date, location, registrable_date, price, status, created_by, google_event_id)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [
-      title,
-      description || null,
-      formattedDate,
-      location || null,
-      parseDateSafe(registrable_date),
-      price || null,
-      status || "hidden",
-      req.user.id,
-      googleEventId,
-    ],
+    [title, description || null, formattedDate, location || null, parseDateSafe(registrable_date), price || null, status || "hidden", req.user.id, googleEventId],
     (err, result) => {
       if (err) return res.status(500).json({ error: "Chyba při ukládání" });
       res.status(201).json({ success: true, id: result.insertId });
-    },
+    }
   );
 });
 
 // PUT /:id – Editace (včetně kalendáře)
 router.put("/:id", verifyToken, async (req, res) => {
-  const {
-    title,
-    description,
-    date,
-    location,
-    registrable_date,
-    price,
-    status,
-  } = req.body;
+  const { title, description, date, location, registrable_date, price, status } = req.body;
   const { id } = req.params;
   const formattedDate = parseDateSafe(date);
 
-  db.query(
-    "SELECT google_event_id FROM exam WHERE id = ?",
-    [id],
-    async (err, results) => {
-      if (err || !results.length)
-        return res.status(404).json({ error: "Nenalezeno" });
+  db.query("SELECT google_event_id FROM exam WHERE id = ?", [id], async (err, results) => {
+    if (err || !results.length) return res.status(404).json({ error: "Nenalezeno" });
 
-      let googleEventId = results[0].google_event_id;
+    let googleEventId = results[0].google_event_id;
 
-      if (googleEventId) {
-        await updateGoogleEvent(googleEventId, {
-          title,
-          location,
-          description,
-          date: formattedDate,
-        });
-      } else {
-        googleEventId = await createGoogleEvent({
-          title,
-          location,
-          description,
-          date: formattedDate,
-        });
+    if (googleEventId) {
+      await updateGoogleEvent(googleEventId, { title, location, description, date: formattedDate });
+    } else {
+      googleEventId = await createGoogleEvent({ title, location, description, date: formattedDate });
+    }
+
+    db.query(
+      `UPDATE exam SET title=?, description=?, date=?, location=?, registrable_date=?, price=?, status=?, google_event_id=? WHERE id=?`,
+      [title, description || null, formattedDate, location || null, parseDateSafe(registrable_date), price || null, status || "hidden", googleEventId, id],
+      (err) => {
+        if (err) return res.status(500).json({ error: "Chyba při ukládání" });
+        res.json({ success: true });
       }
-
-      db.query(
-        `UPDATE exam SET title=?, description=?, date=?, location=?, registrable_date=?, price=?, status=?, google_event_id=? WHERE id=?`,
-        [
-          title,
-          description || null,
-          formattedDate,
-          location || null,
-          parseDateSafe(registrable_date),
-          price || null,
-          status || "hidden",
-          googleEventId,
-          id,
-        ],
-        (err) => {
-          if (err) return res.status(500).json({ error: "Chyba při ukládání" });
-          res.json({ success: true });
-        },
-      );
-    },
-  );
+    );
+  });
 });
 
 // DELETE /:id – Smazání (včetně kalendáře)
 router.delete("/:id", verifyToken, (req, res) => {
   const { id } = req.params;
 
-  db.query(
-    "SELECT google_event_id FROM exam WHERE id = ?",
-    [id],
-    async (err, results) => {
-      if (err || !results.length)
-        return res.status(404).json({ error: "Nenalezeno" });
+  db.query("SELECT google_event_id FROM exam WHERE id = ?", [id], async (err, results) => {
+    if (err || !results.length) return res.status(404).json({ error: "Nenalezeno" });
 
-      if (results[0].google_event_id) {
-        await deleteGoogleEvent(results[0].google_event_id);
-      }
+    if (results[0].google_event_id) {
+      await deleteGoogleEvent(results[0].google_event_id);
+    }
 
-      db.query("DELETE FROM exam_registration WHERE exam_id = ?", [id], () => {
-        db.query("DELETE FROM exam WHERE id = ?", [id], (err2) => {
-          if (err2) return res.status(500).json({ error: "Chyba při mazání" });
-          res.json({ success: true });
-        });
+    db.query("DELETE FROM exam_registration WHERE exam_id = ?", [id], () => {
+      db.query("DELETE FROM exam WHERE id = ?", [id], (err2) => {
+        if (err2) return res.status(500).json({ error: "Chyba při mazání" });
+        res.json({ success: true });
       });
-    },
-  );
+    });
+  });
 });
 
 // --- REGISTRACE ---
+
+
 
 // POST /:id/register/fighter/:fighterId – admin přihlásí konkrétního závodníka
 router.post("/:id/register/fighter/:fighterId", verifyToken, (req, res) => {
@@ -329,9 +272,10 @@ router.post("/:id/register/fighter/:fighterId", verifyToken, (req, res) => {
       }
 
       res.json({ success: true });
-    },
+    }
   );
 });
+
 
 // POST /:id/register – přihlášení uživatele na zkoušku
 router.post("/:id/register", verifyToken, (req, res) => {
@@ -353,18 +297,25 @@ router.post("/:id/register", verifyToken, (req, res) => {
           .status(400)
           .json({ error: "Nemáš přiřazeného závodníka. Kontaktuj trenéra." });
       if (!name || !surname)
-        return res.status(400).json({
-          error: "Závodník nemá vyplněné jméno a příjmení. Kontaktuj trenéra.",
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Závodník nemá vyplněné jméno a příjmení. Kontaktuj trenéra.",
+          });
       if (!birth || birth.toString().startsWith("0000"))
-        return res.status(400).json({
-          error: "Závodník nemá vyplněné datum narození. Kontaktuj trenéra.",
-        });
+        return res
+          .status(400)
+          .json({
+            error: "Závodník nemá vyplněné datum narození. Kontaktuj trenéra.",
+          });
       if (!actual_weight_category)
-        return res.status(400).json({
-          error:
-            "Závodník nemá vyplněnou váhovou kategorii. Kontaktuj trenéra nebo ji doplň v profilu.",
-        });
+        return res
+          .status(400)
+          .json({
+            error:
+              "Závodník nemá vyplněnou váhovou kategorii. Kontaktuj trenéra nebo ji doplň v profilu.",
+          });
 
       db.query(
         "INSERT INTO exam_registration (exam_id, fighter_id) VALUES (?, ?)",
@@ -464,7 +415,7 @@ router.get("/calendar", (req, res) => {
     (err, results) => {
       if (err) return res.status(500).json({ error: "Chyba serveru" });
       res.json(results);
-    },
+    }
   );
 });
 
