@@ -78,7 +78,7 @@ src={`${API}${banner.img_path}`}
 # CO MUSÍM UDĚLAT
 - do admin/me přidat nějaké info pole, které bude informovat, že pokud není přidělený uživatelský účet, tak že nějaký informace nepůjdou editovat a že nebude možné se přihlásit na turnje a zkoušky
 - restruktualizace kodu - classy, názvy a tak
-- editace turnaje
+- editace zkousky
 - ikonky nejsou statické nebo tak
 - možná se podívat na datum a validace formuláře
 - search bar jako utilka
@@ -111,4 +111,12 @@ Oprava data narození
 --------------------
 ALTER TABLE fighters 
 MODIFY birth DATE NULL DEFAULT NULL;
+
+# Textová část - ukázka komponenty
+Komponenta zkoušky slouží jako hlavní kontejner ve kterém jsou naimportovány jednotlivé menší komponenty, které jsou společně propojené a které dohromady tvoří funkční celek pro zobrazení zkoušek uživateli.
+
+Stránku tvoří tabulka s přehledem pásků obsahující informace o názvu pásku, třídě danu či cupu, ceně za zkoušku na jednotlivý technický stupeň a obrázek pásku.
+Pod tabulkou se nachází sekce, která se dynamicky mění na zákldě vybraného technického stupně. Sekce je složená z komponenty Video a SestavyInfo. Komponenta video se vykresluje pokud má daný technický stupeň v databázi uložený odkaz na video. Klíčové pojmy k jednotlivým sestavám vykresluje komponenta SestavyInfo.
+
+Dynamické vykreslování je realizováno pomocí useState logiky, která pracuje s informacemi o aktuálně zvoleném technickém stupni. Výchozí hodnota je nastavena na null, což zajišťuje, že při prvotním načtení stránky nebude vybrán žádný technický stupeň a tím pádem nebudou vykreslovány komponenty Video a SestavyInfo.
 
