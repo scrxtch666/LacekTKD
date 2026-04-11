@@ -22,111 +22,111 @@
       align-items: center;
     }
 
-  .addBtn {
-  display: flex;             /* flex */
-  align-items: center;       /* items-center */
-  gap: 0.5rem;               /* gap-2 (8px) */
-  padding: 0.5rem 0.75rem;   /* py-2 px-3 (8px 12px) */
-  background-color: #22c55e; /* bg-green-500 */
-  color: #ffffff;            /* text-white */
-  border-radius: 0.5rem;     /* rounded-lg (8px) */
-  font-size: 0.875rem;       /* text-sm (14px) */
-  font-weight: 500;           /* pokud chceš mírně tučný text jako Tailwind medium */
-  transition: background-color 0.2s ease-in-out; /* plynulý hover efekt */
-}
-
-.addBtn:hover {
-  background-color: #16a34a; /* hover:bg-green-600 */
-}
-
-.editBtn {
-  display: flex;                 /* flex */
-  align-items: center;           /* items-center */
-  gap: 0.5rem;                   /* gap-2 (8px) */
-  padding-left: 1rem;          /* py-2 px-4 (8px 16px) */
-  padding-right: 1rem; 
-  padding-bottom: 0.5rem;
-  padding-top: 0.5rem;
-  background-color: #3b82f6;     /* bg-blue-500 */
-  color: #ffffff;                /* text-white */
-  border-radius: 0.5rem;         /* rounded-lg (8px) */
-  transition: background-color 0.2s ease-in-out; /* transition-colors duration-200 */
-}
-
-.editBtn:hover {
-  background-color: #2563eb;     /* hover:bg-blue-600 */
-}
-
-.deleteBtn {
-  display: flex;                 /* flex */
-  align-items: center;           /* items-center */
-  gap: 0.5rem;                   /* gap-2 (8px) */
-  padding: 0.5rem 1rem;          /* py-2 px-4 (8px 16px) */
-  background-color: #ef4444;     /* bg-red-500 */
-  color: #ffffff;                /* text-white */
-  border-radius: 0.5rem;         /* rounded-lg (8px) */
-  transition: background-color 0.2s ease-in-out; /* transition-colors */
-}
-
-.deleteBtn:hover {
-  background-color: #dc2626;     /* hover:bg-red-600 */
-}
-
-.deleteBtn:disabled {
-  opacity: 0.5;                  /* disabled:opacity-50 */
-  cursor: not-allowed;
-}
-
-.noPfp {
-  border-radius: 9999px;
-  background: linear-gradient(to bottom right, #4ade80, #16a34a);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.5rem; /* text-2xl */
-  font-weight: 700;
-}
-
-    /* glassy animation */
-@media (min-width: 640px) {
-  .glass::after {
-    content: '';
-    position: absolute;
-    height: 200%;
-    width: 200%;
-    bottom: 0;
-    right: 60px;
-    z-index: 2;
-    background: -moz-linear-gradient(-45deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0) 100%);
-    background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(255, 255, 255, 0)), color-stop(45%, rgba(255, 255, 255, 0)), color-stop(50%, rgba(255, 255, 255, 0.2)), color-stop(55%, rgba(255, 255, 255, 0)), color-stop(100%, rgba(255, 255, 255, 0)));
-    background: -webkit-linear-gradient(-45deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0) 100%);
-    background: -o-linear-gradient(-45deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0) 100%);
-    background: -ms-linear-gradient(-45deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0) 100%);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0) 100%);
-    pointer-events: none;
+    .addBtn {
+    display: flex;             
+    align-items: center;      
+    gap: 0.5rem;               
+    padding: 0.5rem 0.75rem;   
+    background-color: #22c55e; 
+    color: #ffffff;          
+    border-radius: 0.5rem;     
+    font-size: 0.875rem;      
+    font-weight: 500;           
+    transition: background-color 0.2s ease-in-out; 
   }
 
-  .glass:hover::after {
-    animation: shiny 1200ms infinite linear;
-  }
-}
-
-@keyframes shiny {
-  0% {
-    top: 10%;
-    left: 10%;
+  .addBtn:hover {
+    background-color: #16a34a; 
   }
 
-  50% {
-    top: -100%;
-    left: -150%;
+  .editBtn {
+    display: flex;                
+    align-items: center;           
+    gap: 0.5rem;                   
+    padding-left: 1rem;          
+    padding-right: 1rem; 
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
+    background-color: #3b82f6;     
+    color: #ffffff;                
+    border-radius: 0.5rem;        
+    transition: background-color 0.2s ease-in-out; 
   }
 
-  100% {
-    top: -100%;
-    left: -150%;
+  .editBtn:hover {
+    background-color: #2563eb;     
   }
-}
+
+  .deleteBtn {
+    display: flex;                
+    align-items: center;           
+    gap: 0.5rem;                   
+    padding: 0.5rem 1rem;          
+    background-color: #ef4444;     
+    color: #ffffff;               
+    border-radius: 0.5rem;         
+    transition: background-color 0.2s ease-in-out; 
   }
+
+  .deleteBtn:hover {
+    background-color: #dc2626;   
+  }
+
+  .deleteBtn:disabled {
+    opacity: 0.5;                  
+    cursor: not-allowed;
+  }
+
+  .noPfp {
+    border-radius: 9999px;
+    background: linear-gradient(to bottom right, #4ade80, #16a34a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+      /* glassy animation */
+  @media (min-width: 640px) {
+    .glass::after {
+      content: '';
+      position: absolute;
+      height: 200%;
+      width: 200%;
+      bottom: 0;
+      right: 60px;
+      z-index: 2;
+      background: -moz-linear-gradient(-45deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0) 100%);
+      background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(255, 255, 255, 0)), color-stop(45%, rgba(255, 255, 255, 0)), color-stop(50%, rgba(255, 255, 255, 0.2)), color-stop(55%, rgba(255, 255, 255, 0)), color-stop(100%, rgba(255, 255, 255, 0)));
+      background: -webkit-linear-gradient(-45deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0) 100%);
+      background: -o-linear-gradient(-45deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0) 100%);
+      background: -ms-linear-gradient(-45deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0) 100%);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 45%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0) 100%);
+      pointer-events: none;
+    }
+
+    .glass:hover::after {
+      animation: shiny 1200ms infinite linear;
+    }
+  }
+
+  @keyframes shiny {
+    0% {
+      top: 10%;
+      left: 10%;
+    }
+
+    50% {
+      top: -100%;
+      left: -150%;
+    }
+
+    100% {
+      top: -100%;
+      left: -150%;
+    }
+  }
+    }
   

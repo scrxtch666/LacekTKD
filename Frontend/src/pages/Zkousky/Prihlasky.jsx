@@ -105,7 +105,7 @@ function Prihlasky() {
             <div className="p-6 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div className="space-y-2 flex-1">
-                  <h2 className="text-xl font-bold text-gray-800">
+                  <h2 className="text-xl font-bold">
                     {exam.title}
                   </h2>
                   <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-500">
@@ -139,7 +139,7 @@ function Prihlasky() {
                     </p>
                   )}
                   {exam.description && (
-                    <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">
+                    <p className="leading-relaxed whitespace-pre-line">
                       {exam.description}
                     </p>
                   )}

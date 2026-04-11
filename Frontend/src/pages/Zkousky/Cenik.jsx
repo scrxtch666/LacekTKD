@@ -27,7 +27,7 @@ function Cenik({ onSelectBelt }) {
 
   return (
     <div className="card w-full p-4">
-      <h2 className="font-extrabold text-xl mb-6">
+      <h2 className="font-extrabold mb-6 uppercase">
         Pásky a ceník
       </h2>
 

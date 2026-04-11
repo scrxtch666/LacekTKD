@@ -19,6 +19,8 @@ const BELT_ORDER = [
   "6. CUP",
   "7. CUP",
   "8. CUP",
+  "9. CUP",
+  "10. CUP",
 ];
 
 function Fighter() {
@@ -30,18 +32,18 @@ function Fighter() {
   const [filterLegend, setFilterLegend] = useState(false);
   const navigate = useNavigate();
 
-useEffect(() => {
-  fetch(`${API}/api/fighters`)
-    .then((response) => response.json())
-    .then((data) => {
-      setFighters(Array.isArray(data) ? data : []);
-      setLoading(false);
-    })
-    .catch((error) => {
-      console.error("Chyba při načítání dat:", error);
-      setLoading(false);
-    });
-}, []);
+  useEffect(() => {
+    fetch(`${API}/api/fighters`)
+      .then((response) => response.json())
+      .then((data) => {
+        setFighters(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Chyba při načítání dat:", error);
+        setLoading(false);
+      });
+  }, []);
 
   if (loading) return <div>Načítám data...</div>;
 
@@ -53,9 +55,10 @@ useEffect(() => {
   }, {});
 
   const sortedGroups = Object.entries(groups).sort(([a], [b]) => {
-    const ai = BELT_ORDER.indexOf(a);
-    const bi = BELT_ORDER.indexOf(b);
-    if (ai === -1 && bi === -1) return 0;
+    const ai = BELT_ORDER.indexOf(a.trim());
+    const bi = BELT_ORDER.indexOf(b.trim());
+
+    if (ai === -1 && bi === -1) return a.localeCompare(b);
     if (ai === -1) return 1;
     if (bi === -1) return -1;
     return ai - bi;
@@ -180,7 +183,7 @@ useEffect(() => {
                 <div className="w-28 flex-shrink-0 rounded-xl overflow-hidden self-stretch">
                   {fighter.img_path ? (
                     <img
-                    src={`${API}${fighter.img_path}`}
+                      src={`${API}${fighter.img_path}`}
                       alt={fighter.name}
                       className="w-full h-full object-cover object-center"
                     />
