@@ -33,7 +33,6 @@ function Header() {
     };
   }, []);
 
-  // Načtení informací o uživateli
   useEffect(() => {
     const loadUser = async () => {
       setLoading(true);
@@ -44,14 +43,12 @@ function Header() {
 
     loadUser();
 
-    // Event listener pro změny v localStorage (např. přihlášení/odhlášení v jiné záložce)
     const handleStorageChange = () => {
       loadUser();
     };
 
     window.addEventListener("storage", handleStorageChange);
 
-    // Custom event pro refresh po přihlášení/odhlášení
     window.addEventListener("authChange", handleStorageChange);
 
     return () => {
@@ -86,18 +83,15 @@ function Header() {
             <>
               {user ? (
                 <div className="flex items-center gap-3">
-                  {/* Uživatelské jméno - viditelné VŽDY (na mobilu i desktopu) */}
                   <Link
                     to="/admin/me"
                     className="flex items-center gap-2 text-sm font-medium hover:underline decoration-customGreen lg:rounded-none"
                   >
-                    {/* Na mobilu můžeš přidat ikonku uživatele z lucide-react pro lepší vzhled */}
                     <span className="max-w-[100px] truncate bg-green-50 text-customGreen border border-green-200 gap-1.5 px-3 py-1 rounded-2xl">
                       {user.login}
                     </span>
                   </Link>
 
-                  {/* Logout button - na mobilu ho můžeš nechat, nebo ho schovat do menu */}
                   <div className="hidden sm:block">
                     <LogoutButton onLogout={() => setUser(null)} />
                   </div>
@@ -108,7 +102,6 @@ function Header() {
             </>
           )}
 
-          {/* Hamburger menu tlačítko */}
           <button
             onClick={toggleMenu}
             type="button"
@@ -116,7 +109,6 @@ function Header() {
             aria-controls="navbar-sticky"
             aria-expanded={isMenuOpen}
           >
-            {/* ... tvoje SVG ... */}
             <svg
               className="w-5 h-5"
               aria-hidden="true"

@@ -121,3 +121,5 @@ Pod tabulkou se nachází sekce, která se dynamicky mění na zákldě vybrané
 Dynamické vykreslování je realizováno pomocí useState logiky, která pracuje s informacemi o aktuálně zvoleném technickém stupni. Výchozí hodnota je nastavena na null, což zajišťuje, že při prvotním načtení stránky nebude vybrán žádný technický stupeň a tím pádem nebudou vykreslovány komponenty Video a SestavyInfo.
 
 Ukázat responzivitu
+
+Zkontrolovat si ty písmenka na konci řádku, plevelová slova 
