@@ -9,7 +9,7 @@ function Button() {
           <div className="relative inline-flex rounded-full h-5 w-5 bg-customGreen">
             <img
               className="px-0.6 py-0.6"
-              src="../src/assets/Icons/login.png"
+              src="/assets/Icons/login.png"
               alt="Login"
             />
           </div>
