@@ -416,48 +416,59 @@ router.put("/:id", upload.single("image"), (req, res) => {
     return res.status(500).json({ error: "Interní chyba serveru" });
   }
 });
-
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
 
   db.query(
-    "DELETE FROM tournament_registration WHERE fighter_id = ?",
+    "DELETE FROM exam_registration WHERE fighter_id = ?",
     [id],
-    (err) => {
-      if (err)
-        return res.status(500).json({ error: "Chyba při mazání registrací" });
+    (err0) => {
+      if (err0)
+        return res.status(500).json({ error: "Chyba při mazání zkoušek" });
 
-      // 2. Odpojit uživatele
       db.query(
-        "UPDATE users SET fighter_id = NULL WHERE fighter_id = ?",
+        "DELETE FROM tournament_registration WHERE fighter_id = ?",
         [id],
-        (err2) => {
-          // 3. Získat cestu k obrázku, abychom ho mohli smazat z disku
+        (err) => {
+          if (err)
+            return res
+              .status(500)
+              .json({ error: "Chyba při mazání registrací" });
+
           db.query(
-            "SELECT img_path FROM fighters WHERE id = ?",
+            "UPDATE users SET fighter_id = NULL WHERE fighter_id = ?",
             [id],
-            (err3, results) => {
-              if (results.length > 0) {
-                const imgPath = results[0].img_path;
+            (err2) => {
+              db.query(
+                "SELECT img_path FROM fighters WHERE id = ?",
+                [id],
+                (err3, results) => {
+                  if (results.length > 0) {
+                    const imgPath = results[0].img_path;
 
-                // 4. Smazat samotného závodníka
-                db.query("DELETE FROM fighters WHERE id = ?", [id], (err4) => {
-                  if (err4)
-                    return res
-                      .status(500)
-                      .json({ error: "Chyba při mazání závodníka" });
+                    db.query(
+                      "DELETE FROM fighters WHERE id = ?",
+                      [id],
+                      (err4) => {
+                        if (err4)
+                          return res.status(500).json({
+                            error: "Chyba při mazání závodníka",
+                          });
 
-                  // 5. Smazat soubor
-                  if (imgPath) {
-                    const fullPath = getFilePath(imgPath);
-                    if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
+                        if (imgPath) {
+                          const fullPath = getFilePath(imgPath);
+                          if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
+                        }
+
+                        res.json({
+                          success: true,
+                          message: "Smazáno vše včetně vazeb",
+                        });
+                      },
+                    );
                   }
-                  res.json({
-                    success: true,
-                    message: "Smazáno vše včetně vazeb",
-                  });
-                });
-              }
+                },
+              );
             },
           );
         },
