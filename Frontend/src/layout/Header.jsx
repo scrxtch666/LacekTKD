@@ -74,7 +74,7 @@ function Header() {
           >
             <img
               className="h-auto w-20"
-              src="../src/assets/Team/Logo.png"
+              src="/assets/Team/Logo.png"
               alt="Logo"
             />
           </Link>

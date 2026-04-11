@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import React, { useState } from "react";
+import { useState } from "react";
 import Modal from "react-modal";
 
 Modal.setAppElement("#root");
@@ -16,11 +15,10 @@ function ModalWin() {
         overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
       >
         <img
-          src="../src/assets/Team/logo_tkdlacek_white.png"
+          src="/assets/Team/logo_tkdlacek_white.png"
           alt=""
-          class=""
         />
-        <hr class="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded-sm dark:bg-customBlack" />
+        <hr className="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded-sm dark:bg-customBlack" />
         <label>
           Email{" "}
           <input
@@ -43,7 +41,6 @@ function ModalWin() {
           >
             Zavřít
           </button>
-          <Button />
         </div>
       </Modal>
     </>

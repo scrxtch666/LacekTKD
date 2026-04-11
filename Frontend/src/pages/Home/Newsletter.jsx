@@ -1,5 +1,4 @@
 import Button from "../../Components/LogInButton";
-import React from "react";
 
 function Newsletter() {
   return (
@@ -8,7 +7,7 @@ function Newsletter() {
         <div className="lg:w-2/3 w-full">
           <div className="bg-customWhite flex flex-col sm:flex-row justify-evenly items-center p-4 sm:p-6 rounded-xl gap-4 shadow-xl border-2">
             <img
-              src="../src/assets/Team/logo_tkdlacek_white.png"
+              src="/assets/Team/logo_tkdlacek_white.png"
               alt=""
               className="h-20 sm:h-28 hidden lg:flex"
             />
