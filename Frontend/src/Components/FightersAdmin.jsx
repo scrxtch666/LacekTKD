@@ -38,13 +38,13 @@ function FightersAdmin() {
       <div className="bg-customWhite">
         <img
           className="px-0.5 py-0.5 flex align-middle items-center"
-          src="/assets/icons/yes_1.png"
+          src="/assets/Icons/yes_1.png"
           alt="image description"
         ></img>
 
         <img
           className="px-0.5 py-0.5 flex align-middle items-center"
-          src="/assets/icons/no_1.png"
+          src="/assets/Icons/no_1.png"
           alt="image description"
         ></img>
       </div>
