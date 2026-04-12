@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../../Libs/db");
 const bcrypt = require("bcryptjs");
+const { verifyToken, isAdmin} = require("../../auth/auth")
 
 // GET / - všichni uživatelé (s fighterem a rolí)
 router.get("/", async (req, res) => {
@@ -136,15 +137,20 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// DELETE /:id - smazání uživatele
-router.delete("/:id", (req, res) => {
+router.delete("/:id", verifyToken, isAdmin, (req, res) => {
   const { id } = req.params;
-  db.query("DELETE FROM users WHERE id = ?", [id], (err, result) => {
-    if (err)
-      return res.status(500).json({ error: "Chyba při mazání z databáze" });
-    if (result.affectedRows === 0)
-      return res.status(404).json({ error: "Uživatel nenalezen" });
-    res.json({ success: true, message: "Uživatel byl úspěšně smazán" });
+
+  db.query("UPDATE users SET fighter_id = NULL WHERE id = ?", [id], (err) => {
+    if (err) return res.status(500).json({ error: "Chyba při odpojení závodníka" });
+
+    db.query("DELETE FROM users WHERE id = ?", [id], (err2, result) => {
+      if (err2) {
+  console.error(err2);
+  return res.status(500).json({ error: err2.message });
+}
+      if (result.affectedRows === 0) return res.status(404).json({ error: "Uživatel nenalezen" });
+      res.json({ success: true });
+    });
   });
 });
 

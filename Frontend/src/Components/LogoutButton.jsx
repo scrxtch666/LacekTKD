@@ -4,13 +4,10 @@ const LogoutButton = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // 1. Smazání tokenu - tím se zneplatní ProtectedRoute
     localStorage.removeItem("token");
     
-    // 2. Přesměrování na login
     navigate("/", { replace: true });
 
-    // 3. Refresh stránky vyčistí paměť (stavy komponent)
     window.location.reload();
   };
 

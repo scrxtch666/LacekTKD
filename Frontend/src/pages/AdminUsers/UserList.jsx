@@ -10,19 +10,30 @@ function UserList({ users, roles, fighters, onRefresh, API }) {
     if (!confirm("Opravdu chcete smazat tohoto uživatele?")) return;
     setDeleting(id);
     try {
-      const res = await fetch(`${API}/api/users/${id}`, { method: "DELETE" });
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API}/api/users/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (res.ok) onRefresh();
-      else alert("Nepodařilo se smazat uživatele");
-    } catch { alert("Chyba při mazání"); }
-    finally { setDeleting(null); }
+      else {
+        const data = await res.json();
+        alert(data.error || "Nepodařilo se smazat uživatele");
+      }
+    } catch {
+      alert("Chyba při mazání");
+    } finally {
+      setDeleting(null);
+    }
   };
 
-  if (!users.length) return (
-    <div className="bg-customWhite rounded-lg shadow p-8 text-center">
-      <UserPlus className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-      <p className="text-gray-500">Zatím nejsou žádní uživatelé</p>
-    </div>
-  );
+  if (!users.length)
+    return (
+      <div className="bg-customWhite rounded-lg shadow p-8 text-center">
+        <UserPlus className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+        <p className="text-gray-500">Zatím nejsou žádní uživatelé</p>
+      </div>
+    );
 
   return (
     <div className="space-y-4">
@@ -35,7 +46,10 @@ function UserList({ users, roles, fighters, onRefresh, API }) {
           isEditing={editingId === user.id}
           onStartEdit={() => setEditingId(user.id)}
           onCancelEdit={() => setEditingId(null)}
-          onEditSuccess={() => { setEditingId(null); onRefresh(); }}
+          onEditSuccess={() => {
+            setEditingId(null);
+            onRefresh();
+          }}
           onDelete={() => handleDelete(user.id)}
           isDeleting={deleting === user.id}
           API={API}
