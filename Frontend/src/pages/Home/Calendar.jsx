@@ -228,7 +228,7 @@ function Calendar() {
         <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3 text-xs text-gray-400">
           <span className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
-            Turnaj / akce
+            Turnaj / soustředění
           </span>
           <span className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-red-400 inline-block" />
