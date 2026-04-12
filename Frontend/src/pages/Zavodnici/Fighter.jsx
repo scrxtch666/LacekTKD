@@ -227,7 +227,7 @@ function Fighter() {
                         <div className="inline-flex rounded-full h-4 w-4 bg-customGreen flex-shrink-0">
                           <img
                             className="px-0.5 py-0.5"
-                            src="../src/assets/icons/belt.png"
+                            src="/assets/icons/belt.png"
                             alt=""
                           />
                         </div>
@@ -239,7 +239,7 @@ function Fighter() {
                           <div className="inline-flex rounded-full h-4 w-4 bg-customGreen flex-shrink-0">
                             <img
                               className="px-0.5 py-0.5"
-                              src="../src/assets/icons/medal.png"
+                              src="/assets/icons/medal.png"
                               alt=""
                             />
                           </div>
@@ -252,7 +252,7 @@ function Fighter() {
                           <div className="inline-flex rounded-full h-4 w-4 bg-customGreen flex-shrink-0">
                             <img
                               className="px-0.5 py-0.5"
-                              src="../src/assets/icons/trophy.png"
+                              src="/assets/icons/trophy.png"
                               alt=""
                             />
                           </div>
