@@ -14,17 +14,17 @@ function Devider() {
 
   return (
     <div className="devider">
-      <div class="justify-center align-middle content-center flex items-center gap-2">
+      <div className="justify-center align-middle content-center flex items-center gap-2">
         <img
-          src="../src/assets/Belts/blt_black_2.gif"
+          src="/assets/Belts/blt_black_2.gif"
           alt="2 DAN"
-          class="w-9"
+          className="w-9"
         />
-        <span class="">2. DAN</span>
+        <span className="">2. DAN</span>
       </div>
-      <div class="justify-center align-middle content-center gap-2 flex items-center">
+      <div className="justify-center align-middle content-center gap-2 flex items-center">
         <span>ZÁVODNÍCI:</span>
-        <span class="text-customGreen">
+        <span className="text-customGreen">
           {count !== null ? count : "Načítám..."}
         </span>
       </div>
