@@ -11,6 +11,7 @@ import {
   X,
   Check,
   KeyRound,
+  TriangleAlert,
 } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import config from "../../../config";
@@ -25,6 +26,7 @@ function AdminMe() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
+  const hasFighter = !!user?.fighter_id;
 
   const [form, setForm] = useState({
     name: "",
@@ -230,6 +232,20 @@ function AdminMe() {
               </div>
             </div>
           </div>
+          {!hasFighter && (
+            <div className="mx-6 mt-4 mb-2">
+              <div className="w-full bg-yellow-50 border border-yellow-200 rounded-xl p-3 flex items-center gap-3">
+                <div className="w-9 h-9 flex items-center justify-center rounded-lg bg-yellow-100 flex-shrink-0">
+                  <TriangleAlert size={18} className="text-yellow-700" />
+                </div>
+
+                <div className="text-sm text-yellow-800">
+                  <strong>Upozornění:</strong> K tomuto účtu není přiřazen žádný
+                  závodník! Nelze se přihlašovat na zkoušky a turnaje!
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="border-t border-gray-100 mx-6" />
 
@@ -259,7 +275,7 @@ function AdminMe() {
                 </div>
               )}
 
-              {user.birth && (
+              {hasFighter && user.birth && (
                 <div className="flex items-center gap-3 text-sm">
                   <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center flex-shrink-0">
                     <Calendar size={15} className="text-orange-400" />
@@ -272,7 +288,7 @@ function AdminMe() {
                   </div>
                 </div>
               )}
-              {user.actual_weight_category && (
+              {hasFighter && user.actual_weight_category && (
                 <div className="flex items-center gap-3 text-sm">
                   <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
                     <User size={15} className="text-purple-400" />
@@ -290,30 +306,38 @@ function AdminMe() {
             <div className="px-6 py-5 space-y-4">
               {/* Editační pole */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs text-gray-500 mb-1 block">
-                    Jméno
-                  </label>
-                  <input
-                    type="text"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-customGreen focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-gray-500 mb-1 block">
-                    Příjmení
-                  </label>
-                  <input
-                    type="text"
-                    value={form.surname}
-                    onChange={(e) =>
-                      setForm({ ...form, surname: e.target.value })
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-customGreen focus:border-transparent"
-                  />
-                </div>
+                {hasFighter && (
+                  <>
+                    <div>
+                      <label className="text-xs text-gray-500 mb-1 block">
+                        Jméno
+                      </label>
+                      <input
+                        type="text"
+                        value={form.name}
+                        onChange={(e) =>
+                          setForm({ ...form, name: e.target.value })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-customGreen focus:border-transparent"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs text-gray-500 mb-1 block">
+                        Příjmení
+                      </label>
+                      <input
+                        type="text"
+                        value={form.surname}
+                        onChange={(e) =>
+                          setForm({ ...form, surname: e.target.value })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-customGreen focus:border-transparent"
+                      />
+                    </div>
+                  </>
+                )}
+                {/* vždy dostupné */}
                 <div>
                   <label className="text-xs text-gray-500 mb-1 block">
                     Email
@@ -327,6 +351,7 @@ function AdminMe() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-customGreen focus:border-transparent"
                   />
                 </div>
+
                 <div>
                   <label className="text-xs text-gray-500 mb-1 block">
                     Telefon
@@ -341,36 +366,40 @@ function AdminMe() {
                   />
                 </div>
 
-                <div>
-                  <label className="text-xs text-gray-500 mb-1 block">
-                    Datum narození
-                  </label>
-                  <input
-                    type="date"
-                    value={form.birth}
-                    onChange={(e) =>
-                      setForm({ ...form, birth: e.target.value })
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-customGreen focus:border-transparent"
-                  />
-                </div>
+                {hasFighter && (
+                  <>
+                    <div>
+                      <label className="text-xs text-gray-500 mb-1 block">
+                        Datum narození
+                      </label>
+                      <input
+                        type="date"
+                        value={form.birth}
+                        onChange={(e) =>
+                          setForm({ ...form, birth: e.target.value })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-customGreen focus:border-transparent"
+                      />
+                    </div>
 
-                <div>
-                  <label className="text-xs text-gray-500 mb-1 block">
-                    Váhová kategorie (kg)
-                  </label>
-                  <input
-                    type="number"
-                    value={form.actual_weight_category}
-                    onChange={(e) =>
-                      setForm({
-                        ...form,
-                        actual_weight_category: e.target.value,
-                      })
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-customGreen focus:border-transparent"
-                  />
-                </div>
+                    <div>
+                      <label className="text-xs text-gray-500 mb-1 block">
+                        Váhová kategorie (kg)
+                      </label>
+                      <input
+                        type="number"
+                        value={form.actual_weight_category}
+                        onChange={(e) =>
+                          setForm({
+                            ...form,
+                            actual_weight_category: e.target.value,
+                          })
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-customGreen focus:border-transparent"
+                      />
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Změna hesla */}
