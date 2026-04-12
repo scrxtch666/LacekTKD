@@ -27,7 +27,7 @@ function FighterMain() {
               <div className="bg-customGreen rounded-full w-6">
                 <img
                   className=""
-                  src="../src/assets/Icons/plus.png"
+                  src="/assets/Icons/plus.png"
                   alt="Logo"
                 />
               </div>
@@ -36,19 +36,19 @@ function FighterMain() {
           </div>
 
           <div className="border-2 border-customGreen border-dotted rounded-md flex p-2 justify-between">
-            <span class="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-24 w-full max-h-8 h-full flex items-center justify-around">
-              <div class="relative inline-flex rounded-full h-6 w-6 bg-customGreen">
+            <span className="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-24 w-full max-h-8 h-full flex items-center justify-around">
+              <div className="relative inline-flex rounded-full h-6 w-6 bg-customGreen">
                 <img
-                  class="px-0.5 py-0.5 flex align-middle items-center"
-                  src="../src/assets/icons/belt.png"
+                  className="px-0.5 py-0.5 flex align-middle items-center"
+                  src="/assets/icons/belt.png"
                   alt="image description"
                 ></img>
               </div>
               1. DAN
             </span>
 
-            <span class="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-24 w-full max-h-8 h-full flex items-center justify-around">
-              <div class="relative inline-flex rounded-full h-6 w-6 bg-customGreen">
+            <span className="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-24 w-full max-h-8 h-full flex items-center justify-around">
+              <div className="relative inline-flex rounded-full h-6 w-6 bg-customGreen">
                 <input
                   name="myInput  "
                   className="rounded-md border-2 border-customGreen border-dotted bg-customWhite px-2 w-full"
@@ -59,8 +59,8 @@ function FighterMain() {
               BEST
             </span>
 
-            <span class="border border-customGreen text-customGreen text-[8px] font-medium px-2.5 py-0.5 rounded max-w-24 w-full max-h-8 h-full flex items-center justify-around">
-              <div class="relative inline-flex rounded-full h-6 w-6 bg-customGreen">
+            <span className="border border-customGreen text-customGreen text-[8px] font-medium px-2.5 py-0.5 rounded max-w-24 w-full max-h-8 h-full flex items-center justify-around">
+              <div className="relative inline-flex rounded-full h-6 w-6 bg-customGreen">
                 <input
                   name="myInput  "
                   className="rounded-md border-2 border-customGreen border-dotted bg-customWhite px-2 w-full"
