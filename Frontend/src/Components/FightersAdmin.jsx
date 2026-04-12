@@ -1,9 +1,6 @@
-import { Link } from "react-router-dom";
-import React from "react";
 import AddButton from "../pages/AddFighter/AddButton";
-import Stats from "../pages/_Admin/Stats";
-import AllFightersAdmin from "../pages/AddFighter/AllFightersAdmin";
 import FightersAdminTable from "./FightersAdminTable";
+import Stats from "../pages/_Admin/Stats";
 
 function FightersAdmin() {
   return (
@@ -12,7 +9,7 @@ function FightersAdmin() {
         <div className="flex justify-center content-center align-middle items-center bg-customWhite w-16 h-16 rounded-md border-2 border-customGreen">
           <img
             className="px-0.6 py-0.6"
-            src="../src/assets/Icons/fighters.png"
+            src="/assets/Icons/fighters.png"
             alt="Login"
           />
         </div>
@@ -40,14 +37,14 @@ function FightersAdmin() {
 
       <div className="bg-customWhite">
         <img
-          class="px-0.5 py-0.5 flex align-middle items-center"
-          src="../src/assets/icons/yes_1.png"
+          className="px-0.5 py-0.5 flex align-middle items-center"
+          src="/assets/icons/yes_1.png"
           alt="image description"
         ></img>
 
         <img
-          class="px-0.5 py-0.5 flex align-middle items-center"
-          src="../src/assets/icons/no_1.png"
+          className="px-0.5 py-0.5 flex align-middle items-center"
+          src="/assets/icons/no_1.png"
           alt="image description"
         ></img>
       </div>

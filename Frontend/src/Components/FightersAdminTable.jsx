@@ -113,14 +113,14 @@ function FightersAdminTable() {
                     </td>
                     {fighter.best === 1 ? (
                       <img
-                        src="../src/assets/icons/yes_1.png"
+                        src="/assets/icons/yes_1.png"
                         alt="Best"
                         className="w-6 h-6 inline-block"
                       />
                     ) : (
                       <img
-                        class="px-0.5 py-0.5 flex align-middle items-center"
-                        src="../src/assets/icons/no_1.png"
+                        className="px-0.5 py-0.5 flex align-middle items-center"
+                        src="/assets/icons/no_1.png"
                         alt="image description"
                       ></img>
                     )}
