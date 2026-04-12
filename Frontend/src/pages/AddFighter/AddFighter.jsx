@@ -40,7 +40,7 @@ function FighterMain() {
               <div className="relative inline-flex rounded-full h-6 w-6 bg-customGreen">
                 <img
                   className="px-0.5 py-0.5 flex align-middle items-center"
-                  src="/assets/icons/belt.png"
+                  src="/assets/Icons/belt.png"
                   alt="image description"
                 ></img>
               </div>

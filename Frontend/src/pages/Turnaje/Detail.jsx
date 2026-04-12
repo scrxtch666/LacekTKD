@@ -12,7 +12,7 @@ function Detail() {
 
             <p className="flex gap-1 items-center">
               <img
-                src="../src/assets/Icons/Location.png"
+                src="/assets/Icons/Location.png"
                 alt=""
                 className="h-5"
               />
@@ -20,24 +20,24 @@ function Detail() {
               xx
             </p>
             <p className="flex gap-1 items-center">
-              <img src="../src/assets/Icons/Type.png" alt="" className="h-5" />
+              <img src="/assets/Icons/Type.png" alt="" className="h-5" />
               <span className="text-customGreen font-bold">Typ akce: </span>
               yy
             </p>
             <p className="flex gap-1 items-center">
-              <img src="../src/assets/Icons/Date.png" alt="" className="h-5" />
+              <img src="/assets/Icons/Date.png" alt="" className="h-5" />
               <span className="text-customGreen font-bold">Datum: </span>
               xx
             </p>
             <br />
           </div>
           <p className="flex gap-1 items-center">
-              <img src="../src/assets/Icons/Info.png" alt="" className="h-5" />
+              <img src="/assets/Icons/Info.png" alt="" className="h-5" />
               <span className="text-customGreen font-bold">Informace: </span>
               info
             </p>
             <p className="flex gap-1 items-center">
-              <img src="../src/assets/Icons/Info.png" alt="" className="h-5" />
+              <img src="/assets/Icons/Info.png" alt="" className="h-5" />
               <span className="text-customGreen font-bold">Výsledky: </span>
               info
             </p>
@@ -46,7 +46,7 @@ function Detail() {
         <div className="card w-full gap-5 justify-between flex flex-col">
           <div className="bg-alertRed flex justify-center">
           <img
-                src="../src/assets/Events/BT_open.jpg"
+                src="/assets/Events/BT_open.jpg"
                 alt="xxx"
                 className="object-cover object-center rounded-md h-full hidden lg:flex"
               />

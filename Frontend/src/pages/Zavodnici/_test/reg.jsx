@@ -27,41 +27,40 @@ function Fighter() {
   }
   return (
     <>
-      {fighters.map((fighter) => (
-        
-        <div>
+      {fighters.map((fighter, index) => (
+        <div key={`fighter-${index}`}>
           <div className="devider flex justify-between">
             <img
               src={fighter.belt_path}
               alt="test"
-              class="w-9 object-cover object-center"
+              className="w-9 object-cover object-center"
             />
-            <span class="">{fighter.cup}</span>
+            <span className="">{fighter.cup}</span>
           </div>
 
-          <div class="w-[400px] h-40 bg-customWhite text-customBlack rounded-md p-2 flex flex-row justify-between">
-            <div class="w-28 h-full rounded-xl overflow-hidden">
+          <div className="w-[400px] h-40 bg-customWhite text-customBlack rounded-md p-2 flex flex-row justify-between">
+            <div className="w-28 h-full rounded-xl overflow-hidden">
               <img
                 src={fighter.img_path}
                 alt="test"
-                class="w-full h-full object-cover object-center"
+                className="w-full h-full object-cover object-center"
               />
             </div>
 
-            <div class="flex flex-col text-left w-64 justify-between overflow-hidden">
-              <span class="font-semibold">
+            <div className="flex flex-col text-left w-64 justify-between overflow-hidden">
+              <span className="font-semibold">
                 {fighter.name} {fighter.surname}
               </span>
 
           {/* TOP 3 úspěchy nebo tak něco */}
-              <div class="flex flex-col">
-                <span class="text-xs">
+              <div className="flex flex-col">
+                <span className="text-xs">
                   1. místo Children Championship (2011)
                 </span>
-                <span class="text-xs">
+                <span className="text-xs">
                   2. místo Children Championship (2011)
                 </span>
-                <span class="text-xs">
+                <span className="text-xs">
                   3. místo Children Championship (2011)
                 </span>
 
@@ -70,27 +69,27 @@ function Fighter() {
 */}
               </div>
 
-              <span class="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-full w-full max-h-5 h-full flex items-center justify-around">
+              <span className="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-full w-full max-h-5 h-full flex items-center justify-around">
                 ÚSPĚCHY
               </span>
 
-              <div class="flex justify-between">
-                <span class="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-20 w-full max-h-5 h-full flex items-center justify-around">
-                  <div class="relative inline-flex rounded-full h-4 w-4 bg-customGreen">
+              <div className="flex justify-between">
+                <span className="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-20 w-full max-h-5 h-full flex items-center justify-around">
+                  <div className="relative inline-flex rounded-full h-4 w-4 bg-customGreen">
                     <img
-                      class="px-0.5 py-0.5 flex align-middle items-center"
-                      src="../src/assets/icons/belt.png"
+                      className="px-0.5 py-0.5 flex align-middle items-center"
+                      src="/assets/Icons/belt.png"
                       alt="image description"
                     ></img>
                   </div>
                   {fighter.cup}
                 </span>
 
-                <span class="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-20 w-full max-h-5 h-full flex items-center justify-around">
+                <span className="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded max-w-20 w-full max-h-5 h-full flex items-center justify-around">
                   <div class="relative inline-flex rounded-full h-4 w-4 bg-customGreen">
                     <img
                       class="px-0.5 py-0.5 flex align-middle items-center"
-                      src="../src/assets/icons/medal.png"
+                      src="/assets/Icons/medal.png"
                       alt="image description"
                     ></img>
                   </div>
@@ -101,7 +100,7 @@ function Fighter() {
                   <div class="relative inline-flex rounded-full h-4 w-4 bg-customGreen">
                     <img
                       class="px-0.5 py-0.5 flex align-middle items-center"
-                      src="../src/assets/icons/trophy.png"
+                      src="/assets/Icons/trophy.png"
                       alt="image description"
                     ></img>
                   </div>

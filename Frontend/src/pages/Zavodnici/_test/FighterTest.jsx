@@ -60,7 +60,7 @@ function FighterTest() {
                 <div className="relative inline-flex rounded-full h-4 w-4 bg-customGreen">
                   <img
                     className="px-0.5 py-0.5 flex align-middle items-center"
-                    src="/assets/icons/belt.png"
+                    src="/assets/Icons/belt.png"
                     alt="image description"
                   ></img>
                 </div>
@@ -71,7 +71,7 @@ function FighterTest() {
                 <div className="relative inline-flex rounded-full h-4 w-4 bg-customGreen">
                   <img
                     className="px-0.5 py-0.5 flex align-middle items-center"
-                    src="/assets/icons/medal.png"
+                    src="/assets/Icons/medal.png"
                     alt="image description"
                   ></img>
                 </div>
@@ -82,7 +82,7 @@ function FighterTest() {
                 <div className="relative inline-flex rounded-full h-4 w-4 bg-customGreen">
                   <img
                     className="px-0.5 py-0.5 flex align-middle items-center"
-                    src="/assets/icons/trophy.png"
+                    src="/assets/Icons/trophy.png"
                     alt="image description"
                   ></img>
                 </div>

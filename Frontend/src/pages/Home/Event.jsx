@@ -46,7 +46,7 @@ function Event() {
 
                 <p className="flex gap-1 items-center">
                   <img
-                    src="../src/assets/Icons/Location.png"
+                    src="/assets/Icons/Location.png"
                     alt=""
                     className="h-5"
                   />
@@ -55,7 +55,7 @@ function Event() {
                 </p>
                 <p className="flex gap-1 items-center">
                   <img
-                    src="../src/assets/Icons/Price.png"
+                    src="/assets/Icons/Price.png"
                     alt=""
                     className="h-5"
                   />
@@ -66,7 +66,7 @@ function Event() {
                 </p>
                 <p className="flex gap-1 items-center">
                   <img
-                    src="../src/assets/Icons/Type.png"
+                    src="/assets/Icons/Type.png"
                     alt=""
                     className="h-5"
                   />
@@ -75,7 +75,7 @@ function Event() {
                 </p>
                 <p className="flex gap-1 items-center">
                   <img
-                    src="../src/assets/Icons/Date.png"
+                    src="/assets/Icons/Date.png"
                     alt=""
                     className="h-5"
                   />
@@ -85,7 +85,7 @@ function Event() {
                 <br />
                 <p className="flex gap-1 items-center">
                   <img
-                    src="../src/assets/Icons/Info.png"
+                    src="/assets/Icons/Info.png"
                     alt=""
                     className="h-5"
                   />

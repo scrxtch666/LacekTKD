@@ -36,27 +36,27 @@ function CalendarTournament({ tournaments }) {
 
               <div className="space-y-1">
                 <p className="flex gap-2 items-center">
-                  <img src="../src/assets/Icons/Location.png" alt="" className="h-5" />
+                  <img src="/assets/Icons/Location.png" alt="" className="h-5" />
                   <span className="text-customGreen font-bold">Lokace:</span>
                   {tournament.location}
                 </p>
                 <p className="flex gap-2 items-center">
-                  <img src="../src/assets/Icons/Price.png" alt="" className="h-5" />
+                  <img src="/assets/Icons/Price.png" alt="" className="h-5" />
                   <span className="text-customGreen font-bold">Startovné:</span>
                   {tournament.price}Kč
                 </p>
                 <p className="flex gap-2 items-center">
-                  <img src="../src/assets/Icons/Type.png" alt="" className="h-5" />
+                  <img src="/assets/Icons/Type.png" alt="" className="h-5" />
                   <span className="text-customGreen font-bold">Typ akce:</span>
                   {tournament.type_name}
                 </p>
                 <p className="flex gap-2 items-center">
-                  <img src="../src/assets/Icons/Date.png" alt="" className="h-5" />
+                  <img src="/assets/Icons/Date.png" alt="" className="h-5" />
                   <span className="text-customGreen font-bold">Datum:</span>
                   {tournament.start_date} - {tournament.end_date}
                 </p>
                 <p className="flex gap-2 items-center mt-2">
-                  <img src="../src/assets/Icons/Info.png" alt="" className="h-5" />
+                  <img src="/assets/Icons/Info.png" alt="" className="h-5" />
                   <span className="text-customGreen font-bold">Informace:</span>
                   {tournament.info}
                 </p>

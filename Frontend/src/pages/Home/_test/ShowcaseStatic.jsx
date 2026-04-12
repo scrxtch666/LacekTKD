@@ -3,7 +3,7 @@ function ShowcaseStatic() {
     <>
       <div className="relative w-full h-[300px] md:h-[400px] lg:h-96 overflow-hidden rounded-2xl bg-customBlack">
         <img
-          src="../src/assets/Showcase/main.jpg"
+          src="/assets/Showcase/main.jpg"
           alt="Showcase background"
           className="w-full h-full object-cover brightness-50 opacity-75"
         />

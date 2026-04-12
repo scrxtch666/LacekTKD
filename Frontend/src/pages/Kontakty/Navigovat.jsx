@@ -25,11 +25,11 @@ function Navigovat() {
           <div className="relative inline-flex rounded-full h-5 w-5 bg-customGreen items-center">
             <img
               className="px-0.6 py-0.6 h-4"
-              src="../src/assets/Icons/navigate.png"
+              src="/assets/Icons/navigate.png"
               alt="Login"
             />
           </div>
-          <span class="text-customWhite">Navigovat</span>
+          <span className="text-customWhite">Navigovat</span>
         </button>
       </div>
     </>
