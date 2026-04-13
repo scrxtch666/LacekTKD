@@ -3,14 +3,12 @@ const router = express.Router();
 const { verifyToken } = require("../../auth/auth");
 const db = require("../../Libs/db");
 
-// GET / – admin/trainer vidí vše, user vidí jen turnaje kde je přihlášen (+ spoluzávodníky)
 router.get("/", verifyToken, (req, res) => {
-  console.log("req.user:", req.user); // ← ukaž mi co vypíše
+  console.log("req.user:", req.user);
 
   const userId = req.user.id;
   const userRole = req.user.role || req.user.role_name || "user";
 
-  // Pokud role není ani admin ani trainer, ber jako user
   const isAdminOrTrainer = userRole === "admin" || userRole === "trainer";
 
   if (isAdminOrTrainer) {
@@ -37,7 +35,6 @@ router.get("/", verifyToken, (req, res) => {
       },
     );
   } else {
-    // User větev
     db.query(
       `SELECT DISTINCT tr.tournament_id
        FROM tournament_registration tr
@@ -86,7 +83,6 @@ router.get("/", verifyToken, (req, res) => {
   }
 });
 
-// GET /?tournamentId=5 – veřejný endpoint pro detail turnaje
 router.get("/public", (req, res) => {
   const { tournamentId } = req.query;
   if (!tournamentId)
@@ -125,7 +121,6 @@ router.get("/prihlaseny", verifyToken, (req, res) => {
   );
 });
 
-// POST /:id/register/fighter/:fighterId – admin přihlásí konkrétního závodníka
 router.post("/:tournamentId/fighter/:fighterId", verifyToken, (req, res) => {
   const { tournamentId, fighterId } = req.params;
 
@@ -143,7 +138,7 @@ router.post("/:tournamentId/fighter/:fighterId", verifyToken, (req, res) => {
       }
 
       res.json({ success: true });
-    }
+    },
   );
 });
 
@@ -158,16 +153,16 @@ router.delete("/:id", verifyToken, (req, res) => {
   );
 });
 
-// PUT /:id/result – uložení výsledku závodníka
 router.put("/:id/result", verifyToken, (req, res) => {
   const { place } = req.body;
   db.query(
     "UPDATE tournament_registration SET place = ? WHERE id = ?",
     [place || null, req.params.id],
     (err) => {
-      if (err) return res.status(500).json({ error: "Chyba při ukládání výsledku" });
+      if (err)
+        return res.status(500).json({ error: "Chyba při ukládání výsledku" });
       res.json({ success: true });
-    }
+    },
   );
 });
 

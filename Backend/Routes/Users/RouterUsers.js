@@ -2,9 +2,8 @@ const express = require("express");
 const router = express.Router();
 const db = require("../../Libs/db");
 const bcrypt = require("bcryptjs");
-const { verifyToken, isAdmin} = require("../../auth/auth")
+const { verifyToken, isAdmin } = require("../../auth/auth");
 
-// GET / - všichni uživatelé (s fighterem a rolí)
 router.get("/", async (req, res) => {
   db.query(
     `SELECT 
@@ -26,7 +25,6 @@ router.get("/", async (req, res) => {
   );
 });
 
-// GET /trainer - trenéři
 router.get("/trainer", (req, res) => {
   db.query(
     `SELECT users.id, users.email, users.phone,
@@ -47,7 +45,6 @@ router.get("/trainer", (req, res) => {
   );
 });
 
-// POST / - přidání uživatele (s volitelným fighter_id)
 router.post("/", async (req, res) => {
   const { login, password, email, role_id, fighter_id, status } = req.body;
 
@@ -62,7 +59,14 @@ router.post("/", async (req, res) => {
 
     db.query(
       `INSERT INTO users (login, password, email, role_id, fighter_id, status) VALUES (?, ?, ?, ?, ?, ?)`,
-      [login, hashedPassword, email || null, role_id, fighter_id || null, 'approved'],
+      [
+        login,
+        hashedPassword,
+        email || null,
+        role_id,
+        fighter_id || null,
+        "approved",
+      ],
       (err, result) => {
         if (err) {
           console.error("Chyba při ukládání uživatele:", err);
@@ -83,7 +87,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// PUT /:id - editace uživatele (s volitelným fighter_id)
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { login, password, email, role_id, fighter_id } = req.body;
@@ -141,14 +144,16 @@ router.delete("/:id", verifyToken, isAdmin, (req, res) => {
   const { id } = req.params;
 
   db.query("UPDATE users SET fighter_id = NULL WHERE id = ?", [id], (err) => {
-    if (err) return res.status(500).json({ error: "Chyba při odpojení závodníka" });
+    if (err)
+      return res.status(500).json({ error: "Chyba při odpojení závodníka" });
 
     db.query("DELETE FROM users WHERE id = ?", [id], (err2, result) => {
       if (err2) {
-  console.error(err2);
-  return res.status(500).json({ error: err2.message });
-}
-      if (result.affectedRows === 0) return res.status(404).json({ error: "Uživatel nenalezen" });
+        console.error(err2);
+        return res.status(500).json({ error: err2.message });
+      }
+      if (result.affectedRows === 0)
+        return res.status(404).json({ error: "Uživatel nenalezen" });
       res.json({ success: true });
     });
   });

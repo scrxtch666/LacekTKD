@@ -10,7 +10,6 @@ const { google } = require("googleapis");
 const SECRET_KEY = process.env.ACCESS_TOKEN_SECRET || "tajnyklic";
 const { parseDateSafe } = require("../../utils/date");
 
-// --- GOOGLE CALENDAR KONFIGURACE ---
 const GOOGLE_SERVICE_ACCOUNT_KEY = path.join(
   __dirname,
   "../../lacektkd-12aaabdf5383.json",
@@ -25,7 +24,6 @@ const getGoogleCalendarClient = () => {
   return google.calendar({ version: "v3", auth });
 };
 
-// Pomocné funkce pro Google Calendar
 const createGoogleEvent = async (exam) => {
   try {
     const calendar = getGoogleCalendarClient();
@@ -83,7 +81,6 @@ const deleteGoogleEvent = async (googleEventId) => {
   }
 };
 
-// --- POMOCNÉ FUNKCE DB ---
 const getIsRegisteredSQL = (userId) => {
   return userId
     ? `(SELECT COUNT(*) FROM exam_registration er 
@@ -93,9 +90,6 @@ const getIsRegisteredSQL = (userId) => {
     : `0 AS is_registered`;
 };
 
-// --- ROUTES ---
-
-// GET / – Veřejné zkoušky (pouze active)
 router.get("/", (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   let userId = null;
@@ -142,7 +136,6 @@ router.get("/", (req, res) => {
   );
 });
 
-// GET /admin – Všechny zkoušky
 router.get("/admin", verifyToken, (req, res) => {
   const isRegisteredSQL = getIsRegisteredSQL(req.user.id);
 
@@ -178,7 +171,6 @@ router.get("/admin", verifyToken, (req, res) => {
   );
 });
 
-// POST / – Přidání zkoušky (včetně kalendáře)
 router.post("/", verifyToken, async (req, res) => {
   const {
     title,
@@ -194,7 +186,6 @@ router.post("/", verifyToken, async (req, res) => {
 
   const formattedDate = parseDateSafe(date);
 
-  // Google Event
   const googleEventId = await createGoogleEvent({
     title,
     location,
@@ -223,7 +214,6 @@ router.post("/", verifyToken, async (req, res) => {
   );
 });
 
-// PUT /:id – Editace (včetně kalendáře)
 router.put("/:id", verifyToken, async (req, res) => {
   const {
     title,
@@ -284,7 +274,6 @@ router.put("/:id", verifyToken, async (req, res) => {
   );
 });
 
-// DELETE /:id – Smazání (včetně kalendáře)
 router.delete("/:id", verifyToken, (req, res) => {
   const { id } = req.params;
 
@@ -309,9 +298,6 @@ router.delete("/:id", verifyToken, (req, res) => {
   );
 });
 
-// --- REGISTRACE ---
-
-// POST /:id/register/fighter/:fighterId – admin přihlásí konkrétního závodníka
 router.post("/:id/register/fighter/:fighterId", verifyToken, (req, res) => {
   const { id, fighterId } = req.params;
 
@@ -333,7 +319,6 @@ router.post("/:id/register/fighter/:fighterId", verifyToken, (req, res) => {
   );
 });
 
-// POST /:id/register – přihlášení uživatele na zkoušku
 router.post("/:id/register", verifyToken, (req, res) => {
   db.query(
     `SELECT u.fighter_id, f.name, f.surname, f.birth, f.actual_weight_category
@@ -379,7 +364,6 @@ router.post("/:id/register", verifyToken, (req, res) => {
   );
 });
 
-// DELETE /:id/register – odhlášení uživatele (s kontrolou uzávěrky)
 router.delete("/:id/register", verifyToken, (req, res) => {
   const examId = req.params.id;
 
@@ -415,7 +399,6 @@ router.delete("/:id/register", verifyToken, (req, res) => {
   );
 });
 
-// DELETE /registration/:id – admin smazání konkrétní registrace
 router.delete("/registration/:id", verifyToken, (req, res) => {
   db.query(
     "DELETE FROM exam_registration WHERE id=?",
@@ -427,7 +410,6 @@ router.delete("/registration/:id", verifyToken, (req, res) => {
   );
 });
 
-// PUT /:id/status – toggle status
 router.put("/:id/status", verifyToken, (req, res) => {
   const { status } = req.body;
   if (!["active", "hidden"].includes(status))
@@ -443,7 +425,6 @@ router.put("/:id/status", verifyToken, (req, res) => {
   );
 });
 
-// Kalendář (pro frontend)
 router.get("/calendar", (req, res) => {
   const { month } = req.query;
   let where = "WHERE e.status = 'active'";

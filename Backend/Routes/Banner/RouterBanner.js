@@ -5,12 +5,8 @@ const fs = require("fs");
 
 const router = express.Router();
 
-// --- MULTER PRO UPLOAD BANNERŮ ---
 const upload = createUpload("banners");
 
-// --- ENDPOINTY ---
-
-// GET - Získání všech bannerů
 router.get("/", (req, res) => {
   const { active } = req.query;
 
@@ -33,9 +29,8 @@ router.get("/", (req, res) => {
   });
 });
 
-// POST - Přidání nového banneru
 router.post("/", upload.single("image"), (req, res) => {
-    console.log("Soubor nahrán:", req.file);
+  console.log("Soubor nahrán:", req.file);
   console.log("Cesta:", req.file?.path);
   const { banner_name, active } = req.body;
 
@@ -52,7 +47,9 @@ router.post("/", upload.single("image"), (req, res) => {
     (err, result) => {
       if (err) {
         console.error("Chyba při ukládání do DB:", err);
-        return res.status(500).json({ error: "Chyba při ukládání do databáze" });
+        return res
+          .status(500)
+          .json({ error: "Chyba při ukládání do databáze" });
       }
 
       res.status(201).json({
@@ -62,11 +59,10 @@ router.post("/", upload.single("image"), (req, res) => {
         img_path,
         active: isActive,
       });
-    }
+    },
   );
 });
 
-// PATCH - Aktivace/deaktivace banneru
 router.patch("/:id/toggle", (req, res) => {
   const { id } = req.params;
   const { active } = req.body;
@@ -89,11 +85,10 @@ router.patch("/:id/toggle", (req, res) => {
         message: `Banner byl ${active ? "aktivován" : "deaktivován"}`,
         active,
       });
-    }
+    },
   );
 });
 
-// DELETE - Smazání banneru
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
 

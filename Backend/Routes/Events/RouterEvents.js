@@ -14,9 +14,6 @@ const uploadFields = upload.fields([
   { name: "photos", maxCount: 10 },
 ]);
 
-// ─── VEŘEJNÉ ROUTY (čtení) ───
-
-// GET / - všechny aktuality včetně fotek
 router.get("/", (req, res) => {
   db.query(
     `SELECT 
@@ -57,7 +54,6 @@ router.get("/", (req, res) => {
   );
 });
 
-// GET / - všechny aktuality včetně fotek
 router.get("/admin", verifyToken, isAdminOrTrainer, (req, res) => {
   db.query(
     `SELECT 
@@ -97,7 +93,6 @@ router.get("/admin", verifyToken, isAdminOrTrainer, (req, res) => {
   );
 });
 
-// GET /latest - poslední 3 aktuality
 router.get("/latest", (req, res) => {
   db.query(
     `SELECT 
@@ -134,7 +129,6 @@ router.get("/latest", (req, res) => {
   );
 });
 
-// GET /:id - detail jedné aktuality
 router.get("/:id", (req, res) => {
   const { id } = req.params;
 
@@ -168,9 +162,6 @@ router.get("/:id", (req, res) => {
   );
 });
 
-// ─── CHRÁNĚNÉ ROUTY (zápis) – pouze přihlášený admin ───
-
-// POST / - přidání aktuality
 router.post("/", verifyToken, isAdminOrTrainer, uploadFields, (req, res) => {
   const { title, body, status, date_start, user_id } = req.body;
 
@@ -224,7 +215,6 @@ router.post("/", verifyToken, isAdminOrTrainer, uploadFields, (req, res) => {
   );
 });
 
-// PUT /:id - editace aktuality
 router.put("/:id", verifyToken, isAdminOrTrainer, uploadFields, (req, res) => {
   const { id } = req.params;
   const { title, body, status, date_start } = req.body;
@@ -279,8 +269,6 @@ router.put("/:id", verifyToken, isAdminOrTrainer, uploadFields, (req, res) => {
   });
 });
 
-// DELETE /photo/:photoId - smazání jednotlivé fotky
-// ⚠️ MUSÍ být PŘED DELETE /:id
 router.delete("/photo/:photoId", verifyToken, isAdminOrTrainer, (req, res) => {
   const { photoId } = req.params;
 
@@ -305,7 +293,6 @@ router.delete("/photo/:photoId", verifyToken, isAdminOrTrainer, (req, res) => {
   );
 });
 
-// DELETE /:id - smazání celé aktuality
 router.delete("/:id", verifyToken, isAdminOrTrainer, (req, res) => {
   const { id } = req.params;
 

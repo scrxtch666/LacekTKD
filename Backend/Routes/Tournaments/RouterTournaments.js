@@ -29,7 +29,6 @@ const getGoogleCalendarClient = () => {
   return google.calendar({ version: "v3", auth });
 };
 
-// Tvorba eventu
 const createGoogleEvent = async (tournament) => {
   try {
     console.log("📅 Vytvářím Google event...");
@@ -167,7 +166,6 @@ router.get("/calendar", (req, res) => {
   );
 });
 
-// GET / – všechny turnaje
 router.get("/", (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   let userId = null;
@@ -413,7 +411,6 @@ router.post("/", upload.single("image"), async (req, res) => {
   );
 });
 
-// Editace
 router.put("/:id", upload.single("image"), async (req, res) => {
   try {
     const { id } = req.params;
@@ -566,7 +563,6 @@ router.post("/:id/register", verifyToken, (req, res) => {
   );
 });
 
-// Smazání
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 

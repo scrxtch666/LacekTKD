@@ -10,7 +10,6 @@ const { createUpload, getFilePath } = require("../../utils/upload");
 const router = express.Router();
 const upload = createUpload("fighters");
 
-// GET / - verejny vypis zavodnikua (puvodni route zachovana)
 router.get("/", async (req, res) => {
   db.query(
     `SELECT 
@@ -29,7 +28,6 @@ router.get("/", async (req, res) => {
     (err, fighters) => {
       if (err) return res.status(500).json({ error: "Chyba" });
 
-      // Druhý dotaz – všechny výsledky najednou
       db.query(
         `SELECT 
             tr.tournament_id,
@@ -44,7 +42,6 @@ router.get("/", async (req, res) => {
         (err2, results) => {
           if (err2) return res.status(500).json({ error: "Chyba" });
 
-          // Spoj v JavaScriptu
           const parsed = fighters.map((fighter) => ({
             ...fighter,
             tournament_results: results
@@ -59,7 +56,6 @@ router.get("/", async (req, res) => {
   );
 });
 
-// GET /admin - výpis závodníků pro admin/trenéra
 router.get("/admin", (req, res) => {
   db.query(
     `SELECT 
@@ -105,7 +101,6 @@ router.get("/admin", (req, res) => {
   );
 });
 
-// GET /countAll - pocet zavodniku (puvodni route zachovana)
 router.get("/countAll", (req, res) => {
   db.query("SELECT COUNT(id) AS count FROM fighters", (err, result) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -126,9 +121,6 @@ router.post("/", upload.single("image"), (req, res) => {
     active,
     user_id,
   } = req.body;
-
-  // VALIDACE VĚKU
-  let parsedBirth = null;
 
   if (birth && birth !== "") {
     const [year, month, day] = birth.split("-");
@@ -211,7 +203,6 @@ router.post("/", upload.single("image"), (req, res) => {
 router.get("/:id", (req, res) => {
   const { id } = req.params;
 
-  // 1. detail závodníka
   db.query(
     `SELECT 
         f.id, f.img_path, f.name, f.surname,
@@ -237,7 +228,6 @@ router.get("/:id", (req, res) => {
 
       const fighter = fighterResults[0];
 
-      // 2. výsledky jen pro něj
       db.query(
         `SELECT 
             tr.tournament_id,
@@ -262,7 +252,6 @@ router.get("/:id", (req, res) => {
   );
 });
 
-// PUT /:id - uprava zavodnika
 router.put("/:id", upload.single("image"), (req, res) => {
   const { id } = req.params;
   const {

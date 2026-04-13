@@ -1,7 +1,6 @@
 const parseDateSafe = (dateStr) => {
   if (!dateStr) return null;
 
-  // Splitneme string YYYY-MM-DD
   const parts = dateStr.split("-");
   if (parts.length !== 3) return null;
 
@@ -9,12 +8,10 @@ const parseDateSafe = (dateStr) => {
   const month = parseInt(parts[1], 10);
   const day = parseInt(parts[2], 10);
 
-  // Vytvoříme datum v lokálním čase, abychom se vyhnuli posunu o den (UTC)
   const parsed = new Date(year, month - 1, day);
 
   if (isNaN(parsed.getTime())) return null;
 
-  // Vrátíme zpět čistý string YYYY-MM-DD
   const y = parsed.getFullYear();
   const m = String(parsed.getMonth() + 1).padStart(2, "0");
   const d = String(parsed.getDate()).padStart(2, "0");

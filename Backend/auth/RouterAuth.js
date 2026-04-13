@@ -5,15 +5,14 @@ const jwt = require("jsonwebtoken");
 const db = require("../Libs/db");
 const { verifyToken } = require("./auth");
 
-// Tajný klíč z .env
 const SECRET_KEY = process.env.ACCESS_TOKEN_SECRET || "tajnyklic";
 
 const formatCzechPhoneNumber = (phone) => {
   if (!phone) return phone;
-  // Odstraní všechny znaky, které nejsou čísla
+  // Odstranění znaků co nejsou čísla
   const cleaned = phone.toString().replace(/\D/g, "");
 
-  // Pokud má číslo 9 cifer (klasické české bez předvolby), rozdělí ho po 3
+  // Rozdělení po 3
   if (cleaned.length === 9) {
     return cleaned.replace(/(\d{3})(\d{3})(\d{3})/, "$1 $2 $3");
   }
@@ -22,9 +21,9 @@ const formatCzechPhoneNumber = (phone) => {
     return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{3})/, "+$1 $2 $3 $4");
   }
 
-  return phone; // Vrátí původní, pokud formát nesedí
+  return phone;
 };
-// Registrace
+
 router.post("/register", async (req, res) => {
   const { login, password, email } = req.body;
 
@@ -62,7 +61,6 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// Přihlášení – vrátí JWT token
 router.post("/login", (req, res) => {
   const { login, password } = req.body;
 
@@ -78,7 +76,6 @@ router.post("/login", (req, res) => {
 
       const user = results[0];
 
-      // Zkontroluj status
       if (user.status === "pending") {
         return res
           .status(403)
@@ -104,7 +101,6 @@ router.post("/login", (req, res) => {
   );
 });
 
-// GET /auth/pending – seznam čekajících žádostí
 router.get("/pending", verifyToken, (req, res) => {
   db.query(
     `SELECT id, login, email FROM users WHERE status = 'pending' ORDER BY id DESC`,
@@ -115,7 +111,6 @@ router.get("/pending", verifyToken, (req, res) => {
   );
 });
 
-// PUT /auth/approve/:id – schválení
 router.put("/approve/:id", verifyToken, (req, res) => {
   db.query(
     "UPDATE users SET status = 'approved' WHERE id = ?",
@@ -127,7 +122,6 @@ router.put("/approve/:id", verifyToken, (req, res) => {
   );
 });
 
-// PUT /auth/reject/:id – zamítnutí
 router.put("/reject/:id", verifyToken, (req, res) => {
   db.query(
     "UPDATE users SET status = 'rejected' WHERE id = ?",
@@ -139,9 +133,7 @@ router.put("/reject/:id", verifyToken, (req, res) => {
   );
 });
 
-// ─── CHRÁNĚNÉ ENDPOINTY ───
-
-// Informace o přihlášeném uživateli
+// Admin routy
 router.get("/me", verifyToken, (req, res) => {
   db.query(
     `SELECT users.id, users.login, users.email, users.phone, role.role_name,
@@ -161,7 +153,6 @@ router.get("/me", verifyToken, (req, res) => {
 
       const user = results[0];
 
-      // Pokud nemá přiřazeného závodníka, vrať bez výsledků
       if (!user.fighter_id) {
         return res.json({
           id: user.id,
@@ -179,7 +170,7 @@ router.get("/me", verifyToken, (req, res) => {
         });
       }
 
-      // Načti výsledky závodníka
+      // Výsledky závodníka
       db.query(
         `SELECT 
             tr.place,
@@ -214,7 +205,7 @@ router.get("/me", verifyToken, (req, res) => {
   );
 });
 
-// PUT /auth/me – úprava vlastního profilu
+// vlastní profil
 router.put("/me", verifyToken, async (req, res) => {
   const {
     name,
@@ -235,7 +226,6 @@ router.put("/me", verifyToken, async (req, res) => {
     if (birth && birth !== "") {
       const parsed = new Date(birth);
 
-      // ❗ KLÍČOVÉ – kontrola validního data
       if (!isNaN(parsed.getTime())) {
         birthDate = parsed;
 
@@ -263,11 +253,10 @@ router.put("/me", verifyToken, async (req, res) => {
           });
         }
       } else {
-        birthDate = null; // fallback
+        birthDate = null;
       }
     }
 
-    // Načti aktuálního uživatele z DB
     db.query(
       "SELECT id, fighter_id, password FROM users WHERE id = ?",
       [req.user.id],
@@ -279,7 +268,7 @@ router.put("/me", verifyToken, async (req, res) => {
         const user = results[0];
         let hashedPassword = null;
 
-        // Pokud chce měnit heslo
+        // Změna hesla
         if (newPassword) {
           if (!currentPassword)
             return res.status(400).json({ error: "Zadejte stávající heslo." });
@@ -293,7 +282,6 @@ router.put("/me", verifyToken, async (req, res) => {
           hashedPassword = await bcrypt.hash(newPassword, 10);
         }
 
-        // Update tabulky users
         db.query(
           "UPDATE users SET phone = ?, email = ?" +
             (hashedPassword ? ", password = ?" : "") +
@@ -307,7 +295,6 @@ router.put("/me", verifyToken, async (req, res) => {
                 .status(500)
                 .json({ error: "Chyba při ukládání uživatele" });
 
-            // Update tabulky fighters pokud existuje fighter_id
             if (user.fighter_id) {
               db.query(
                 "UPDATE fighters SET name = ?, surname = ?, actual_weight_category = ?, birth = ? WHERE id = ?",
@@ -327,7 +314,6 @@ router.put("/me", verifyToken, async (req, res) => {
                 },
               );
             } else {
-              // Uživateli neupdatujeme fighters
               res.json({ success: true, message: "Profil byl upraven" });
             }
           },
