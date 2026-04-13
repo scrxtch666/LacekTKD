@@ -24,7 +24,7 @@ const API = config.API_URL;
     return <div>Načítám data...</div>; 
   }
   return (
-      <div class="devider">
+      <div className="hidden sm:flex devider">
         {belts.map((belt) => (
           <img src={belt.img_path} alt={belt.belt_name} className="w-9" />
         ))}

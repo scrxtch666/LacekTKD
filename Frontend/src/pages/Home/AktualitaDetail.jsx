@@ -147,7 +147,6 @@ function AktualitaDetail() {
 
   return (
     <div className="max-w-4xl space-y-6">
-      {/* Zpět */}
       <button
         onClick={() => navigate(-1)}
         className="flex items-center gap-2 text-sm text-gray-500 hover:text-customGreen transition-colors"
@@ -156,7 +155,6 @@ function AktualitaDetail() {
         Zpět na aktuality
       </button>
 
-      {/* Hero karta */}
       <div className="bg-customWhite rounded-2xl shadow-md overflow-hidden">
         {event.photo && (
           <div className="h-72 sm:h-96 overflow-hidden">
@@ -202,7 +200,6 @@ function AktualitaDetail() {
         </div>
       </div>
 
-      {/* Fotogalerie */}
       {event.photos?.length > 0 && (
         <div className="bg-customWhite rounded-2xl shadow-md p-6 space-y-4">
           <div className="flex items-center gap-2">

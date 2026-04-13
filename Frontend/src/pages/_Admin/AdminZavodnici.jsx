@@ -33,13 +33,11 @@ function AdminZavodnici() {
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
 
-  // Filtry
   const [search, setSearch] = useState("");
   const [filterBest, setFilterBest] = useState(false);
   const [filterLegend, setFilterLegend] = useState(false);
   const [filterAccount, setFilterAccount] = useState("");
 
-  // Přidání
   const [showAddForm, setShowAddForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [newFighter, setNewFighter] = useState({
@@ -57,7 +55,6 @@ function AdminZavodnici() {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [formError, setFormError] = useState("");
 
-  // Editace
   const [editingId, setEditingId] = useState(null);
   const [editFighter, setEditFighter] = useState({});
   const [editPreviewUrl, setEditPreviewUrl] = useState(null);
@@ -246,7 +243,6 @@ function AdminZavodnici() {
     }
   };
 
-  // Filtrování
   const filteredFighters = fighters.filter((fighter) => {
     const matchesSearch = `${fighter.name} ${fighter.surname}`
       .toLowerCase()
@@ -271,7 +267,6 @@ function AdminZavodnici() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex justify-between items-center">
         <div className="devider">Správa závodníků</div>
         {!showAddForm && (
@@ -285,7 +280,6 @@ function AdminZavodnici() {
         )}
       </div>
 
-      {/* Filtry */}
       <div className="flex gap-3 flex-col sm:flex-row flex-wrap">
         <input
           type="text"
@@ -295,7 +289,6 @@ function AdminZavodnici() {
           className="bg-customWhite flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
         />
 
-        {/* Filtr účtu */}
         <select
           value={filterAccount}
           onChange={(e) => setFilterAccount(e.target.value)}
@@ -337,7 +330,6 @@ function AdminZavodnici() {
         )}
       </div>
 
-      {/* Formulář přidání */}
       {showAddForm && (
         <div className="bg-customWhite rounded-lg shadow-lg p-6 border-2 border-green-500">
           <div className="flex justify-between items-center mb-4">
@@ -525,7 +517,6 @@ function AdminZavodnici() {
         </div>
       )}
 
-      {/* Seznam */}
       {filteredFighters.length === 0 ? (
         <div className="bg-customWhite rounded-lg shadow p-8 text-center">
           <UserX className="mx-auto h-12 w-12 text-gray-400 mb-4" />

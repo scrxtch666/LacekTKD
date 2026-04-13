@@ -23,7 +23,6 @@ function Prihlasky() {
 
   useEffect(() => {
     fetchExams();
-    // Načti fighter_id přihlášeného uživatele
     const token = localStorage.getItem("token");
     if (token && userRole === "user") {
       fetch(`${API}/auth/me`, {
@@ -105,9 +104,7 @@ function Prihlasky() {
             <div className="p-6 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div className="space-y-2 flex-1">
-                  <h2 className="text-xl font-bold">
-                    {exam.title}
-                  </h2>
+                  <h2 className="text-xl font-bold">{exam.title}</h2>
                   <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-500">
                     {exam.date && (
                       <span className="flex items-center gap-1">
@@ -145,7 +142,6 @@ function Prihlasky() {
                   )}
                 </div>
 
-                {/* Tlačítko přihlášení – pouze pro role user */}
                 {userRole === "user" && (
                   <div className="flex-shrink-0">
                     {userRole === "user" && (
@@ -190,7 +186,6 @@ function Prihlasky() {
                 )}
               </div>
 
-              {/* Přihlášení závodníci */}
               <div className="border-t border-gray-100 pt-4">
                 <button
                   onClick={() =>
@@ -220,7 +215,7 @@ function Prihlasky() {
                         >
                           {reg.fighter_pfp ? (
                             <img
-                            src={`${API}${reg.fighter_pfp}`}
+                              src={`${API}${reg.fighter_pfp}`}
                               alt={reg.fighter_name}
                               className="w-9 h-9 rounded-full object-cover border-2 border-gray-200"
                             />

@@ -15,10 +15,7 @@ import Zkousky from "./Components/Zkousky";
 import Home from "./Components/Home";
 import Turnaje from "./Components/Turnaje";
 import AboutUs from "./Components/AboutUS";
-import Detail from "./pages/Turnaje/Detail";
 import SideBar from "./layout/Sidebar";
-import AddFighter from "./Components/AddFighter";
-import FightersAdmin from "./Components/FightersAdmin";
 import Login from "./Components/Login";
 import Register from "./Components/Register";
 import ProtectedRoute from "./pages/Login/ProtectedRoute";
@@ -86,22 +83,6 @@ function Layout() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="/admin/pridani-zavodnika"
-                element={
-                  <ProtectedRoute allowedRoles={["admin", "trainer"]}>
-                    <AddFighter />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/vsichni-zavodnici"
-                element={
-                  <ProtectedRoute allowedRoles={["admin", "trainer"]}>
-                    <FightersAdmin />
-                  </ProtectedRoute>
-                }
-              />
 
               <Route
                 path="/admin/aktuality"
@@ -164,7 +145,6 @@ function Layout() {
           <Route path="/aktuality" element={<Aktuality />} />
           <Route path="/zkousky" element={<Zkousky />} />
           <Route path="/nas-oddil" element={<AboutUs />} />
-          <Route path="/detail" element={<Detail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/aktualita/:id" element={<AktualitaDetail />} />

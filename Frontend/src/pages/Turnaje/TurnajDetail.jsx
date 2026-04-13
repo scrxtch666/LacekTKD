@@ -31,7 +31,7 @@ function TurnajDetail() {
     fetchRegistrations();
     fetch(`${API}/api/tournaments/${id}`)
       .then((res) => {
-        if (!res.ok) throw new Error("Turnaj nenalezen"); // Toto vyvolá .catch
+        if (!res.ok) throw new Error("Turnaj nenalezen");
         return res.json();
       })
       .then((data) => {
@@ -40,7 +40,7 @@ function TurnajDetail() {
       })
       .catch((err) => {
         console.error(err);
-        setTournament(null); // Explicitně null pro podmínku níže
+        setTournament(null);
         setLoading(false);
       });
 
@@ -56,7 +56,6 @@ function TurnajDetail() {
           : [];
         setRegistrations(filtered);
 
-        // Zkontroluj jestli je přihlášený uživatel v seznamu
         if (token && userRole === "user") {
           fetch(`${API}/api/tournamentRegistration/prihlaseny`, {
             headers: { Authorization: `Bearer ${token}` },
@@ -98,9 +97,9 @@ function TurnajDetail() {
     const diffTime = target - today;
     const diffDays = diffTime / (1000 * 60 * 60 * 24);
 
-    if (diffDays < 0) return "text-red-600"; // po uzávěrce
-    if (diffDays <= 3) return "text-orange-500"; // 3 dny před
-    return "text-green-600"; // více než 3 dny
+    if (diffDays < 0) return "text-red-600";
+    if (diffDays <= 3) return "text-orange-500";
+    return "text-green-600";
   };
   const fetchRegistrations = () => {
     const token = localStorage.getItem("token");
@@ -149,7 +148,6 @@ function TurnajDetail() {
 
   return (
     <div className="max-w-4xl space-y-6">
-      {/* Zpět */}
       <button
         onClick={() => navigate(-1)}
         className="flex items-center gap-2 text-sm text-gray-500 hover:text-customGreen transition-colors"
@@ -157,7 +155,6 @@ function TurnajDetail() {
         <ArrowLeft size={16} /> Zpět na turnaje
       </button>
 
-      {/* Hero karta */}
       <div className="bg-customWhite rounded-2xl shadow-md overflow-hidden">
         {tournament.img_path && (
           <div className="h-64 sm:h-80 overflow-hidden">
@@ -246,7 +243,6 @@ function TurnajDetail() {
             </div>
           )}
 
-          {/* Tlačítko přihlášení – pouze pro závodníky */}
           {userRole === "user" && tournament.registrable_date && (
             <div className="border-t border-gray-100 pt-4">
               {new Date() < new Date(tournament.registrable_date) ? (
@@ -280,7 +276,6 @@ function TurnajDetail() {
         </div>
       </div>
 
-      {/* Přihlášení závodníci */}
       <div className="bg-customWhite rounded-2xl shadow-md p-6 space-y-4">
         <div className="flex items-center gap-2">
           <Users size={18} className="text-customGreen" />

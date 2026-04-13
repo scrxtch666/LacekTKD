@@ -1,13 +1,7 @@
-import { Link } from "react-router-dom";
-import React from "react";
-
 const navigateToGoogleMaps = () => {
-  const lat = 49.4278672; // Souřadnice z vašeho obrázku
+  const lat = 49.4278672;
   const lon = 15.2179083;
 
-  // api=1 aktivuje Google Maps URL rozhraní
-  // destination nastaví cíl (v tomto případě souřadnice)
-  // travelmode=driving (volitelné, můžete nastavit walking, bicycling, transit)
   const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&travelmode=driving`;
 
   window.open(url, "_blank");

@@ -89,10 +89,10 @@ function SideBar() {
       trainerOnly: true,
       items: [
         { name: "Můj účet", path: "/admin/me", icon: User },
+        { name: "Aktuality", path: "/admin/aktuality", icon: LayoutDashboard },
         { name: "Zkoušky", path: "/admin/zkousky", icon: BookCheckIcon },
         { name: "Turnaje", path: "/admin/turnaje", icon: Swords },
         { name: "Závodníci", path: "/admin/zavodnici", icon: Users },
-        { name: "Aktuality", path: "/admin/aktuality", icon: LayoutDashboard },
       ],
     },
   ];

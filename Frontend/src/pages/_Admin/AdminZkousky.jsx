@@ -96,7 +96,6 @@ function AdminZkousky() {
   };
 
   const fetchExams = () => {
-    // User volá veřejný endpoint (pouze active), admin/trainer volá /admin (vše)
     const url =
       userRole === "admin" || userRole === "trainer"
         ? `${API}/api/exams/admin`
@@ -261,7 +260,6 @@ function AdminZkousky() {
         )}
       </div>
 
-      {/* Formulář */}
       {showForm && (
         <div className="bg-customWhite rounded-lg shadow-lg p-6 border-2 border-green-500">
           <div className="flex justify-between items-center mb-4">
@@ -407,7 +405,6 @@ function AdminZkousky() {
         </div>
       )}
 
-      {/* Seznam */}
       {exams.length === 0 ? (
         userRole === "user" ? (
           <div className="text-center py-16 space-y-2">
@@ -594,7 +591,6 @@ function AdminZkousky() {
                   </button>
                 </div>
               )}
-              {/* Přihlášení závodníci */}
               {expanded === exam.id && (
                 <div className="border-t border-gray-100">
                   {!exam.registrations?.length ? (

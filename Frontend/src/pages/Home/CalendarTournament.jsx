@@ -1,7 +1,7 @@
 import React from "react";
 import config from "../../../config";
 
- const API = config.API_URL;
+const API = config.API_URL;
 
 function CalendarTournament({ tournaments }) {
   if (tournaments.length === 0) {
@@ -17,9 +17,11 @@ function CalendarTournament({ tournaments }) {
   return (
     <div className="flex flex-col gap-6">
       {tournaments.map((tournament) => (
-        <div key={tournament.id} className="card w-full flex items-center overflow-hidden h-64 bg-customWhite rounded-2xl p-4 shadow-sm border border-[#e8dfd3]">
+        <div
+          key={tournament.id}
+          className="card w-full flex items-center overflow-hidden h-64 bg-customWhite rounded-2xl p-4 shadow-sm border border-[#e8dfd3]"
+        >
           <div className="flex gap-4 h-full w-full">
-            {/* OBRÁZEK */}
             <div className="flex w-44 max-w-44 h-full items-center justify-center overflow-hidden shrink-0 hidden sm:flex">
               <img
                 src={`${API}${tournament.img_path}`}
@@ -28,7 +30,6 @@ function CalendarTournament({ tournaments }) {
               />
             </div>
 
-            {/* INFO */}
             <div className="flex flex-col gap-2 justify-center">
               <span className="font-extrabold text-2xl uppercase text-gray-800">
                 {tournament.tournament_name || tournament.name}
@@ -36,7 +37,11 @@ function CalendarTournament({ tournaments }) {
 
               <div className="space-y-1">
                 <p className="flex gap-2 items-center">
-                  <img src="/assets/Icons/Location.png" alt="" className="h-5" />
+                  <img
+                    src="/assets/Icons/Location.png"
+                    alt=""
+                    className="h-5"
+                  />
                   <span className="text-customGreen font-bold">Lokace:</span>
                   {tournament.location}
                 </p>

@@ -85,7 +85,6 @@ function Fighter() {
   return (
     <div className="space-y-8">
       <div className="flex gap-3 flex-col sm:flex-row flex-wrap">
-        {/* Vyhledávání */}
         <input
           type="text"
           value={search}
@@ -94,7 +93,6 @@ function Fighter() {
           className="bg-customWhite flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
         />
 
-        {/* Filtr pásu */}
         <select
           value={filterBelt}
           onChange={(e) => setFilterBelt(e.target.value)}
@@ -108,7 +106,6 @@ function Fighter() {
           ))}
         </select>
 
-        {/* Filtr Best */}
         <button
           onClick={() => setFilterBest(!filterBest)}
           className={`inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
@@ -121,7 +118,6 @@ function Fighter() {
           Nejlepší
         </button>
 
-        {/* Filtr Legend */}
         <button
           onClick={() => setFilterLegend(!filterLegend)}
           className={`inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
@@ -134,7 +130,6 @@ function Fighter() {
           Legenda
         </button>
 
-        {/* Reset – zobrazí se jen když je něco aktivní */}
         {(search || filterBelt || filterBest || filterLegend) && (
           <button
             onClick={() => {
@@ -151,7 +146,6 @@ function Fighter() {
       </div>
       {filteredGroups.map(([cup, group]) => (
         <div key={cup}>
-          {/* Header skupiny */}
           <div className="devider flex justify-between mb-4">
             <div className="flex items-center gap-2">
               <img
@@ -171,7 +165,6 @@ function Fighter() {
             </span>
           </div>
 
-          {/* Mřížka závodníků */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {group.fighters.map((fighter) => (
               <div
@@ -179,7 +172,6 @@ function Fighter() {
                 onClick={() => navigate(`/zavodnik/${fighter.id}`)}
                 className="w-full min-h-40 bg-customWhite text-customBlack rounded-md p-2 flex flex-row gap-2"
               >
-                {/* Fotka */}
                 <div className="w-28 flex-shrink-0 rounded-xl overflow-hidden self-stretch">
                   {fighter.img_path ? (
                     <img
@@ -194,14 +186,11 @@ function Fighter() {
                   )}
                 </div>
 
-                {/* Obsah */}
                 <div className="flex flex-col text-left flex-1 justify-between overflow-hidden">
-                  {/* Jméno */}
                   <span className="font-semibold truncate">
                     {fighter.name} {fighter.surname}
                   </span>
 
-                  {/* Úspěchy – vždy stejná výška */}
                   <div className="flex flex-col gap-0.5 min-h-[48px] justify-center">
                     {(fighter.tournament_results || []).length > 0 ? (
                       fighter.tournament_results.map((result, i) => (
@@ -216,7 +205,6 @@ function Fighter() {
                     )}
                   </div>
 
-                  {/* Spodní část – vždy dole */}
                   <div className="flex flex-col gap-1">
                     <span className="border border-customGreen text-customGreen text-xs font-medium px-2.5 py-0.5 rounded w-full flex items-center justify-center">
                       ÚSPĚCHY

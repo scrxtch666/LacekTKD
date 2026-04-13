@@ -108,7 +108,6 @@ function AdminMe() {
       } else {
         setSuccess("Profil byl úspěšně uložen.");
         setEditing(false);
-        // Obnov data
         authService.getCurrentUser().then(setUser);
       }
     } catch {
@@ -181,7 +180,6 @@ function AdminMe() {
 
       <div className="grid gap-5 lg:grid-cols-2 md:grid-cols-1">
         <div className="bg-customWhite rounded-2xl shadow-md overflow-hidden w-full">
-          {/* Banner */}
           <div className="h-24 bg-gradient-to-r from-customGreen to-green-400 relative">
             <div className="absolute -bottom-10 left-6">
               {user.img_path ? (
@@ -198,7 +196,6 @@ function AdminMe() {
             </div>
           </div>
 
-          {/* Jméno + akce */}
           <div className="pt-14 px-6 pb-5">
             <div className="flex items-start justify-between">
               <div>
@@ -249,7 +246,6 @@ function AdminMe() {
 
           <div className="border-t border-gray-100 mx-6" />
 
-          {/* Zobrazení nebo editace */}
           {!editing ? (
             <div className="px-6 py-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
               {user.email && (
@@ -304,7 +300,6 @@ function AdminMe() {
             </div>
           ) : (
             <div className="px-6 py-5 space-y-4">
-              {/* Editační pole */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {hasFighter && (
                   <>
@@ -337,7 +332,6 @@ function AdminMe() {
                     </div>
                   </>
                 )}
-                {/* vždy dostupné */}
                 <div>
                   <label className="text-xs text-gray-500 mb-1 block">
                     Email
@@ -402,7 +396,6 @@ function AdminMe() {
                 )}
               </div>
 
-              {/* Změna hesla */}
               <div className="border-t border-gray-100 pt-4">
                 <div className="flex items-center gap-2 mb-3">
                   <KeyRound size={15} className="text-gray-400" />
@@ -474,14 +467,12 @@ function AdminMe() {
                 </div>
               </div>
 
-              {/* Chyba / úspěch */}
               {error && (
                 <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
                   {error}
                 </div>
               )}
 
-              {/* Tlačítka */}
               <div className="flex gap-2 pt-2">
                 <button
                   onClick={handleSave}
@@ -501,7 +492,6 @@ function AdminMe() {
             </div>
           )}
 
-          {/* Success zpráva mimo edit mode */}
           {success && !editing && (
             <div className="mx-6 mb-4 px-4 py-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-600">
               {success}

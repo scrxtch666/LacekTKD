@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Trash2, Image as ImageIcon, Plus, Upload, X, Eye, EyeOff } from "lucide-react";
+import {
+  Trash2,
+  Image as ImageIcon,
+  Plus,
+  Upload,
+  X,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import config from "../../../config";
 const API = config.API_URL;
 
@@ -14,7 +22,7 @@ function AdminBanner() {
   const [newBanner, setNewBanner] = useState({
     name: "",
     image: null,
-    active: true, 
+    active: true,
   });
   const [previewUrl, setPreviewUrl] = useState(null);
 
@@ -72,8 +80,8 @@ function AdminBanner() {
       if (response.ok) {
         setBanners(
           banners.map((banner) =>
-            banner.id === id ? { ...banner, active: !currentActive } : banner
-          )
+            banner.id === id ? { ...banner, active: !currentActive } : banner,
+          ),
         );
       } else {
         alert("Nepodařilo se změnit stav banneru");
@@ -91,7 +99,6 @@ function AdminBanner() {
     if (file) {
       setNewBanner({ ...newBanner, image: file });
 
-      // Vytvoření náhledu
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result);
@@ -130,7 +137,6 @@ function AdminBanner() {
         setPreviewUrl(null);
         setShowAddForm(false);
 
-        // Refresh seznamu
         fetchBanners();
       } else {
         const error = await response.json();
@@ -174,7 +180,6 @@ function AdminBanner() {
         )}
       </div>
 
-      {/* Formulář pro přidání */}
       {showAddForm && (
         <div className="bg-customWhite rounded-lg shadow-lg p-6 border-2 border-green-500">
           <div className="flex justify-between items-center mb-4">
@@ -188,7 +193,6 @@ function AdminBanner() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Název banneru */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Název banneru
@@ -204,7 +208,6 @@ function AdminBanner() {
               />
             </div>
 
-            {/* Upload obrázku */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Obrázek
@@ -228,7 +231,6 @@ function AdminBanner() {
               </div>
             </div>
 
-            {/* Aktivní/Neaktivní */}
             <div>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -245,7 +247,6 @@ function AdminBanner() {
               </label>
             </div>
 
-            {/* Náhled */}
             {previewUrl && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -259,7 +260,6 @@ function AdminBanner() {
               </div>
             )}
 
-            {/* Tlačítka */}
             <div className="flex gap-3 pt-4">
               <button
                 type="submit"
@@ -280,7 +280,6 @@ function AdminBanner() {
         </div>
       )}
 
-      {/* Seznam bannerů */}
       {!banners.length ? (
         <div className="bg-customWhite rounded-lg shadow p-8 text-center">
           <ImageIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
@@ -296,14 +295,12 @@ function AdminBanner() {
               }`}
             >
               <div className="flex flex-col sm:flex-row items-center gap-4">
-                {/* ID Badge */}
                 <div className="flex-shrink-0">
                   <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-green-100 text-green-800 font-semibold">
                     {banner.id}
                   </span>
                 </div>
 
-                {/* Obrázek */}
                 <div className="flex-shrink-0 relative">
                   <img
                     src={`${API}${banner.img_path}`}
@@ -317,7 +314,6 @@ function AdminBanner() {
                   )}
                 </div>
 
-                {/* Info */}
                 <div className="flex-1 text-center sm:text-left">
                   <p className="text-sm text-gray-500 mb-1">Název banneru</p>
                   <p className="text-lg font-semibold text-gray-800">
@@ -336,9 +332,7 @@ function AdminBanner() {
                   </div>
                 </div>
 
-                {/* Tlačítka */}
                 <div className="flex flex-col sm:flex-row gap-2">
-                  {/* Tlačítko aktivace/deaktivace */}
                   <button
                     onClick={() => handleToggleActive(banner.id, banner.active)}
                     disabled={toggling === banner.id}
@@ -353,12 +347,11 @@ function AdminBanner() {
                       {toggling === banner.id
                         ? "..."
                         : banner.active
-                        ? "Skrýt"
-                        : "Zobrazit"}
+                          ? "Skrýt"
+                          : "Zobrazit"}
                     </span>
                   </button>
 
-                  {/* Tlačítko smazat */}
                   <button
                     onClick={() => handleDelete(banner.id)}
                     disabled={deleting === banner.id}

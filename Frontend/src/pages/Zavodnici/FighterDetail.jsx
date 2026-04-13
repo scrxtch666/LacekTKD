@@ -47,7 +47,6 @@ function FighterDetail() {
 
   return (
     <div className="max-w-4xl space-y-6">
-      {/* Zpět */}
       <button
         onClick={() => navigate(-1)}
         className="flex items-center gap-2 text-sm text-gray-500 hover:text-customGreen transition-colors"
@@ -55,10 +54,7 @@ function FighterDetail() {
         <ArrowLeft size={16} /> Zpět na závodníky
       </button>
 
-      {/* Hlavní karta */}
       <div className="bg-customWhite rounded-2xl shadow-md overflow-hidden p-6 flex gap-6 relative">
-        {/* Obrázek */}
-
         {fighter.img_path ? (
           <img
             src={`${API}${fighter.img_path}`}
@@ -71,7 +67,6 @@ function FighterDetail() {
           </div>
         )}
 
-        {/* Info */}
         <div className="flex flex-col justify-between">
           <div>
             <h1 className="text-2xl font-bold">
@@ -79,7 +74,6 @@ function FighterDetail() {
             </h1>
 
             <div className="flex flex-col gap-1">
-              {/* Pás */}
               <div className="flex items-center gap-2 mt-1">
                 {fighter.belt_path && (
                   <img
@@ -140,7 +134,6 @@ function FighterDetail() {
         </div>
       </div>
 
-      {/* Výsledky */}
       <div className="bg-customWhite rounded-2xl shadow-md p-6">
         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
           <Users size={18} />

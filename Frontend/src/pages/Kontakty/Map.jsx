@@ -2,11 +2,9 @@ import { useEffect, useRef } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-//const API_KEY = 'eyJpIjoyNTcsImMiOjE2Njc0ODU2MjN9.c_UlvdpHGTI_Jb-TNMYlDYuIkCLJaUpi911RdlwPsAY';
 const API_KEY = '9MPPC5RXcG1E8weX-CVtMhwEWfe293q_60lCYt3KLVo';
 
 
-// Logo control
 class LogoControl {
   onAdd(map) {
     this._map = map;
@@ -33,7 +31,6 @@ const Map = ({
   useEffect(() => {
     if (map.current || !mapContainer.current) return;
 
-    // Inicializace mapy
     map.current = new maplibregl.Map({
       container: mapContainer.current,
       center: [longitude, latitude],
@@ -55,15 +52,12 @@ const Map = ({
       },
     });
 
-    // Přidání loga
     map.current.addControl(new LogoControl(), 'bottom-left');
 
-    // Přidání značky (markeru)
     new maplibregl.Marker()
       .setLngLat([longitude, latitude])
       .addTo(map.current);
 
-    // Cleanup
     return () => {
       if (map.current) {
         map.current.remove();

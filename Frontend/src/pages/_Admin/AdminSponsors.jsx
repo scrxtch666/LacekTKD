@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Trash2, Image as ImageIcon, Plus, Upload, X, Pencil, Check } from "lucide-react";
+import {
+  Trash2,
+  Image as ImageIcon,
+  Plus,
+  Upload,
+  X,
+  Pencil,
+  Check,
+} from "lucide-react";
 import config from "../../../config";
 
 function AdminSponsors() {
@@ -7,13 +15,15 @@ function AdminSponsors() {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(null);
 
-  // ADD
   const [showAddForm, setShowAddForm] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [newSponsor, setNewSponsor] = useState({ name: "", url: "", image: null });
+  const [newSponsor, setNewSponsor] = useState({
+    name: "",
+    url: "",
+    image: null,
+  });
   const [previewUrl, setPreviewUrl] = useState(null);
 
-  // EDIT
   const [editingId, setEditingId] = useState(null);
   const [editData, setEditData] = useState({ name: "", url: "", image: null });
   const [editPreviewUrl, setEditPreviewUrl] = useState(null);
@@ -58,7 +68,6 @@ function AdminSponsors() {
     }
   };
 
-  // --- ADD ---
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -108,10 +117,13 @@ function AdminSponsors() {
     setPreviewUrl(null);
   };
 
-  // --- EDIT ---
   const startEdit = (sponsor) => {
     setEditingId(sponsor.id);
-    setEditData({ name: sponsor.sponsor_name, url: sponsor.url || "", image: null });
+    setEditData({
+      name: sponsor.sponsor_name,
+      url: sponsor.url || "",
+      image: null,
+    });
     setEditPreviewUrl(null);
   };
 
@@ -185,51 +197,80 @@ function AdminSponsors() {
         )}
       </div>
 
-      {/* Formulář pro přidání */}
       {showAddForm && (
         <div className="bg-customWhite rounded-lg shadow-lg p-6 border-2 border-green-500">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-semibold text-gray-800">Nový sponzor</h3>
-            <button onClick={cancelAdd} className="text-gray-400 hover:text-gray-600">
+            <h3 className="text-xl font-semibold text-gray-800">
+              Nový sponzor
+            </h3>
+            <button
+              onClick={cancelAdd}
+              className="text-gray-400 hover:text-gray-600"
+            >
               <X size={24} />
             </button>
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Název sponzora</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Název sponzora
+              </label>
               <input
                 type="text"
                 value={newSponsor.name}
-                onChange={(e) => setNewSponsor({ ...newSponsor, name: e.target.value })}
+                onChange={(e) =>
+                  setNewSponsor({ ...newSponsor, name: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 placeholder="Např. Firma s.r.o."
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Web sponzora (URL)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Web sponzora (URL)
+              </label>
               <input
                 type="url"
                 value={newSponsor.url}
-                onChange={(e) => setNewSponsor({ ...newSponsor, url: e.target.value })}
+                onChange={(e) =>
+                  setNewSponsor({ ...newSponsor, url: e.target.value })
+                }
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 placeholder="https://www.firma.cz"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Logo sponzora</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Logo sponzora
+              </label>
               <div className="flex items-center gap-4">
                 <label className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer transition-colors">
                   <Upload size={20} />
                   <span>Vybrat soubor</span>
-                  <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
                 </label>
-                {newSponsor.image && <span className="text-sm text-gray-600">{newSponsor.image.name}</span>}
+                {newSponsor.image && (
+                  <span className="text-sm text-gray-600">
+                    {newSponsor.image.name}
+                  </span>
+                )}
               </div>
             </div>
             {previewUrl && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Náhled loga</label>
-                <img src={previewUrl} alt="Náhled" className="h-24 object-contain rounded-lg border-2 border-gray-200 p-2 bg-gray-50" />
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Náhled loga
+                </label>
+                <img
+                  src={previewUrl}
+                  alt="Náhled"
+                  className="h-24 object-contain rounded-lg border-2 border-gray-200 p-2 bg-gray-50"
+                />
               </div>
             )}
             <div className="flex gap-3 pt-4">
@@ -240,7 +281,11 @@ function AdminSponsors() {
               >
                 {uploading ? "Nahrávám..." : "Přidat sponzora"}
               </button>
-              <button type="button" onClick={cancelAdd} className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors">
+              <button
+                type="button"
+                onClick={cancelAdd}
+                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors"
+              >
                 Zrušit
               </button>
             </div>
@@ -248,7 +293,6 @@ function AdminSponsors() {
         </div>
       )}
 
-      {/* Seznam sponzorů */}
       {!sponsors.length ? (
         <div className="bg-customWhite rounded-lg shadow p-8 text-center">
           <ImageIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
@@ -257,32 +301,48 @@ function AdminSponsors() {
       ) : (
         <div className="space-y-4">
           {sponsors.map((sponsor) => (
-            <div key={sponsor.id} className="bg-customWhite rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-4">
+            <div
+              key={sponsor.id}
+              className="bg-customWhite rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-4"
+            >
               {editingId === sponsor.id ? (
                 /* --- EDIT FORMULÁŘ --- */
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <p className="font-semibold text-gray-700">Upravit sponzora #{sponsor.id}</p>
-                    <button onClick={cancelEdit} className="text-gray-400 hover:text-gray-600">
+                    <p className="font-semibold text-gray-700">
+                      Upravit sponzora #{sponsor.id}
+                    </p>
+                    <button
+                      onClick={cancelEdit}
+                      className="text-gray-400 hover:text-gray-600"
+                    >
                       <X size={20} />
                     </button>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Název</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Název
+                      </label>
                       <input
                         type="text"
                         value={editData.name}
-                        onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                        onChange={(e) =>
+                          setEditData({ ...editData, name: e.target.value })
+                        }
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">URL</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        URL
+                      </label>
                       <input
                         type="url"
                         value={editData.url}
-                        onChange={(e) => setEditData({ ...editData, url: e.target.value })}
+                        onChange={(e) =>
+                          setEditData({ ...editData, url: e.target.value })
+                        }
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                         placeholder="https://www.firma.cz"
                       />
@@ -290,18 +350,34 @@ function AdminSponsors() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Nové logo <span className="text-gray-400 font-normal">(nepovinné – ponechá stávající)</span>
+                      Nové logo{" "}
+                      <span className="text-gray-400 font-normal">
+                        (nepovinné – ponechá stávající)
+                      </span>
                     </label>
                     <div className="flex items-center gap-4">
                       <label className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg cursor-pointer transition-colors">
                         <Upload size={18} />
                         <span>Vybrat soubor</span>
-                        <input type="file" accept="image/*" onChange={handleEditImageChange} className="hidden" />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleEditImageChange}
+                          className="hidden"
+                        />
                       </label>
-                      {editData.image && <span className="text-sm text-gray-600">{editData.image.name}</span>}
+                      {editData.image && (
+                        <span className="text-sm text-gray-600">
+                          {editData.image.name}
+                        </span>
+                      )}
                     </div>
                     {editPreviewUrl && (
-                      <img src={editPreviewUrl} alt="Náhled" className="mt-2 h-20 object-contain rounded-lg border-2 border-gray-200 p-2 bg-gray-50" />
+                      <img
+                        src={editPreviewUrl}
+                        alt="Náhled"
+                        className="mt-2 h-20 object-contain rounded-lg border-2 border-gray-200 p-2 bg-gray-50"
+                      />
                     )}
                   </div>
                   <div className="flex gap-3">
@@ -313,7 +389,10 @@ function AdminSponsors() {
                       <Check size={18} />
                       <span>{saving ? "Ukládám..." : "Uložit"}</span>
                     </button>
-                    <button onClick={cancelEdit} className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors">
+                    <button
+                      onClick={cancelEdit}
+                      className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors"
+                    >
                       Zrušit
                     </button>
                   </div>
@@ -335,9 +414,16 @@ function AdminSponsors() {
                   </div>
                   <div className="flex-1 text-center sm:text-left">
                     <p className="text-sm text-gray-500 mb-1">Název sponzora</p>
-                    <p className="text-lg font-semibold text-gray-800">{sponsor.sponsor_name}</p>
+                    <p className="text-lg font-semibold text-gray-800">
+                      {sponsor.sponsor_name}
+                    </p>
                     {sponsor.url && (
-                      <a href={sponsor.url} target="_blank" rel="noopener noreferrer" className="text-sm text-green-600 hover:underline mt-1 inline-block">
+                      <a
+                        href={sponsor.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-green-600 hover:underline mt-1 inline-block"
+                      >
                         {sponsor.url}
                       </a>
                     )}
@@ -356,7 +442,9 @@ function AdminSponsors() {
                       className="deleteBtn disabled:cursor-not-allowed"
                     >
                       <Trash2 size={18} />
-                      <span>{deleting === sponsor.id ? "Mažu..." : "Smazat"}</span>
+                      <span>
+                        {deleting === sponsor.id ? "Mažu..." : "Smazat"}
+                      </span>
                     </button>
                   </div>
                 </div>

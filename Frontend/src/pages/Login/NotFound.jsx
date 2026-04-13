@@ -7,7 +7,6 @@ function NotFound() {
 
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4 space-y-6">
-      {/* Číslo chyby */}
       <div className="relative">
         <p className="text-[120px] font-black text-gray-100 leading-none select-none">
           404
@@ -17,7 +16,6 @@ function NotFound() {
         </div>
       </div>
 
-      {/* Text */}
       <div className="space-y-2">
         <h1 className="text-2xl font-bold text-gray-800">Stránka nenalezena</h1>
         <p className="text-gray-500 max-w-sm">
@@ -29,7 +27,6 @@ function NotFound() {
         </p>
       </div>
 
-      {/* Tlačítka */}
       <div className="flex gap-3">
         <button
           onClick={() => navigate(-1)}

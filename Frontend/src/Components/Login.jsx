@@ -19,13 +19,12 @@ const Login = () => {
       const data = await response.json();
 
       if (data.token) {
-        // Uložíme token do paměti prohlížeče
+        // Uložení tokenu do paměti prohlížeče
         localStorage.setItem("token", data.token);
         if (data.token) {
           localStorage.setItem("token", data.token);
 
           window.dispatchEvent(new Event("authChange"));
-          // Přečti roli AŽ po uložení tokenu
           const role = getUserRole();
 
           if (role === "admin") {

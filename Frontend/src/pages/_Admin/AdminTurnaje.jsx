@@ -96,7 +96,6 @@ const TournamentForm = ({
         >
           <option value="completed">Aktivní (zobrazena na webu)</option>
           <option value="uncompleted">Skrytá</option>
-          
         </select>
       </div>
       <div>
@@ -239,14 +238,13 @@ function AdminTurnaje() {
   const isAdminOrTrainer = userRole === "admin" || userRole === "trainer";
   const headerText = isAdminOrTrainer ? "Správa turnajů" : "Turnaje";
 
-  // Filtry
   const [search, setSearch] = useState("");
   const [filterActual, setFilterActual] = useState(false);
   const [filterOld, setFilterOld] = useState(false);
-  const [filterTournament, setFilterTournament] = useState(""); // "completed" | "uncompleted" |
+  const [filterTournament, setFilterTournament] = useState("");
 
   const [fighters, setFighters] = useState([]);
-  const [showRegisterModal, setShowRegisterModal] = useState(null); // tournamentId
+  const [showRegisterModal, setShowRegisterModal] = useState(null);
   const [selectedFighter, setSelectedFighter] = useState("");
   const [registerLoading, setRegisterLoading] = useState(false);
 
@@ -294,7 +292,7 @@ function AdminTurnaje() {
   const fetchRegistrations = () => {
     setLoadingReg(true);
 
-    const token = localStorage.getItem("token"); 
+    const token = localStorage.getItem("token");
     if (!token) {
       console.warn("⚠️ Žádný token");
       setLoadingReg(false);
@@ -308,8 +306,6 @@ function AdminTurnaje() {
     })
       .then((res) => res.json())
       .then((data) => {
-        //  console.log("DATA:", data);
-
         if (Array.isArray(data)) {
           setRegistrations(data);
         } else if (Array.isArray(data.data)) {
@@ -447,10 +443,9 @@ function AdminTurnaje() {
     if (!confirm("Opravdu chcete smazat tento turnaj?")) return;
     setDeleting(id);
     try {
-      const response = await fetch(
-        `${API}/api/tournaments/${id}`,
-        { method: "DELETE" },
-      );
+      const response = await fetch(`${API}/api/tournaments/${id}`, {
+        method: "DELETE",
+      });
       if (response.ok) setTournaments(tournaments.filter((t) => t.id !== id));
       else alert("Nepodařilo se smazat turnaj");
     } catch {
@@ -539,22 +534,22 @@ function AdminTurnaje() {
   };
 
   const startEdit = (t) => {
-  setEditingId(t.id);
-  setEditTournament({
-    name: t.name || "",
-    location: t.location || "",
-    price: t.price || "",
-    type_id: t.type_id || "",
-    start_date: t.start_date_raw?.substring(0, 10) || "",
-    end_date: t.end_date_raw?.substring(0, 10) || "",
-    registrable_date: t.registrable_date_raw?.substring(0, 10) || "",
-    info: t.info || "",
-    image: null,
-    status: t.status || "",
-  });
-  setEditPreviewUrl(null);
-  setEditError("");
-};
+    setEditingId(t.id);
+    setEditTournament({
+      name: t.name || "",
+      location: t.location || "",
+      price: t.price || "",
+      type_id: t.type_id || "",
+      start_date: t.start_date_raw?.substring(0, 10) || "",
+      end_date: t.end_date_raw?.substring(0, 10) || "",
+      registrable_date: t.registrable_date_raw?.substring(0, 10) || "",
+      info: t.info || "",
+      image: null,
+      status: t.status || "",
+    });
+    setEditPreviewUrl(null);
+    setEditError("");
+  };
 
   const cancelEdit = () => {
     setEditingId(null);
@@ -583,10 +578,10 @@ function AdminTurnaje() {
       else if (key !== "image") formData.append(key, val || "");
     });
     try {
-      const response = await fetch(
-        `${API}/api/tournaments/${id}`,
-        { method: "PUT", body: formData },
-      );
+      const response = await fetch(`${API}/api/tournaments/${id}`, {
+        method: "PUT",
+        body: formData,
+      });
       if (response.ok) {
         cancelEdit();
         fetchTournaments();
@@ -608,24 +603,19 @@ function AdminTurnaje() {
     const diffTime = target - today;
     const diffDays = diffTime / (1000 * 60 * 60 * 24);
 
-    if (diffDays < 0) return "text-red-600"; // po uzávěrce
-    if (diffDays <= 3) return "text-orange-500"; // 3 dny před
-    return "text-green-600"; // více než 3 dny
+    if (diffDays < 0) return "text-red-600";
+    if (diffDays <= 3) return "text-orange-500";
+    return "text-green-600";
   };
 
   const formatDate = (dateStr) =>
     dateStr ? new Date(dateStr).toLocaleDateString("cs-CZ") : "—";
 
-  // Filtrování
-
-  // --- OPRAVENÉ FILTROVÁNÍ ---
   const today = new Date().setHours(0, 0, 0, 0);
 
   const filteredTournaments = tournaments.filter((t) => {
-    // 1. Vyhledávání v názvu (vždy aktivní, pokud je něco v inputu)
     const matchesSearch = t.name.toLowerCase().includes(search.toLowerCase());
 
-    // 2. Časová logika turnaje
     const tourDate = new Date(t.end_date_raw || t.start_date_raw).setHours(
       0,
       0,
@@ -635,14 +625,10 @@ function AdminTurnaje() {
     const isActual = tourDate >= today;
     const isOld = tourDate < today;
 
-    // 3. Logika pro přepínače "Aktuální" a "Staré"
-    // Pokud není aktivní žádný filtr (oba jsou false), propustíme vše.
-    // Pokud je aktivní aspoň jeden, musí turnaj odpovídat danému filtru.
     const timeFilterActive = filterActual || filterOld;
     const matchesTime =
       !timeFilterActive || (filterActual && isActual) || (filterOld && isOld);
 
-    // 4. Logika pro status (Vydané / Nevydané)
     const matchesStatus =
       filterTournament === "" ||
       (filterTournament === "completed" && t.status === "completed") ||
@@ -650,7 +636,6 @@ function AdminTurnaje() {
 
     const matchesRole = userRole !== "user" || t.status === "completed";
 
-    // Všechny podmínky musí platit najednou
     return matchesSearch && matchesTime && matchesStatus && matchesRole;
   });
 
@@ -665,7 +650,6 @@ function AdminTurnaje() {
 
   return (
     <div className="space-y-6">
-      {/* Hlavička */}
       <div className="flex justify-between items-center">
         <div className="devider">{headerText}</div>
         {!showAddForm &&
@@ -681,7 +665,6 @@ function AdminTurnaje() {
           )}
       </div>
 
-      {/* Formulář přidání */}
       {showAddForm && (
         <div className="bg-customWhite rounded-lg shadow-lg p-6 border-2 border-green-500">
           <div className="flex justify-between items-center mb-4">
@@ -717,7 +700,6 @@ function AdminTurnaje() {
           className="bg-customWhite flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
         />
 
-        {/* Filtr účtu */}
         {(userRole === "admin" || userRole === "trainer") && (
           <select
             value={filterTournament}
@@ -758,7 +740,6 @@ function AdminTurnaje() {
         )}
       </div>
 
-      {/* Záložky */}
       <div className="flex gap-2 border-b border-gray-200">
         <button
           onClick={() => setActiveTab("turnaje")}
@@ -777,7 +758,6 @@ function AdminTurnaje() {
         </button>
       </div>
 
-      {/* ─── TAB: TURNAJE ─── */}
       {activeTab === "turnaje" && (
         <div className="space-y-4">
           {filteredTournaments.length === 0 ? (
@@ -900,27 +880,21 @@ function AdminTurnaje() {
                       </div>
                     </div>
                     <div className="flex gap-2 flex-shrink-0 flex-wrap">
-                      {/* Tlačítka */}
                       <div className="flex gap-2 flex-shrink-0 flex-wrap">
                         {userRole === "user" &&
                           (() => {
                             const isRegistered = !!tournament.is_registered;
 
-                            // 1. Dnešní datum (nastavené na začátek dne pro přesné porovnání)
                             const dnes = new Date();
                             dnes.setHours(0, 0, 0, 0);
 
-                            // 2. Datum uzávěrky z databáze (raw formát YYYY-MM-DD)
-                            // Nastavíme ho na konec dne (23:59:59), aby uživatel mohl kliknout i v den uzávěrky
                             const uzaverka = new Date(
                               tournament.registrable_date_raw,
                             );
                             uzaverka.setHours(23, 59, 59, 999);
 
-                            // 3. Hlavní podmínka: Je už po uzávěrce?
                             const jePoUzaverce = dnes > uzaverka;
 
-                            // STAV A: Po uzávěrce (pouze šedé tlačítko, žádná akce)
                             if (jePoUzaverce) {
                               return (
                                 <div className="flex items-center gap-2">
@@ -939,7 +913,6 @@ function AdminTurnaje() {
                               );
                             }
 
-                            // STAV B: Před uzávěrkou + Přihlášen (může se odhlásit)
                             if (isRegistered) {
                               return (
                                 <div className="flex items-center gap-2">
@@ -958,7 +931,6 @@ function AdminTurnaje() {
                               );
                             }
 
-                            // STAV C: Před uzávěrkou + Nepřihlášen (může se přihlásit)
                             return (
                               <button
                                 onClick={() => handleRegister(tournament.id)}
@@ -972,7 +944,6 @@ function AdminTurnaje() {
 
                         {(userRole === "admin" || userRole === "trainer") && (
                           <>
-                            {/* Zveřejnit/Skrýt */}
                             <button
                               onClick={() => handleToggleStatus(tournament)}
                               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-white text-sm transition-colors ${
@@ -1067,9 +1038,8 @@ function AdminTurnaje() {
               </div>
             </div>
           </div>,
-          document.body, // Tento řádek musí být jako druhý argument funkce createPortal
+          document.body,
         )}
-      {/* ─── TAB: PŘIHLÁŠKY ─── */}
       {activeTab === "prihlasky" && (
         <div className="space-y-4">
           {loadingReg ? (
@@ -1107,10 +1077,8 @@ function AdminTurnaje() {
                   key={key}
                   className="bg-customWhite rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
                 >
-                  {/* Header – stejný styl jako karta turnaje */}
                   <div className="p-4">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                      {/* Foto */}
                       <div className="flex-shrink-0">
                         {group.tournament_img ? (
                           <img
@@ -1125,7 +1093,6 @@ function AdminTurnaje() {
                         )}
                       </div>
 
-                      {/* Info */}
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-2 mb-1">
                           <p className="text-lg font-semibold text-gray-800">
@@ -1164,7 +1131,6 @@ function AdminTurnaje() {
                           )}
                         </div>
                       </div>
-                      {/* Rozbalit + Přihlásit */}
                       <div className="flex items-center gap-2 flex-shrink-0">
                         {(userRole === "admin" || userRole === "trainer") && (
                           <button
@@ -1190,12 +1156,9 @@ function AdminTurnaje() {
                             : "Zobrazit závodníky ▼"}
                         </button>
                       </div>
-
-                      {/* Rozbalit */}
                     </div>
                   </div>
 
-                  {/* Závodníci */}
                   {isExpanded && (
                     <div className="border-t border-gray-100">
                       {group.fighters.map((reg) => (
@@ -1230,7 +1193,6 @@ function AdminTurnaje() {
                                   {reg.fighter_weight} kg
                                 </p>
                               )}
-                              {/* Zobraz výsledek pokud existuje */}
                               {reg.place && (
                                 <p className="text-xs text-customBlack font-bold">
                                   {reg.place}. místo{" "}
@@ -1240,7 +1202,6 @@ function AdminTurnaje() {
                           </div>
 
                           <div className="flex items-center gap-2">
-                            {/* Inline editace výsledku */}
                             {editingResult?.regId === reg.id ? (
                               <div
                                 className="flex items-center gap-2"

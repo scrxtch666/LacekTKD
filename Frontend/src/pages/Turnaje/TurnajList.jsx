@@ -1,12 +1,13 @@
 import TurnajCard from "./TurnajCard";
 
 function TurnajList({ title, tournaments, search, selectedPeriod }) {
-  // Zjistíme typ období podle title
-  const periodType = title === "Nadcházející turnaje" ? "Nadcházející" : "Proběhlé";
+  const periodType =
+    title === "Nadcházející turnaje" ? "Nadcházející" : "Proběhlé";
 
   const filtered = tournaments.filter((t) => {
     const matchesSearch = t.name?.toLowerCase().includes(search.toLowerCase());
-    const matchesPeriod = selectedPeriod === "" || selectedPeriod === periodType;
+    const matchesPeriod =
+      selectedPeriod === "" || selectedPeriod === periodType;
     return matchesSearch && matchesPeriod;
   });
 

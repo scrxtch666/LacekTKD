@@ -23,7 +23,6 @@ const EventCardList = () => {
 
   if (loading) return <div>Načítám data...</div>;
 
-  // Vypočítat dostupná období
   const periods = [
     ...new Set(
       news.map((event) => {
@@ -33,7 +32,6 @@ const EventCardList = () => {
     ),
   ].sort((a, b) => b.localeCompare(a));
 
-  // Filtr
   const filtered = news.filter((event) => {
     const matchesSearch = event.title
       ?.toLowerCase()
@@ -44,7 +42,6 @@ const EventCardList = () => {
     return matchesSearch && matchesPeriod;
   });
 
-  // Seskupit podle období
   const groups = filtered.reduce((acc, event) => {
     const d = new Date(event.date_start_raw);
     const year = `${d.toLocaleString("cs-CZ", { month: "long" })} ${d.getFullYear()}`;
@@ -59,7 +56,6 @@ const EventCardList = () => {
 
   return (
     <div className="space-y-8">
-      {/* Filtry */}
       <SearchBar
         search={search}
         onSearchChange={setSearch}
@@ -80,14 +76,12 @@ const EventCardList = () => {
         ]}
       />
 
-      {/* Žádné výsledky */}
       {sortedGroups.length === 0 && (
         <p className="text-gray-400 text-center italic py-8">
           Žádná aktualita neodpovídá zadaným filtrům
         </p>
       )}
 
-      {/* Grid aktualit */}
       {sortedGroups.map(([period, events]) => (
         <div key={period}>
           <div className="devider flex justify-between mb-4">

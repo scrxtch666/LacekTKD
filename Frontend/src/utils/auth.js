@@ -1,10 +1,8 @@
-// src/utils/auth.js
 import config from "../../config";
 
 const API_URL = config.API_URL;
 
 export const authService = {
-  // Přihlášení
   async login(login, password) {
     const response = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
@@ -22,22 +20,18 @@ export const authService = {
     return data;
   },
 
-  // Odhlášení
   logout() {
     localStorage.removeItem("token");
   },
 
-  // Získání tokenu
   getToken() {
     return localStorage.getItem("token");
   },
 
-  // Kontrola, zda je uživatel přihlášený
   isAuthenticated() {
     return !!this.getToken();
   },
 
-  // Získání informací o uživateli
   async getCurrentUser() {
     const token = this.getToken();
     if (!token) return null;
@@ -51,7 +45,7 @@ export const authService = {
 
       if (!response.ok) {
         if (response.status === 401 || response.status === 403) {
-          this.logout(); // Token je neplatný, odhlásíme uživatele
+          this.logout();
         }
         return null;
       }
@@ -64,7 +58,6 @@ export const authService = {
   },
 };
 
-// getUserRole() pro sidebar - dekóduje přímo z JWT (bez API callu)
 export function getUserRole() {
   const token = localStorage.getItem("token");
   if (!token) return null;

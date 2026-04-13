@@ -46,7 +46,7 @@ const getDaysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
 function Calendar() {
   const today = new Date();
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
-  const [currentMonth, setCurrentMonth] = useState(today.getMonth()); // 0-11
+  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [selectedDate, setSelectedDate] = useState(toDateStr(today));
   const [tournaments, setTournaments] = useState([]);
   const [exams, setExams] = useState([]);
@@ -139,9 +139,7 @@ function Calendar() {
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 w-full">
-      {/* ─── LEVÁ STRANA – MINI KALENDÁŘ ─── */}
       <div className="bg-customWhite rounded-2xl shadow-md p-5 w-full lg:w-80 flex-shrink-0">
-        {/* Navigace měsíce */}
         <div className="flex items-center justify-between mb-4">
           <button onClick={prevMonth}>
             <ChevronLeft size={20} className="text-gray-600" />
@@ -224,7 +222,6 @@ function Calendar() {
           })}
         </div>
 
-        {/* Legenda */}
         <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3 text-xs text-gray-400">
           <span className="flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
@@ -297,7 +294,6 @@ function Calendar() {
                   )}
                 </div>
 
-                {/* Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <h4 className="font-semibold text-gray-800 text-sm">
@@ -308,7 +304,6 @@ function Calendar() {
                         {tournament.type_name}
                       </span>
                     )}
-                    {/* Badge pro nezveřejněné – pouze admin/trainer */}
                     {tournament.status === "uncompleted" &&
                       (userRole === "admin" || userRole === "trainer") && (
                         <span className="px-2 py-0.5 rounded-full text-xs bg-orange-100 text-orange-600 font-medium">
@@ -359,7 +354,7 @@ function Calendar() {
                 </div>
               </div>
             ))}
-            {/* Zkoušky */}
+
             {selectedExams.length > 0 && (
               <div className="space-y-3 mt-2">
                 {selectedExams.map((exam) => (

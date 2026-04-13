@@ -5,16 +5,12 @@ import Modal from "react-modal";
 Modal.setAppElement("#root");
 
 function LogInButton({ onLogin }) {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-
   const handleLogin = async () => {
-    // Zde by měla být vaše logika pro přihlášení
-    // Po úspěšném přihlášení zavolejte:
     if (onLogin) {
       onLogin();
     }
     window.dispatchEvent(new Event("authChange"));
-  }; // <-- Chyběla tato uzavírací závorka
+  };
 
   return (
     <>
@@ -38,61 +34,6 @@ function LogInButton({ onLogin }) {
           </button>
         </Link>
       </div>
-      {/*
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={() => setModalIsOpen(false)}
-        className="bg-customWhite p-2 rounded-lg shadow-lg max-w-lg mx-auto mt-20 flex flex-col items-center w-96 pb-5"
-        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
-      >
-        <div className="w-full flex justify-end">
-          <img
-            src="../src/assets/Icons/cross.png"
-            alt=""
-            className=""
-            onClick={() => setModalIsOpen(false)}
-          />
-        </div>
-        <img src="../src/assets/Team/logo_tkdlacek_white.png" alt="" className="" />
-        <hr className="w-48 h-1 mx-auto my-4 bg-gray-100 border-0 rounded-sm dark:bg-customBlack" />
-        <div className="flex flex-col gap-2">
-          <label>
-            <p>Email:</p>
-            <input
-              name="myInput"
-              className="rounded-md border-2 border-customBlack px-2"
-              placeholder="Zadejte email"
-            />
-          </label>
-          <label>
-            <p>Heslo:</p>
-            <input
-              name="myInput"
-              className="rounded-md border-2 border-customBlack px-2"
-              placeholder="Zadejte heslo"
-            />
-          </label>
-          <div className="flex items-center mb-4">
-            <input
-              id="default-checkbox"
-              type="checkbox"
-              value=""
-              className="w-4 h-4 text-customGreen bg-gray-100 border-gray-300 rounded-sm focus:ring-customGreen dark:focus:ring-customGreen dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
-            <label
-              htmlFor="default-checkbox"
-              className="ms-2 text-xs text-gray-900 dark:text-customBlack"
-            >
-              Zapamatovat
-            </label>
-          </div>
-        </div>
-
-        <div className="flex justify-between">
-          <LoginButtonModal />
-        </div>
-      </Modal>
-      */}
     </>
   );
 }

@@ -10,7 +10,7 @@ function Turnaj() {
   const [past, setPast] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [selectedPeriod, setSelectedPeriod] = useState(""); // "upcoming" / "past"
+  const [selectedPeriod, setSelectedPeriod] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {

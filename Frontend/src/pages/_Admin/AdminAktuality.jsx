@@ -85,7 +85,6 @@ const EventForm = ({
       </div>
     </div>
 
-    {/* Náhledová fotka */}
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-1">
         Náhledová fotka{" "}
@@ -96,7 +95,6 @@ const EventForm = ({
         )}
       </label>
 
-      {/* Pokud je předán existingCoverUrl (z turnaje) a ještě nebyl vybrán nový soubor */}
       {existingCoverUrl && !coverPreview && (
         <div className="mb-2">
           <p className="text-xs text-gray-400 mb-1">
@@ -133,7 +131,6 @@ const EventForm = ({
       )}
     </div>
 
-    {/* Fotogalerie */}
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-1">
         Fotky{" "}
@@ -197,7 +194,6 @@ const EventForm = ({
   </form>
 );
 
-// ─── GALERIE FOTEK v řádku aktuality ───
 const PhotoGallery = ({ photos, onDeletePhoto }) => {
   const [lightbox, setLightbox] = useState(null);
 
@@ -244,9 +240,7 @@ const PhotoGallery = ({ photos, onDeletePhoto }) => {
   );
 };
 
-// ─── HLAVNÍ KOMPONENTA ───
 function AdminAktuality() {
-  // Načtení prefill dat z React Router navigate state (z AdminTurnaje)
   const location = useLocation();
   const prefill = location.state?.prefill || null;
 
@@ -254,7 +248,6 @@ function AdminAktuality() {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(null);
 
-  // Přidání
   const [showAddForm, setShowAddForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [newEvent, setNewEvent] = useState({
@@ -267,11 +260,9 @@ function AdminAktuality() {
   const [newPhotoPreviews, setNewPhotoPreviews] = useState([]);
   const [newCover, setNewCover] = useState(null);
   const [newCoverPreview, setNewCoverPreview] = useState(null);
-  // existingCoverUrl = URL obrázku převzatého z turnaje (není File objekt)
   const [existingCoverUrl, setExistingCoverUrl] = useState(null);
   const [formError, setFormError] = useState("");
 
-  // Editace
   const [editingId, setEditingId] = useState(null);
   const [editEvent, setEditEvent] = useState({});
   const [editPhotos, setEditPhotos] = useState([]);
@@ -281,7 +272,6 @@ function AdminAktuality() {
   const [editError, setEditError] = useState("");
   const [editSaving, setEditSaving] = useState(false);
 
-  // Pokud přišel prefill z AdminTurnaje → otevři formulář s předvyplněnými daty
   useEffect(() => {
     if (prefill) {
       setNewEvent({
@@ -294,7 +284,6 @@ function AdminAktuality() {
         setExistingCoverUrl(prefill.existingCoverUrl);
       }
       setShowAddForm(true);
-      // Scroll na formulář
       setTimeout(() => {
         window.scrollTo({ top: 0, behavior: "smooth" });
       }, 100);
@@ -307,7 +296,7 @@ function AdminAktuality() {
 
   const fetchEvents = () => {
     fetch(`${API}/api/events/admin`, {
-      headers: authHeader(), // Musíte poslat token, aby vás backend pustil
+      headers: authHeader(),
     })
       .then((res) => res.json())
       .then((data) => {
@@ -336,12 +325,10 @@ function AdminAktuality() {
     return true;
   };
 
-  // --- ADD ---
   const handleCoverChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setNewCover(file);
-      // Jakmile uživatel vybere vlastní soubor, existingCoverUrl se přestane zobrazovat
       const reader = new FileReader();
       reader.onloadend = () => setNewCoverPreview(reader.result);
       reader.readAsDataURL(file);
@@ -375,8 +362,6 @@ function AdminAktuality() {
     formData.append("date_start", newEvent.date_start);
     formData.append("status", newEvent.status);
 
-    // Pokud uživatel vybral nový soubor → pošli ho
-    // Pokud ne ale má existingCoverUrl (z turnaje) → pošli URL jako text
     if (newCover) {
       formData.append("cover", newCover);
     } else if (existingCoverUrl) {
@@ -418,7 +403,6 @@ function AdminAktuality() {
     setNewEvent({ title: "", body: "", date_start: "", status: "Availible" });
   };
 
-  // --- EDIT ---
   const startEdit = (event) => {
     setEditingId(event.id);
     setEditEvent({
@@ -502,7 +486,6 @@ function AdminAktuality() {
     }
   };
 
-  // --- DELETE ---
   const handleDelete = async (id) => {
     if (!confirm("Opravdu chcete smazat tuto aktualitu včetně všech fotek?"))
       return;
@@ -553,7 +536,6 @@ function AdminAktuality() {
 
   return (
     <div className="space-y-6">
-      {/* Hlavička */}
       <div className="flex justify-between items-center">
         <div className="devider">Správa aktualit</div>
         {!showAddForm && (
@@ -567,7 +549,6 @@ function AdminAktuality() {
         )}
       </div>
 
-      {/* Formulář přidání – zobrazí se i při přesměrování z turnajů */}
       {showAddForm && (
         <div className="bg-customWhite rounded-lg shadow-lg p-6 border-2 border-green-500">
           <div className="flex justify-between items-center mb-4">
@@ -575,7 +556,6 @@ function AdminAktuality() {
               <h3 className="text-xl font-semibold text-gray-800">
                 Nová aktualita
               </h3>
-              {/* Upozornění pokud byl formulář předvyplněn z turnaje */}
               {prefill && (
                 <p className="text-sm text-purple-600 mt-1 flex items-center gap-1">
                   <Newspaper size={14} />
@@ -607,7 +587,6 @@ function AdminAktuality() {
         </div>
       )}
 
-      {/* Seznam */}
       {!events.length ? (
         <div className="bg-customWhite rounded-lg shadow p-8 text-center">
           <Newspaper className="mx-auto h-12 w-12 text-gray-400 mb-4" />

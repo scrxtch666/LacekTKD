@@ -44,7 +44,6 @@ function Gdpr() {
         </div>
       </div>
 
-      {/* Jaké údaje zpracováváme */}
       <div className="bg-customWhite rounded-2xl shadow-md p-6">
         <h2 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
           <Database size={18} className="text-customGreen" /> Jaké osobní údaje
@@ -107,7 +106,6 @@ function Gdpr() {
         </div>
       </div>
 
-      {/* Účel zpracování */}
       <div className="bg-customWhite rounded-2xl shadow-md p-6">
         <h2 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
           <AlertCircle size={18} className="text-customGreen" /> Účel a právní
@@ -148,7 +146,6 @@ function Gdpr() {
         </div>
       </div>
 
-      {/* Doba uchovávání */}
       <div className="bg-customWhite rounded-2xl shadow-md p-6">
         <h2 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
           <Clock size={18} className="text-customGreen" /> Doba uchovávání údajů
@@ -178,7 +175,6 @@ function Gdpr() {
         </div>
       </div>
 
-      {/* Práva subjektů */}
       <div className="bg-customWhite rounded-2xl shadow-md p-6">
         <h2 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
           <User size={18} className="text-customGreen" /> Vaše práva
@@ -237,7 +233,6 @@ function Gdpr() {
         </p>
       </div>
 
-      {/* Zabezpečení */}
       <div className="bg-customWhite rounded-2xl shadow-md p-6">
         <h2 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
           <Lock size={18} className="text-customGreen" /> Zabezpečení údajů

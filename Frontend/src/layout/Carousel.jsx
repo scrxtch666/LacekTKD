@@ -12,7 +12,6 @@ function SponsorCarousel() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Načítání dat z backendu
     fetch(`${API}/api/sponsors`)
       .then((response) => response.json())
       .then((data) => {
@@ -25,7 +24,6 @@ function SponsorCarousel() {
       });
   }, []);
 
-  // Funkce pro posun přehlídky
   const moveCarousel = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % sponsors.length);
   };
@@ -42,7 +40,6 @@ function SponsorCarousel() {
     }
   }, [sponsors]);
 
-  // Získání aktuálních log pro zobrazení
   const getVisibleSponsors = () => {
     if (sponsors.length === 0) return [];
 

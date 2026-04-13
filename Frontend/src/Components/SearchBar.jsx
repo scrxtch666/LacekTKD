@@ -32,7 +32,6 @@ function SearchBar({
         </select>
       ))}
 
-      {/* Toggle filtry (tlačítka) */}
       {filters
         .filter((f) => f.type === "toggle")
         .map((filter) => (

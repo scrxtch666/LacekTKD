@@ -1,4 +1,3 @@
-// SearchBar.jsx
 function SearchBar({ search, setSearch, selectedPeriod, setSelectedPeriod, periods }) {
   return (
     <div className="flex gap-3 flex-col sm:flex-row">

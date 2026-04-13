@@ -12,7 +12,6 @@ const EventCardSingle = ({ event }) => {
       onClick={() => navigate(`/aktualita/${event.id}`)}
       className="w-full overflow-hidden bg-pink-50 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
     >
-      {/* Obrázek / placeholder */}
       <div className="relative">
         {event.cover_photo ? (
           <img
@@ -27,7 +26,6 @@ const EventCardSingle = ({ event }) => {
         )}
       </div>
 
-      {/* Text */}
       <div className="px-4 py-2 bg-customWhite">
         <div className="flex justify-between gap-5 text-sm font-medium text-gray-700">
           <p className="font-medium">{event.title}</p>
