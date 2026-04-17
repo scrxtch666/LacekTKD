@@ -17,6 +17,9 @@ import { createPortal } from "react-dom";
 import config from "../../../config";
 
 const API = config.API_URL;
+const authHeader = () => ({
+  Authorization: `Bearer ${localStorage.getItem("token")}`,
+});
 
 const TournamentForm = ({
   data,
@@ -445,6 +448,7 @@ function AdminTurnaje() {
     try {
       const response = await fetch(`${API}/api/tournaments/${id}`, {
         method: "DELETE",
+        headers: authHeader(),
       });
       if (response.ok) setTournaments(tournaments.filter((t) => t.id !== id));
       else alert("Nepodařilo se smazat turnaj");
@@ -478,6 +482,7 @@ function AdminTurnaje() {
     try {
       const response = await fetch(`${API}/api/tournaments`, {
         method: "POST",
+        headers: authHeader(),
         body: formData,
       });
       if (response.ok) {
@@ -501,8 +506,8 @@ function AdminTurnaje() {
       {
         method: "PUT",
         headers: {
+          ...authHeader(),
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ place: editingResult.place }),
       },
@@ -580,6 +585,7 @@ function AdminTurnaje() {
     try {
       const response = await fetch(`${API}/api/tournaments/${id}`, {
         method: "PUT",
+        headers: authHeader(),
         body: formData,
       });
       if (response.ok) {

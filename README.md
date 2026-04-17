@@ -7,6 +7,3 @@ Použité technologie:
 # SPUŠTĚNÍ 
 Frontend - cd .\Frontend\ - npm run dev
 Backend - cd  .\Backend\ - node server.js
-
-
-

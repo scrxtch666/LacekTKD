@@ -267,6 +267,7 @@ router.put("/:id", verifyToken, isAdminOrTrainer, uploadFields, (req, res) => {
 
     res.json({ success: true, message: "Aktualita byla úspěšně upravena" });
   });
+  console.log(req.headers.authorization);
 });
 
 router.delete("/photo/:photoId", verifyToken, isAdminOrTrainer, (req, res) => {

@@ -107,6 +107,7 @@ function AdminZavodnici() {
     try {
       const response = await fetch(`${API}/api/fighters/${id}`, {
         method: "DELETE",
+        headers: authHeader(),
       });
       if (response.ok) setFighters(fighters.filter((f) => f.id !== id));
       else alert("Nepodařilo se smazat závodníka");
@@ -143,6 +144,7 @@ function AdminZavodnici() {
     try {
       const response = await fetch(`${API}/api/fighters`, {
         method: "POST",
+        headers: authHeader(),
         body: formData,
       });
       if (response.ok) {
@@ -227,6 +229,7 @@ function AdminZavodnici() {
     try {
       const response = await fetch(`${API}/api/fighters/${id}`, {
         method: "PUT",
+        headers: authHeader(),
         body: formData,
       });
       if (response.ok) {
