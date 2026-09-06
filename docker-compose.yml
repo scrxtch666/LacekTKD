@@ -1,0 +1,45 @@
+services:
+  backend:
+    build:
+      context: ./Backend
+    restart: unless-stopped
+    env_file:
+      - ./Backend/.env
+    volumes:
+      - uploads:/app/public/uploads
+    networks:
+      - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      # /api, /auth a /uploads jdou na backend — priority musí být vyšší
+      # než u frontend routeru, jinak by je pohltilo pravidlo "/".
+      - traefik.http.routers.lacektkd-api.rule=Host(`tvedomena.cz`) && (PathPrefix(`/api`) || PathPrefix(`/auth`) || PathPrefix(`/uploads`))
+      - traefik.http.routers.lacektkd-api.entrypoints=websecure
+      - traefik.http.routers.lacektkd-api.tls.certresolver=letsencrypt
+      - traefik.http.routers.lacektkd-api.priority=10
+      - traefik.http.services.lacektkd-api.loadbalancer.server.port=3000
+
+  frontend:
+    build:
+      context: ./Frontend
+      args:
+        VITE_API_URL: ""
+    restart: unless-stopped
+    networks:
+      - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=traefik
+      - traefik.http.routers.lacektkd-web.rule=Host(`tvedomena.cz`)
+      - traefik.http.routers.lacektkd-web.entrypoints=websecure
+      - traefik.http.routers.lacektkd-web.tls.certresolver=letsencrypt
+      - traefik.http.routers.lacektkd-web.priority=1
+      - traefik.http.services.lacektkd-web.loadbalancer.server.port=80
+
+networks:
+  traefik:
+    external: true
+
+volumes:
+  uploads:

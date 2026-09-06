@@ -11,7 +11,7 @@ const authRouter = require("./auth/RouterAuth");
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: process.env.CORS_ORIGIN || "http://localhost:5173",
   methods: "GET,POST,PUT,DELETE,PATCH",
   allowedHeaders: "Content-Type,Authorization",
 };
@@ -27,6 +27,7 @@ app.get("/", (req, res) => {
   res.send("Server běží správně! 🚀");
 });
 
-app.listen(process.env.PORT, () =>
-  console.log(`🚀 Server běží na http://localhost:3000`),
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () =>
+  console.log(`🚀 Server běží na http://localhost:${PORT}`),
 );
