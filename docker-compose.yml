@@ -22,15 +22,20 @@ services:
     build:
       context: ./Backend
     restart: unless-stopped
-    env_file:
-      - ./Backend/.env
-    # DB_* přebíjí, co je (nebo není) v Backend/.env — jediný zdroj pravdy je
-    # kořenový .env, ať se přihlašovací údaje nemusí ručně synchronizovat.
+    # Jediný zdroj proměnných je kořenový .env — docker compose ho načte
+    # automaticky a hodnoty se doplní sem.
     environment:
       DB_HOST: db
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
       DB_NAME: ${DB_NAME}
+      PORT: ${PORT}
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      ACCES_TOKEN_SECRET: ${ACCES_TOKEN_SECRET}
+      REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
+      MAP_API: ${MAP_API}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN}
+      GOOGLE_CALENDAR_ID: ${GOOGLE_CALENDAR_ID}
     depends_on:
       db:
         condition: service_healthy
