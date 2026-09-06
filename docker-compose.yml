@@ -1,14 +1,44 @@
 services:
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - db
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
   backend:
     build:
       context: ./Backend
     restart: unless-stopped
     env_file:
       - ./Backend/.env
+    # DB_* přebíjí, co je (nebo není) v Backend/.env — jediný zdroj pravdy je
+    # kořenový .env, ať se přihlašovací údaje nemusí ručně synchronizovat.
+    environment:
+      DB_HOST: db
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+    depends_on:
+      db:
+        condition: service_healthy
     volumes:
       - uploads:/app/public/uploads
     networks:
       - traefik
+      - db
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik
@@ -40,6 +70,9 @@ services:
 networks:
   traefik:
     external: true
+  # interní síť backend <-> db, na Traefik ani ven není napojená
+  db:
 
 volumes:
   uploads:
+  db_data:
