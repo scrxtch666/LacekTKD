@@ -46,10 +46,13 @@ services:
       - db
     labels:
       - traefik.enable=true
-      - traefik.docker.network=traefik
+      # backend visí na dvou sítích (traefik + db), takže Traefik musí
+      # dostat přesný (skutečný) název té traefik sítě, jinak neví,
+      # kudy na kontejner routovat.
+      - traefik.docker.network=traefik_default
       # /api, /auth a /uploads jdou na backend — priority musí být vyšší
       # než u frontend routeru, jinak by je pohltilo pravidlo "/".
-      - traefik.http.routers.lacektkd-api.rule=Host(`tvedomena.cz`) && (PathPrefix(`/api`) || PathPrefix(`/auth`) || PathPrefix(`/uploads`))
+      - traefik.http.routers.lacektkd-api.rule=Host(`lacektkd.jktech.dev`) && (PathPrefix(`/api`) || PathPrefix(`/auth`) || PathPrefix(`/uploads`))
       - traefik.http.routers.lacektkd-api.entrypoints=websecure
       - traefik.http.routers.lacektkd-api.tls.certresolver=letsencrypt
       - traefik.http.routers.lacektkd-api.priority=10
@@ -65,8 +68,8 @@ services:
       - traefik
     labels:
       - traefik.enable=true
-      - traefik.docker.network=traefik
-      - traefik.http.routers.lacektkd-web.rule=Host(`tvedomena.cz`)
+      - traefik.docker.network=traefik_default
+      - traefik.http.routers.lacektkd-web.rule=Host(`lacektkd.jktech.dev`)
       - traefik.http.routers.lacektkd-web.entrypoints=websecure
       - traefik.http.routers.lacektkd-web.tls.certresolver=letsencrypt
       - traefik.http.routers.lacektkd-web.priority=1
