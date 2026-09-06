@@ -75,6 +75,7 @@ services:
 networks:
   traefik:
     external: true
+    name: traefik_default
   # interní síť backend <-> db, na Traefik ani ven není napojená
   db:
 
