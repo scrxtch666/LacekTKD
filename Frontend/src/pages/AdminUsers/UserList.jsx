@@ -38,9 +38,10 @@ function UserList({ users, roles, fighters, onRefresh, API }) {
 
   return (
     <div className="space-y-4">
-      {users.map((user) => (
+      {users.map((user,index) => (
         <UserCard
           key={user.id}
+          index={index}
           user={user}
           roles={roles}
           fighters={fighters}

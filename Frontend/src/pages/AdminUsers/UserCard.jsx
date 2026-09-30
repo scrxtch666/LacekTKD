@@ -9,11 +9,13 @@ const getRoleBadge = (role) => {
   }
 };
 
-function UserCard({ user, roles, fighters, isEditing, onStartEdit, onCancelEdit, onEditSuccess, onDelete, isDeleting, API }) {
+function UserCard({ user, index, roles, fighters, isEditing, onStartEdit, onCancelEdit, onEditSuccess, onDelete, isDeleting, API }) {
   const [form, setForm] = useState({});
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const token = localStorage.getItem("token");
+
+  const figNumber = index + 1;
 
   const startEdit = () => {
     setForm({
@@ -116,11 +118,13 @@ function UserCard({ user, roles, fighters, isEditing, onStartEdit, onCancelEdit,
 
   const badge = getRoleBadge(user.role_name);
 
+
+  // Karta uživatele
   return (
     <div className="bg-customWhite rounded-lg shadow-md hover:shadow-lg transition-shadow p-4">
       <div className="flex flex-col sm:flex-row items-center gap-4">
         <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-green-100 text-green-800 font-semibold flex-shrink-0">
-          {user.id}
+          {figNumber}
         </span>
         <div className="flex-shrink-0">
           {user.img_path ? (
