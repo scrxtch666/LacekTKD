@@ -23,6 +23,7 @@ import TurnajDetail from "./pages/Turnaje/TurnajDetail";
 import AdminRequests from "./pages/_Admin/AdminRequests";
 import FighterDetail from "./pages/Zavodnici/FighterDetail";
 import AdminZkousky from "./pages/_Admin/AdminZkousky";
+import AdminTreninky from "./pages/_Admin/AdminTreninky";
 import Gdpr from "./pages/Login/Gdpr";
 import NotFound from "./pages/Login/NotFound";
 
@@ -72,6 +73,7 @@ function App() {
             <Route path="/admin/users" element={<AdminUsers />} />
             <Route path="/admin/zadosti" element={<AdminRequests />} />
             <Route path="/admin/sponsors" element={<AdminSponsors />} />
+            <Route path="/admin/treninky" element={<AdminTreninky />} />
           </Route>
         </Route>
 

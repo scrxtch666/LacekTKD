@@ -13,6 +13,7 @@ import {
   Swords,
   Landmark,
   ChevronRight,
+  Clock12,
 } from "lucide-react";
 import { getUserRole, authService } from "../utils/auth";
 import config from "../../config";
@@ -73,6 +74,7 @@ function SideBar() {
         { name: "Sponzoři", path: "/admin/sponsors", icon: Landmark },
         { name: "Uživatelé", path: "/admin/users", icon: Users },
         { name: "Žádosti", path: "/admin/zadosti", icon: Users },
+        { name: "Tréninky", path: "/admin/treninky", icon: Clock12 },
       ],
     },
     {
@@ -214,9 +216,17 @@ function SideBar() {
         </button>
         <span className="text-white font-semibold text-sm">LacekTKD</span>
 
-        <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-white font-bold text-xs">
-          {initials}
-        </div>
+        {currentUser?.img_path ? (
+          <img
+            src={`${API}${currentUser.img_path}`}
+            alt={currentUser.login}
+            className="w-8 h-8 rounded-lg object-cover flex-shrink-0"
+          />
+        ) : (
+          <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+            {initials}
+          </div>
+        )}
       </div>
 
       {open && (

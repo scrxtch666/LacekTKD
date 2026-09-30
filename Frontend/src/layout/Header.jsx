@@ -5,6 +5,10 @@ import LogoutButton from "../Components/LogoutButton";
 import { useState, useEffect } from "react";
 import { authService } from "../utils/auth";
 import { useLocation } from "react-router-dom";
+import config from "../../config";
+import { Menu } from "lucide-react";
+
+const API = config.API_URL;
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,6 +17,10 @@ function Header() {
   const [loading, setLoading] = useState(true);
   const location = useLocation();
 
+  const initials =
+    user?.name && user?.surname
+      ? `${user.name.charAt(0)}${user.surname.charAt(0)}`
+      : user?.login?.charAt(0).toUpperCase() || "?";
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -61,9 +69,9 @@ function Header() {
     <nav
       className={`${
         isScrolled ? "bg-customGreen" : "bg-white"
-      } text-black w-full z-20 top-0 sticky mb-5 start-0 dark:border-gray-600 transition-colors duration-300`}
+      } text-black max-w-screen-xl mx-auto px-5 rounded-xl z-20 top-2 sticky mb-5 start-0 transition-colors duration-300`}
     >
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto py-2 px-5">
+      <div className="flex flex-wrap items-center justify-between mx-auto py-2">
         <div className="flex items-center space-x-6">
           <Link
             to="/"
@@ -87,12 +95,26 @@ function Header() {
                     to="/admin/me"
                     className="flex items-center gap-2 text-sm font-medium hover:underline decoration-customGreen lg:rounded-none"
                   >
-                    <span className="max-w-[100px] truncate bg-green-50 text-customGreen border border-green-200 gap-1.5 px-3 py-1 rounded-2xl">
-                      {user.login}
+                    <span className="flex justify-center items-center max-w-[200px] truncate bg-green-50 text-customGreen border border-green-200 gap-1.5 px-3 py-1 rounded-xl">
+                      {user?.img_path ? (
+                        <img
+                          src={`${API}${user.img_path}`}
+                          alt={user.login}
+                          className="w-8 h-8 rounded-full object-cover flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-customBlack border border-customGreen font-bold text-xs flex-shrink-0">
+                          {initials}
+                        </div>
+                      )}
+                      <div className="hidden sm:block">
+                        {user?.name && user?.surname
+                          ? `${user.name} ${user.surname}`
+                          : user?.login || "..."}
+                      </div>
                     </span>
                   </Link>
-
-                  <div className="hidden sm:block">
+                  <div>
                     <LogoutButton onLogout={() => setUser(null)} />
                   </div>
                 </div>
@@ -109,20 +131,7 @@ function Header() {
             aria-controls="navbar-sticky"
             aria-expanded={isMenuOpen}
           >
-            <svg
-              className="w-5 h-5"
-              aria-hidden="true"
-              fill="none"
-              viewBox="0 0 17 14"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M1 1h15M1 7h15M1 13h15"
-              />
-            </svg>
+            <Menu />
           </button>
         </div>
 

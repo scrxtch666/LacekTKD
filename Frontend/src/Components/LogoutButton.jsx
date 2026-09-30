@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { LogOut } from "lucide-react";
 
 const LogoutButton = () => {
   const navigate = useNavigate();
@@ -14,9 +15,9 @@ const LogoutButton = () => {
   return (
     <button 
       onClick={handleLogout}
-      className="logout-button text-customGreen bg-customWhite font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-customWhite flex items-center space-x-1 border border-customGreen"
+      className="w-8 h-8 logout-button text-red-700 bg-red-200 font-medium rounded-full p-2 flex items-center justify-center border border-red-400"
     >
-      Odhlásit se
+     <LogOut/>
     </button>
   );
 };
