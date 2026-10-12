@@ -6,13 +6,13 @@ function Contact() {
   return (
     <>
       <div className="devider">kontakt</div>
-      <div class="flex justify-between gap-5">
+      <div className="flex justify-between gap-5">
         <MainContact />
       </div>
 
       <div className="devider">Informace k tréninkům</div>
 
-      <div class="flex gap-5">
+      <div className="flex gap-5">
         <TimeTable />
         <Map />
       </div>
