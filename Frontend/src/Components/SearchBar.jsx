@@ -16,42 +16,48 @@ function SearchBar({
         className="bg-customWhite flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
       />
 
-      {filters.map((filter) => (
-        <select
-          key={filter.key}
-          value={filter.value}
-          onChange={(e) => filter.onChange(e.target.value)}
-          className="bg-customWhite px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
-        >
-          <option value="">{filter.placeholder}</option>
-          {filter.options.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      ))}
+      {filters
+        .filter((f) => f.type === "select")
+        .map((filter) => (
+          <select
+            key={filter.key}
+            value={filter.value}
+            onChange={(e) => filter.onChange(e.target.value)}
+            className="bg-customWhite px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
+          >
+            <option value="">{filter.placeholder}</option>
+            {filter.options.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        ))}
 
       {filters
         .filter((f) => f.type === "toggle")
-        .map((filter) => (
-       <button
-  key={filter.key}
-  onClick={() => filter.onChange(!filter.value)}
-  className={`inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
-    filter.value
-      ? "bg-customGreen text-white border-customGreen"
-      : "bg-customWhite text-gray-600 border-gray-300"
-  }`}
->
-  {filter.label}
-</button>
-        ))}
+        .map((filter) => {
+          return (
+            <button
+              key={filter.key}
+              type="button"
+              onClick={() => filter.onChange(!filter.value)}
+              className={`inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
+                filter.value
+                  ? "bg-customGreen text-white border-customGreen"
+                  : "bg-customWhite text-customBlack  border-gray-300"
+              }`}
+            >
+              {filter.icon && <filter.icon size={11} />}
+              {filter.label}
+            </button>
+          );
+        })}
 
       {hasActiveFilter && (
         <button
           onClick={onClear}
-          className="px-4 py-2 bg-customWhite border border-gray-300 text-gray-600 rounded-lg text-sm transition-colors hover:bg-gray-50"
+          className="px-4 py-2 bg-customWhite border border-gray-300 text-gray-600 rounded-lg text-sm transition-colors"
         >
           Zrušit filtry
         </button>

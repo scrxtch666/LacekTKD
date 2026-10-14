@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import SearchBar from "../../Components/SearchBar";
 
 import {
   Trash2,
@@ -283,55 +284,46 @@ function AdminZavodnici() {
         )}
       </div>
 
-      <div className="flex gap-3 flex-col sm:flex-row flex-wrap">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Hledat závodníka..."
-          className="bg-customWhite flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
-        />
-
-        <select
-          value={filterAccount}
-          onChange={(e) => setFilterAccount(e.target.value)}
-          className="bg-customWhite px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
-        >
-          <option value="">Všichni závodníci</option>
-          <option value="assigned">✅ Přiřazený účet</option>
-          <option value="unassigned">❌ Nepřiřazený účet</option>
-        </select>
-
-        <button
-          onClick={() => setFilterBest(!filterBest)}
-          className={`inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${filterBest ? "bg-customGreen text-white border-customGreen" : "bg-customWhite border-gray-300"}`}
-        >
-          <Star size={11} />
-          Nejlepší
-        </button>
-
-        <button
-          onClick={() => setFilterLegend(!filterLegend)}
-          className={`inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${filterLegend ? "bg-customGreen text-white border-customGreen" : "bg-customWhite border-gray-300"}`}
-        >
-          <Trophy size={11} />
-          Legenda
-        </button>
-
-        {hasActiveFilter && (
-          <button
-            onClick={() => {
-              setSearch("");
-              setFilterBest(false);
-              setFilterLegend(false);
-              setFilterAccount("");
-            }}
-            className="px-4 py-2 bg-customWhite border border-gray-300 rounded-lg text-sm transition-colors hover:bg-gray-50"
-          >
-            Zrušit filtry
-          </button>
-        )}
-      </div>
+      <SearchBar
+        search={search}
+        onSearchChange={setSearch}
+        placeholder="Hledat závodníka..."
+        hasActiveFilter={!!(search || filterBest || filterLegend)}
+        onClear={() => {
+          setSearch("");
+          setFilterBest(false);
+          setFilterLegend(false);
+        }}
+        filters={[
+          {
+            key: "account",
+            type: "select",
+            value: filterAccount,
+            onChange: setFilterAccount,
+            placeholder: "Typy účtů",
+            options: [
+              { value: "assigned", label: "✅ Přiřazený účet" },
+              { value: "unassigned", label: "❌Nepřiřazený účet" },
+            ],
+          },
+          {
+            key: "best",
+            type: "toggle",
+            value: filterBest,
+            onChange: setFilterBest,
+            label: "Nejlepší",
+            icon: Star,
+          },
+          {
+            key: "legend",
+            type: "toggle",
+            value: filterLegend,
+            onChange: setFilterLegend,
+            label: "Legenda",
+            icon: Trophy,
+          },
+        ]}
+      />
 
       {showAddForm && (
         <div className="bg-customWhite rounded-lg shadow-lg p-6 border-2 border-green-500">

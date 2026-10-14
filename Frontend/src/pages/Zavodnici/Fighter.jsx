@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Star, Trophy } from "lucide-react";
+import { Star, Trophy, StarOff } from "lucide-react";
 import config from "../../../config";
+import SearchBar from "../../Components/SearchBar";
 
 const API = config.API_URL;
 
@@ -84,66 +85,48 @@ function Fighter() {
 
   return (
     <div className="space-y-8">
-      <div className="flex gap-3 flex-col sm:flex-row flex-wrap">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Hledat závodníka..."
-          className="bg-customWhite flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
-        />
+      <SearchBar
+        search={search}
+        onSearchChange={setSearch}
+        placeholder="Hledat závodníka..."
+        hasActiveFilter={!!(search || filterBelt || filterBest || filterLegend)}
+        onClear={() => {
+          setSearch("");
+          setFilterBelt("");
+          setFilterBest(false);
+          setFilterLegend(false);
+        }}
+        filters={[
+          {
+            key: "belt",
+            type: "select",
+            value: filterBelt,
+            onChange: setFilterBelt,
+            placeholder: "Všechny pásy",
+            options: BELT_ORDER.map((belt) => ({
+              value: belt,
+              label: belt,
+            })),
+          },
+          {
+            key: "best",
+            type: "toggle",
+            value: filterBest,
+            onChange: setFilterBest,
+            label: "Nejlepší",
+            icon: Star,
+          },
+          {
+            key: "legend",
+            type: "toggle",
+            value: filterLegend,
+            onChange: setFilterLegend,
+            label: "Legenda",
+            icon: Trophy,
+          },
+        ]}
+      />
 
-        <select
-          value={filterBelt}
-          onChange={(e) => setFilterBelt(e.target.value)}
-          className="bg-customWhite px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
-        >
-          <option value="">Všechny pásy</option>
-          {BELT_ORDER.map((belt) => (
-            <option key={belt} value={belt}>
-              {belt}
-            </option>
-          ))}
-        </select>
-
-        <button
-          onClick={() => setFilterBest(!filterBest)}
-          className={`inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
-            filterBest
-              ? "bg-customGreen text-white border-customGreen"
-              : "bg-customWhite border-gray-300"
-          }`}
-        >
-          <Star size={11} />
-          Nejlepší
-        </button>
-
-        <button
-          onClick={() => setFilterLegend(!filterLegend)}
-          className={`inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
-            filterLegend
-              ? "bg-customGreen text-white border-customGreen"
-              : "bg-customWhite border-gray-300"
-          }`}
-        >
-          <Trophy size={11} />
-          Legenda
-        </button>
-
-        {(search || filterBelt || filterBest || filterLegend) && (
-          <button
-            onClick={() => {
-              setSearch("");
-              setFilterBelt("");
-              setFilterBest(false);
-              setFilterLegend(false);
-            }}
-            className="px-4 py-2 bg-customWhite rounded-lg text-sm transition-colors"
-          >
-            Zrušit filtry
-          </button>
-        )}
-      </div>
       {filteredGroups.map(([cup, group]) => (
         <div key={cup}>
           <div className="devider flex justify-between mb-4">

@@ -1,5 +1,5 @@
-import SearchBar from "../pages/Turnaje/SearchBar";
 import TurnajList from "../pages/Turnaje/TurnajList";
+import SearchBar from "./SearchBar";
 import { useState, useEffect } from "react";
 import config from "../../config";
 
@@ -30,24 +30,44 @@ function Turnaje() {
       <main className="space-y-8">
         <SearchBar
           search={search}
-          setSearch={setSearch}
-          selectedPeriod={selectedPeriod}
-          setSelectedPeriod={setSelectedPeriod}
+          onSearchChange={setSearch}
+          hasActiveFilter={!!(search || selectedPeriod)}
+          onClear={() => {
+            setSearch("");
+            setSelectedPeriod("");
+          }}
+          filters={[
+            {
+              key: "period",
+              type: "select",
+              value: selectedPeriod,
+              onChange: setSelectedPeriod,
+              placeholder: "Časové období",
+              options: [
+                { value: "upcoming", label: "Nadcházející" },
+                { value: "past", label: "Proběhlé" },
+              ],
+            },
+          ]}
         />
 
-        <TurnajList
-          title="Nadcházející turnaje"
-          tournaments={upcoming}
-          search={search}
-          selectedPeriod={selectedPeriod}
-        />
+        {(selectedPeriod === "" || selectedPeriod === "upcoming") && (
+          <TurnajList
+            title="Nadcházející turnaje"
+            tournaments={upcoming}
+            search={search}
+            selectedPeriod={selectedPeriod}
+          />
+        )}
 
-        <TurnajList
-          title="Proběhlé turnaje"
-          tournaments={past}
-          search={search}
-          selectedPeriod={selectedPeriod}
-        />
+        {(selectedPeriod === "" || selectedPeriod === "past") && (
+          <TurnajList
+            title="Proběhlé turnaje"
+            tournaments={past}
+            search={search}
+            selectedPeriod={selectedPeriod}
+          />
+        )}
 
         {loading && (
           <div className="text-gray-400 text-center py-10">
