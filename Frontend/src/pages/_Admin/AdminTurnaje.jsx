@@ -15,6 +15,7 @@ import { getUserRole } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 import config from "../../../config";
+import SearchBar from "../../Components/SearchBar";
 
 const API = config.API_URL;
 const authHeader = () => ({
@@ -697,54 +698,72 @@ function AdminTurnaje() {
         </div>
       )}
 
-      <div className="flex gap-3 flex-col sm:flex-row flex-wrap">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Hledat turnaj..."
-          className="bg-customWhite flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
-        />
+      <SearchBar
+        search={search}
+        onSearchChange={setSearch}
+        placeholder="Hledat turnaj..."
+        hasActiveFilter={
+          !!(search || filterActual || filterOld || filterTournament)
+        }
+        onClear={() => {
+          setSearch("");
+          setFilterActual(false);
+          setFilterOld(false);
+          setFilterTournament("");
+        }}
+        filters={[
+          {
+            key: "tournament",
+            type: "select",
+            value: filterTournament,
+            onChange: setFilterTournament,
+            placeholder: "Všechny turnaje",
+            options: [
+              { value: "completed", label: "✅ Zveřejněné" },
+              { value: "uncompleted", label: "❌ Nezveřejněné" },
+            ],
+          },
+          {
+            key: "actual",
+            type: "toggle",
+            value: filterActual,
+            onChange: setFilterActual,
+            label: "Aktuální",
+          },
+          {
+            key: "old",
+            type: "toggle",
+            value: filterOld,
+            onChange: setFilterOld,
+            label: "Staré",
+          },
+        ]}
+      />
 
-        {(userRole === "admin" || userRole === "trainer") && (
-          <select
-            value={filterTournament}
-            onChange={(e) => setFilterTournament(e.target.value)}
-            className="bg-customWhite px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
-          >
-            <option value="">Všechny turnaje</option>
-            <option value="completed">✅ Zveřejněné</option>
-            <option value="uncompleted">❌ Nezveřejněné</option>
-          </select>
-        )}
-        <button
-          onClick={() => setFilterActual(!filterActual)}
-          className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${filterActual ? "bg-customGreen text-white border-customGreen" : "bg-customWhite border-gray-300"}`}
+      {(userRole === "admin" || userRole === "trainer") && (
+        <select
+          value={filterTournament}
+          onChange={(e) => setFilterTournament(e.target.value)}
+          className="bg-customWhite px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-customGreen focus:border-transparent"
         >
-          Aktuální
-        </button>
+          <option value="">Všechny turnaje</option>
+          <option value="completed">✅ Zveřejněné</option>
+          <option value="uncompleted">❌ Nezveřejněné</option>
+        </select>
+      )}
+      <button
+        onClick={() => setFilterActual(!filterActual)}
+        className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${filterActual ? "bg-customGreen text-white border-customGreen" : "bg-customWhite border-gray-300"}`}
+      >
+        Aktuální
+      </button>
 
-        <button
-          onClick={() => setFilterOld(!filterOld)}
-          className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${filterOld ? "bg-customGreen text-white border-customGreen" : "bg-customWhite border-gray-300"}`}
-        >
-          Staré
-        </button>
-
-        {hasActiveFilter && (
-          <button
-            onClick={() => {
-              setSearch("");
-              setFilterActual(false);
-              setFilterOld(false);
-              setFilterTournament("");
-            }}
-            className="px-4 py-2 bg-customWhite border border-gray-300 rounded-lg text-sm transition-colors hover:bg-gray-50"
-          >
-            Zrušit filtry
-          </button>
-        )}
-      </div>
+      <button
+        onClick={() => setFilterOld(!filterOld)}
+        className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${filterOld ? "bg-customGreen text-white border-customGreen" : "bg-customWhite border-gray-300"}`}
+      >
+        Staré
+      </button>
 
       <div className="flex gap-2 border-b border-gray-200">
         <button

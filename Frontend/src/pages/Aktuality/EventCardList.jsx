@@ -68,6 +68,7 @@ const EventCardList = () => {
         filters={[
           {
             key: "period",
+            type: "select",
             value: selectedPeriod,
             onChange: setSelectedPeriod,
             placeholder: "Všechna období",

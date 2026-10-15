@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import config from "../../../config";
-
+import WarningMessage from "../../Components/Messages/WarningMessage";
 const API = config.API_URL;
 
 function AdminMe() {
@@ -230,18 +230,7 @@ function AdminMe() {
             </div>
           </div>
           {!hasFighter && (
-            <div className="mx-6 mt-4 mb-2">
-              <div className="w-full bg-yellow-50 border border-yellow-200 rounded-xl p-3 flex items-center gap-3">
-                <div className="w-9 h-9 flex items-center justify-center rounded-lg bg-yellow-100 flex-shrink-0">
-                  <TriangleAlert size={18} className="text-yellow-700" />
-                </div>
-
-                <div className="text-sm text-yellow-800">
-                  <strong>Upozornění:</strong> K tomuto účtu není přiřazen žádný
-                  závodník! Nelze se přihlašovat na zkoušky a turnaje!
-                </div>
-              </div>
-            </div>
+            <WarningMessage message="K tomuto účtu není přiřazen žádný závodník! Nelze se přihlašovat na zkoušky a turnaje!" />
           )}
 
           <div className="border-t border-gray-100 mx-6" />
