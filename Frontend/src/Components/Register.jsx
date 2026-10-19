@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import config from "../../config";
+import SuccessMessage from "./Messages/SuccessMessage";
 
 const API = config.API_URL;
 
@@ -13,10 +14,12 @@ const Register = () => {
   });
   const [gdprConsent, setGdprConsent] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSuccessMessage("");
 
     if (
       !formData.login ||
@@ -59,8 +62,8 @@ const Register = () => {
         });
         setGdprConsent(false);
         setError("");
-        alert(
-          data.message || "Registrace odeslána! Počkej na schválení od admina.",
+        setSuccessMessage(
+          data.message || "Registrace odeslána – čeká na schválení adminem.",
         );
       } else {
         setError(data.error || "Chyba při registraci.");
@@ -150,6 +153,7 @@ const Register = () => {
         </div>
 
         {error && <p className="text-sm text-red-500">{error}</p>}
+        {successMessage && <SuccessMessage message={successMessage} />}
 
         <button
           disabled={!gdprConsent}

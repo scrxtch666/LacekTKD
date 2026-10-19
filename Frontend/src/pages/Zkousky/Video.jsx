@@ -1,5 +1,3 @@
-import React from "react";
-
 function Video({ belt }) {
   if (!belt?.video_path) return null;
 

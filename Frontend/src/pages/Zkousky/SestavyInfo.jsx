@@ -1,5 +1,7 @@
-import React from "react";
 function SestavyInfo({ belt }) {
+  if (!belt.info) {
+    return null;
+  }
   if (!belt) return null;
   return (
     <>

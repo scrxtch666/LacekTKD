@@ -230,7 +230,9 @@ function AdminMe() {
             </div>
           </div>
           {!hasFighter && (
-            <WarningMessage message="K tomuto účtu není přiřazen žádný závodník! Nelze se přihlašovat na zkoušky a turnaje!" />
+            <div className="mx-6 mt-4 mb-2">
+              <WarningMessage message="K tomuto účtu není přiřazen žádný závodník! Nelze se přihlašovat na zkoušky a turnaje!" />
+            </div>
           )}
 
           <div className="border-t border-gray-100 mx-6" />
