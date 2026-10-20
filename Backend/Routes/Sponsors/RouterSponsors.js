@@ -8,14 +8,14 @@ const router = express.Router();
 const upload = createUpload("sponsors");
 
 router.get("/", (req, res) => {
-  db.query("SELECT * FROM sponsors ORDER BY id DESC", (err, results) => {
+  db.query("SELECT * FROM sponsors", (err, results) => {
     if (err)
       return res.status(500).json({ error: "Chyba při načítání sponzorů" });
     res.json(results);
   });
 });
 
-router.post("/", verifyToken, isAdmin, upload.single("image"), (req, res) => {
+router.post("/", verifyToken, isAdmin, upload.single("img_path"), (req, res) => {
   const { sponsor_name, url } = req.body;
   if (!sponsor_name || !req.file)
     return res.status(400).json({ error: "Chybí název nebo obrázek" });
@@ -35,7 +35,7 @@ router.post("/", verifyToken, isAdmin, upload.single("image"), (req, res) => {
   );
 });
 
-router.put("/:id", verifyToken, isAdmin, upload.single("image"), (req, res) => {
+router.put("/:id", verifyToken, isAdmin, upload.single("img_path"), (req, res) => {
   const { id } = req.params;
   const { sponsor_name, url } = req.body;
   if (!sponsor_name)
