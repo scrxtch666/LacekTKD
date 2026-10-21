@@ -229,7 +229,7 @@ function AdminMe() {
               </div>
             </div>
           </div>
-          {!hasFighter && (
+          {!hasFighter && !["admin", "trainer"].includes(user.role) && (
             <div className="mx-6 mt-4 mb-2">
               <WarningMessage message="K tomuto účtu není přiřazen žádný závodník! Nelze se přihlašovat na zkoušky a turnaje!" />
             </div>

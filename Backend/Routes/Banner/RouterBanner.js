@@ -2,7 +2,7 @@ const express = require("express");
 const { createUpload, getFilePath } = require("../../utils/upload");
 const db = require("../../Libs/db");
 const fs = require("fs");
-const { verifyToken, isAdminOrTrainer } = require("../../auth/auth")
+const { verifyToken, isAdminOrTrainer } = require("../../auth/auth");
 
 const router = express.Router();
 
@@ -19,7 +19,7 @@ router.get("/", (req, res) => {
     params.push(1);
   }
 
-  query += " ORDER BY id DESC";
+  query += " ORDER BY id";
 
   db.query(query, params, (err, results) => {
     if (err) {
@@ -30,39 +30,45 @@ router.get("/", (req, res) => {
   });
 });
 
-router.post("/", verifyToken, isAdminOrTrainer, upload.single("image"), (req, res) => {
-  console.log("Soubor nahrán:", req.file);
-  console.log("Cesta:", req.file?.path);
-  const { banner_name, active } = req.body;
+router.post(
+  "/",
+  verifyToken,
+  isAdminOrTrainer,
+  upload.single("image"),
+  (req, res) => {
+    console.log("Soubor nahrán:", req.file);
+    console.log("Cesta:", req.file?.path);
+    const { banner_name, active } = req.body;
 
-  if (!banner_name || !req.file) {
-    return res.status(400).json({ error: "Chybí název nebo obrázek" });
-  }
+    if (!banner_name || !req.file) {
+      return res.status(400).json({ error: "Chybí název nebo obrázek" });
+    }
 
-  const img_path = `/uploads/banners/${req.file.filename}`;
-  const isActive = active === "1" || active === true ? 1 : 0;
+    const img_path = `/uploads/banners/${req.file.filename}`;
+    const isActive = active === "1" || active === true ? 1 : 0;
 
-  db.query(
-    "INSERT INTO banner (banner_name, img_path, active) VALUES (?, ?, ?)",
-    [banner_name, img_path, isActive],
-    (err, result) => {
-      if (err) {
-        console.error("Chyba při ukládání do DB:", err);
-        return res
-          .status(500)
-          .json({ error: "Chyba při ukládání do databáze" });
-      }
+    db.query(
+      "INSERT INTO banner (banner_name, img_path, active) VALUES (?, ?, ?)",
+      [banner_name, img_path, isActive],
+      (err, result) => {
+        if (err) {
+          console.error("Chyba při ukládání do DB:", err);
+          return res
+            .status(500)
+            .json({ error: "Chyba při ukládání do databáze" });
+        }
 
-      res.status(201).json({
-        success: true,
-        message: "Banner byl úspěšně přidán",
-        id: result.insertId,
-        img_path,
-        active: isActive,
-      });
-    },
-  );
-});
+        res.status(201).json({
+          success: true,
+          message: "Banner byl úspěšně přidán",
+          id: result.insertId,
+          img_path,
+          active: isActive,
+        });
+      },
+    );
+  },
+);
 
 router.patch("/:id/toggle", verifyToken, isAdminOrTrainer, (req, res) => {
   const { id } = req.params;

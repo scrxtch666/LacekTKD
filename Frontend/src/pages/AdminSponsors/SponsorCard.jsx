@@ -74,8 +74,6 @@ function SponsorCard({
     formData.append("sponsor_name", form.name.trim());
     formData.append("url", form.url);
 
-    // Obrázek se odešle pouze tehdy,
-    // pokud uživatel vybral nový.
     if (form.img_path) {
       formData.append("img_path", form.img_path);
     }
