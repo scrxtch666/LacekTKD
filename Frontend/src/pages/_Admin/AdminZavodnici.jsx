@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import SearchBar from "../../Components/SearchBar";
 import FighterAddForm from "../AdminZavodnici/FighterAddForm";
 import FighterList from "../AdminZavodnici/FighterList";
 
-import { UserPlus, Star, UserX, Trophy } from "lucide-react";
+import { UserPlus} from "lucide-react";
 import { getUserRole } from "../../utils/auth";
 import config from "../../../config";
 
@@ -14,11 +13,6 @@ function AdminZavodnici() {
   const [loading, setLoading] = useState(true);
   const [belts, setBelts] = useState([]);
   const [categories, setCategories] = useState([]);
-
-  const [search, setSearch] = useState("");
-  const [filterBest, setFilterBest] = useState(false);
-  const [filterLegend, setFilterLegend] = useState(false);
-  const [filterAccount, setFilterAccount] = useState("");
 
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -62,21 +56,6 @@ function AdminZavodnici() {
       .catch(console.error);
   };
 
-  const filteredFighters = fighters.filter((fighter) => {
-    const matchesSearch = `${fighter.name} ${fighter.surname}`
-      .toLowerCase()
-      .includes(search.toLowerCase());
-    const matchesBest = !filterBest || fighter.best === 1;
-    const matchesLegend = !filterLegend || fighter.legend === 1;
-    const matchesAccount =
-      filterAccount === "" ||
-      (filterAccount === "assigned" && fighter.user_login) ||
-      (filterAccount === "unassigned" && !fighter.user_login);
-    return matchesSearch && matchesBest && matchesLegend && matchesAccount;
-  });
-
-  const hasActiveFilter = search || filterBest || filterLegend || filterAccount;
-
   if (loading)
     return (
       <div className="flex justify-center items-center h-64 text-gray-500">
@@ -99,47 +78,6 @@ function AdminZavodnici() {
         )}
       </div>
 
-      <SearchBar
-        search={search}
-        onSearchChange={setSearch}
-        placeholder="Hledat závodníka..."
-        hasActiveFilter={!!(search || filterBest || filterLegend)}
-        onClear={() => {
-          setSearch("");
-          setFilterBest(false);
-          setFilterLegend(false);
-        }}
-        filters={[
-          {
-            key: "account",
-            type: "select",
-            value: filterAccount,
-            onChange: setFilterAccount,
-            placeholder: "Typy účtů",
-            options: [
-              { value: "assigned", label: "✅ Přiřazený účet" },
-              { value: "unassigned", label: "❌Nepřiřazený účet" },
-            ],
-          },
-          {
-            key: "best",
-            type: "toggle",
-            value: filterBest,
-            onChange: setFilterBest,
-            label: "Nejlepší",
-            icon: Star,
-          },
-          {
-            key: "legend",
-            type: "toggle",
-            value: filterLegend,
-            onChange: setFilterLegend,
-            label: "Legenda",
-            icon: Trophy,
-          },
-        ]}
-      />
-
       {showAddForm && (
         <FighterAddForm
           onSuccess={() => {
@@ -153,24 +91,13 @@ function AdminZavodnici() {
         />
       )}
 
-      {filteredFighters.length === 0 ? (
-        <div className="bg-customWhite rounded-lg shadow p-8 text-center">
-          <UserX className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <p className="text-gray-500">
-            {hasActiveFilter
-              ? "Žádný závodník neodpovídá filtrům"
-              : "Zatím nejsou žádní závodníci"}
-          </p>
-        </div>
-      ) : (
-        <FighterList
-          fighters={fighters}
-          belts={belts}
-          categories={categories}
-          onRefresh={fetchFighters}
-          API={API}
-        />
-      )}
+      <FighterList
+        fighters={fighters}
+        belts={belts}
+        categories={categories}
+        onRefresh={fetchFighters}
+        API={API}
+      />
     </div>
   );
 }
